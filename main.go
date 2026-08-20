@@ -8,8 +8,8 @@ import (
 func main() {
     staticDir := "./static"
     fileServer := http.FileServer(http.Dir(staticDir))
-    http.Handle("/", fileServer)
-    port := ":8080"
+    http.Handle("/", fileServer)  //Maneja automaticamente los Content-Type
+    port := ":8080"               //de los archivos que sirve
 
     fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
 
@@ -18,21 +18,3 @@ func main() {
         fmt.Printf("Error: %s\n", err)
     }
 }
-
-// func serve(w http.ResponseWriter, r *http.Request) {
-//     if r.URL.Path != "/" || r.Method != http.MethodGet {
-//         http.NotFound(w, r)
-//         return
-//     }
-//     w.Header().Set("Content-Type", "text/html; charset=utf-8")
-//     fmt.Fprint(w, `<!DOCTYPE html>
-// <html>
-// <head><title>Inicio</title></head>
-// <body>
-//   <h1>Bienvenido a ...</h1>
-//   <p>Esta es la pagina principal.</p>
-//   <!-- <a href=""><> -->
-// </body>
-// </html>
-// `)
-// }
