@@ -11,7 +11,7 @@ func main() {
     http.Handle("/", fileServer)
     port := ":8080"
 
-    fmt.Printf("servidor escuchando en http://localhost%s\n", port)
+    fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
 
     err := http.ListenAndServe(port, nil)
     if err != nil {
