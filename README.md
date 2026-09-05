@@ -13,5 +13,7 @@ Por cada artículo:
 - Stock
 - Contacto
 
-Para ejecutar: `go run .` \
+Para ejecutar: `sudo docker compose up` \
 Para ver la página: http://localhost:8080
+
+Una vez modificado

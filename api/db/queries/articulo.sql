@@ -1,17 +1,17 @@
--- name: GetArticuloID :one
-SELECT id, nombre,precio,descripcion,condicion,categoria,stock,contacto,fecha_publicacion
+-- name: GetArticuloByID :one
+SELECT *
 FROM articulo
 WHERE id = $1;
 
 -- name: ListArticulos :many
-SELECT id, nombre, precio, descripcion, condicion, categoria, stock, contacto
+SELECT *
 FROM articulo
 ORDER BY nombre;
 
 -- name: CreateArticulo :one
 INSERT INTO articulo (nombre, precio, descripcion, condicion, categoria, stock, contacto)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, nombre, precio, descripcion, condicion, categoria, stock, contacto, fecha_publicacion;
+RETURNING id, nombre, precio, descripcion, condicion, ruta_imagen, categoria, stock, contacto, fecha_publicacion;
 
 -- name: UpdateArticulo :exec
 UPDATE articulo

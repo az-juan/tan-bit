@@ -7,13 +7,12 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createArticulo = `-- name: CreateArticulo :one
 INSERT INTO articulo (nombre, precio, descripcion, condicion, categoria, stock, contacto)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, nombre, precio, descripcion, condicion, categoria, stock, contacto, fecha_publicacion
+RETURNING id, nombre, precio, descripcion, condicion, ruta_imagen, categoria, stock, contacto, fecha_publicacion
 `
 
 type CreateArticuloParams struct {
@@ -26,19 +25,7 @@ type CreateArticuloParams struct {
 	Contacto    string      `json:"contacto"`
 }
 
-type CreateArticuloRow struct {
-	ID               int32        `json:"id"`
-	Nombre           string       `json:"nombre"`
-	Precio           string       `json:"precio"`
-	Descripcion      string       `json:"descripcion"`
-	Condicion        Condicion    `json:"condicion"`
-	Categoria        Categoria    `json:"categoria"`
-	Stock            interface{}  `json:"stock"`
-	Contacto         string       `json:"contacto"`
-	FechaPublicacion sql.NullTime `json:"fecha_publicacion"`
-}
-
-func (q *Queries) CreateArticulo(ctx context.Context, arg CreateArticuloParams) (CreateArticuloRow, error) {
+func (q *Queries) CreateArticulo(ctx context.Context, arg CreateArticuloParams) (Articulo, error) {
 	row := q.db.QueryRowContext(ctx, createArticulo,
 		arg.Nombre,
 		arg.Precio,
@@ -48,13 +35,14 @@ func (q *Queries) CreateArticulo(ctx context.Context, arg CreateArticuloParams) 
 		arg.Stock,
 		arg.Contacto,
 	)
-	var i CreateArticuloRow
+	var i Articulo
 	err := row.Scan(
 		&i.ID,
 		&i.Nombre,
 		&i.Precio,
 		&i.Descripcion,
 		&i.Condicion,
+		&i.RutaImagen,
 		&i.Categoria,
 		&i.Stock,
 		&i.Contacto,
@@ -73,33 +61,22 @@ func (q *Queries) DeleteArticulo(ctx context.Context, id int32) error {
 	return err
 }
 
-const getArticuloID = `-- name: GetArticuloID :one
-SELECT id, nombre,precio,descripcion,condicion,categoria,stock,contacto,fecha_publicacion
+const getArticuloByID = `-- name: GetArticuloByID :one
+SELECT id, nombre, precio, descripcion, condicion, ruta_imagen, categoria, stock, contacto, fecha_publicacion
 FROM articulo
 WHERE id = $1
 `
 
-type GetArticuloIDRow struct {
-	ID               int32        `json:"id"`
-	Nombre           string       `json:"nombre"`
-	Precio           string       `json:"precio"`
-	Descripcion      string       `json:"descripcion"`
-	Condicion        Condicion    `json:"condicion"`
-	Categoria        Categoria    `json:"categoria"`
-	Stock            interface{}  `json:"stock"`
-	Contacto         string       `json:"contacto"`
-	FechaPublicacion sql.NullTime `json:"fecha_publicacion"`
-}
-
-func (q *Queries) GetArticuloID(ctx context.Context, id int32) (GetArticuloIDRow, error) {
-	row := q.db.QueryRowContext(ctx, getArticuloID, id)
-	var i GetArticuloIDRow
+func (q *Queries) GetArticuloByID(ctx context.Context, id int32) (Articulo, error) {
+	row := q.db.QueryRowContext(ctx, getArticuloByID, id)
+	var i Articulo
 	err := row.Scan(
 		&i.ID,
 		&i.Nombre,
 		&i.Precio,
 		&i.Descripcion,
 		&i.Condicion,
+		&i.RutaImagen,
 		&i.Categoria,
 		&i.Stock,
 		&i.Contacto,
@@ -109,40 +86,31 @@ func (q *Queries) GetArticuloID(ctx context.Context, id int32) (GetArticuloIDRow
 }
 
 const listArticulos = `-- name: ListArticulos :many
-SELECT id, nombre, precio, descripcion, condicion, categoria, stock, contacto
+SELECT id, nombre, precio, descripcion, condicion, ruta_imagen, categoria, stock, contacto, fecha_publicacion
 FROM articulo
 ORDER BY nombre
 `
 
-type ListArticulosRow struct {
-	ID          int32       `json:"id"`
-	Nombre      string      `json:"nombre"`
-	Precio      string      `json:"precio"`
-	Descripcion string      `json:"descripcion"`
-	Condicion   Condicion   `json:"condicion"`
-	Categoria   Categoria   `json:"categoria"`
-	Stock       interface{} `json:"stock"`
-	Contacto    string      `json:"contacto"`
-}
-
-func (q *Queries) ListArticulos(ctx context.Context) ([]ListArticulosRow, error) {
+func (q *Queries) ListArticulos(ctx context.Context) ([]Articulo, error) {
 	rows, err := q.db.QueryContext(ctx, listArticulos)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListArticulosRow
+	var items []Articulo
 	for rows.Next() {
-		var i ListArticulosRow
+		var i Articulo
 		if err := rows.Scan(
 			&i.ID,
 			&i.Nombre,
 			&i.Precio,
 			&i.Descripcion,
 			&i.Condicion,
+			&i.RutaImagen,
 			&i.Categoria,
 			&i.Stock,
 			&i.Contacto,
+			&i.FechaPublicacion,
 		); err != nil {
 			return nil, err
 		}

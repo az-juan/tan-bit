@@ -11,8 +11,9 @@ import (
 )
 
 func main() {
-	connStr := "user=azjuan password=1234 dbname=tan_bit"
+	connStr := "host=database port=5432 user=postgres password=postgres database=tan_bit"
 	db, err := sql.Open("pgx", connStr)
+	db.Ping()
 	if err != nil {
 		log.Fatalf("failed to connect to DB: %v", err)
 	}
@@ -26,6 +27,7 @@ func main() {
 			Precio:      "300.000",
 			Descripcion: "",
 			Condicion:   "nuevo",
+			Categoria:   "notebook",
 			Stock:       "1",
 			Contacto:    "2494112233",
 		})
@@ -36,7 +38,7 @@ func main() {
 
 	fmt.Printf("Articulo creado: %+v\n", artCreado)
 
-	art, err := queries.GetArticuloID(ctx, artCreado.ID)
+	art, err := queries.GetArticuloByID(ctx, artCreado.ID)
 	if err != nil {
 		log.Fatalf("error al obtener articulo: %v", err)
 	}
@@ -60,7 +62,7 @@ func main() {
 	}
 	fmt.Println("Articulo actualizado sin problemas.")
 
-	artActualizado, err := queries.GetArticuloID(ctx, artCreado.ID)
+	artActualizado, err := queries.GetArticuloByID(ctx, artCreado.ID)
 	if err != nil {
 		log.Fatalf("Error al obtener articulo actualizado: %v", err)
 	}
@@ -73,7 +75,7 @@ func main() {
 
 	fmt.Println("Articulo borrado sin problemas.")
 
-	_, err = queries.GetArticuloID(ctx, artCreado.ID)
+	_, err = queries.GetArticuloByID(ctx, artCreado.ID)
 	if err == sql.ErrNoRows {
 		fmt.Println("Articulo no encontrado despues de borrado")
 	} else if err != nil {

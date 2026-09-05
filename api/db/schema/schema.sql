@@ -6,7 +6,7 @@ CREATE TYPE categoria AS ENUM ('notebook','pantalla','electronica','periferico',
 -- categoria creada por los usuarios?
 
 CREATE TABLE articulo (
-    id          SERIAL PRIMARY KEY,
+    id          SERIAL       PRIMARY KEY,
     nombre      varchar(255) NOT NULL,
     precio      money        NOT NULL,
     descripcion text         NOT NULL,

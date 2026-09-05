@@ -7,24 +7,24 @@ services:
     environment:
       - DB_HOST=database
       - DB_PORT=5432
-      - DB_USER=3{PG_USER}
-      - DB_PASSWORD=${PG_PASSWD}
-      - DB_NAME=${PG_DB_NAME}
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=tan_bit
     depends_on:
       - database
     volumes:
       - ./api:/app
-
   database:
     image: postgres:15
     container_name: tan-bit-pg
     environment:
-      - POSTGRES_DB=${PG_DB_NAME}
-      - POSTGRES_USER=#{PG_USER}
-      - POSTGRES_PASSWORD=${PG_PASSWD}
+      - POSTGRES_DB=tan_bit
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
       - "5433:5432"
     volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - pgdata:/var/lib/postgresql/data
 
 volumes:
