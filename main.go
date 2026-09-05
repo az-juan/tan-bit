@@ -7,8 +7,8 @@ import (
 
 func main() {
 	staticDir := "./static"
-	fileServer := http.FileServer(http.Dir(staticDir))  //Creamos un handler de archivos html
-	
+	fileServer := http.FileServer(http.Dir(staticDir)) //Creamos un handler de archivos html
+
 	http.Handle("/", fileServer) //Lo registramos para que atienda peticiones a /
 	//Maneja automaticamente los Content-Type
 	//de los archivos que sirve
