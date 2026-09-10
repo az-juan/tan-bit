@@ -110,7 +110,7 @@ type Articulo struct {
 	Condicion        Condicion      `json:"condicion"`
 	RutaImagen       sql.NullString `json:"ruta_imagen"`
 	Categoria        Categoria      `json:"categoria"`
-	Stock            interface{}    `json:"stock"`
+	Stock            int32          `json:"stock"`
 	Contacto         string         `json:"contacto"`
 	FechaPublicacion sql.NullTime   `json:"fecha_publicacion"`
 }

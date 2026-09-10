@@ -1,7 +1,9 @@
 
 # Mi Primera aplicacion web, TAN-BIT
 
-Tema: Mercado de hardware/tecnología de segunda mano
+![Alt text](tanbit_logo.png)
+
+Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circulación de articulos que aún tienen utilidad.
 
 Por cada artículo:
 - Título
@@ -13,7 +15,9 @@ Por cada artículo:
 - Stock
 - Contacto
 
-Para ejecutar: `sudo docker compose up` \
-Para ver la página: http://localhost:8080
+Para ejecutar:
+```bash
+  make test
+```
 
-Una vez modificado
+Para ver la página: http://localhost:8080

@@ -25,10 +25,10 @@ func main() {
 		sqlc.CreateArticuloParams{
 			Nombre:      "thinkpad t480",
 			Precio:      "300.000",
-			Descripcion: "",
+			Descripcion: "notebook thinkpad util para cualquier trabajo de oficio y desarrollo, buena calidad de materiales, sin uso",
 			Condicion:   "nuevo",
 			Categoria:   "notebook",
-			Stock:       "1",
+			Stock:       1,
 			Contacto:    "2494112233",
 		})
 
@@ -53,8 +53,14 @@ func main() {
 	fmt.Printf("Todos los articulos: %+v\n", arts)
 
 	err = queries.UpdateArticulo(ctx, sqlc.UpdateArticuloParams{
-		ID:     artCreado.ID,
-		Precio: "350.000",
+		ID:          artCreado.ID,
+		Nombre:      artCreado.Nombre,
+		Precio:      "350.000",
+		Descripcion: artCreado.Descripcion,
+		Condicion:   artCreado.Condicion,
+		Categoria:   artCreado.Categoria,
+		Stock:       2,
+		Contacto:    artCreado.Contacto,
 	})
 
 	if err != nil {
@@ -70,7 +76,7 @@ func main() {
 
 	err = queries.DeleteArticulo(ctx, artCreado.ID)
 	if err != nil {
-		fmt.Println("Error al borrar articulo: %v", err)
+		log.Fatalf("Error al borrar articulo: %v", err)
 	}
 
 	fmt.Println("Articulo borrado sin problemas.")
@@ -86,6 +92,7 @@ func main() {
 	fileServer := http.FileServer(http.Dir(staticDir))
 	http.Handle("/", fileServer) //Maneja automaticamente los Content-Type
 	port := ":8080"              //de los archivos que sirve
+	// http.HandleFunc("/*", handle404)
 
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
 

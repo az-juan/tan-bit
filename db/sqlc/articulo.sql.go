@@ -16,13 +16,13 @@ RETURNING id, nombre, precio, descripcion, condicion, ruta_imagen, categoria, st
 `
 
 type CreateArticuloParams struct {
-	Nombre      string      `json:"nombre"`
-	Precio      string      `json:"precio"`
-	Descripcion string      `json:"descripcion"`
-	Condicion   Condicion   `json:"condicion"`
-	Categoria   Categoria   `json:"categoria"`
-	Stock       interface{} `json:"stock"`
-	Contacto    string      `json:"contacto"`
+	Nombre      string    `json:"nombre"`
+	Precio      string    `json:"precio"`
+	Descripcion string    `json:"descripcion"`
+	Condicion   Condicion `json:"condicion"`
+	Categoria   Categoria `json:"categoria"`
+	Stock       int32     `json:"stock"`
+	Contacto    string    `json:"contacto"`
 }
 
 func (q *Queries) CreateArticulo(ctx context.Context, arg CreateArticuloParams) (Articulo, error) {
@@ -132,14 +132,14 @@ WHERE id = $1
 `
 
 type UpdateArticuloParams struct {
-	ID          int32       `json:"id"`
-	Nombre      string      `json:"nombre"`
-	Precio      string      `json:"precio"`
-	Descripcion string      `json:"descripcion"`
-	Condicion   Condicion   `json:"condicion"`
-	Categoria   Categoria   `json:"categoria"`
-	Stock       interface{} `json:"stock"`
-	Contacto    string      `json:"contacto"`
+	ID          int32     `json:"id"`
+	Nombre      string    `json:"nombre"`
+	Precio      string    `json:"precio"`
+	Descripcion string    `json:"descripcion"`
+	Condicion   Condicion `json:"condicion"`
+	Categoria   Categoria `json:"categoria"`
+	Stock       int32     `json:"stock"`
+	Contacto    string    `json:"contacto"`
 }
 
 func (q *Queries) UpdateArticulo(ctx context.Context, arg UpdateArticuloParams) error {
