@@ -1,9 +1,5 @@
--- CREATE DOMAIN u_int AS integer
--- CHECK (VALUE >= 0);
-
 CREATE TYPE condicion AS ENUM ('nuevo','muy bueno','decente','a reparar');
 CREATE TYPE categoria AS ENUM ('notebook','pantalla','electronica','periferico','accesorio','audio','video','gaming');
--- categoria creada por los usuarios?
 
 CREATE TABLE articulo (
     id          SERIAL        PRIMARY KEY,

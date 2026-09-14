@@ -38,5 +38,5 @@ func main() {
 }
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
-
+	w.Write([]byte("Servidor andando!"))
 }
