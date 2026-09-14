@@ -1,5 +1,7 @@
 .git
-tmp/
-.env
 .gitignore
+.env
 README.md
+tmp/
+docs/
+images/

@@ -13,8 +13,6 @@ services:
       - go-mod-cache:/go/pkg/mod
       # Cachea builds
       - go-build-cache:/root/.cache/go-build
-      # Excluye tmp para evitar conflictos con air
-      # - /app/tmp
     env_file:
       - path: ./example.env
         required: true
@@ -36,7 +34,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
   database:
-    image: postgres:15
+    image: postgres:15-alpine
     container_name: tan-bit-dev-pg
     env_file:
       - path: ./example.env

@@ -34,6 +34,11 @@ Luego, ejecutar tests:
 ```bash
   make test
 ```
+Para detener la aplicación:
+```bash
+  make stop
+```
+
 ## Asegurarse de:
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`
 + Tener el puerto 5432 libre

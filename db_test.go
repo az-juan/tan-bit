@@ -16,13 +16,13 @@ import (
 
 func TestServidorEstaticoConPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un puntero)
 	if err := godotenv.Load(".env"); err != nil {
-		log.Fatalf("no .env file found")
+		log.Fatalf("Archivo .env no encontrado")
 	}
 	connStr := "host=database port=5432 user=" + os.Getenv("PG_USER") + " password=" + os.Getenv("PG_PASSWD") + " database=" + os.Getenv("PG_DB_NAME")
 	db, err := sql.Open("pgx", connStr)
 	db.Ping()
 	if err != nil {
-		log.Fatalf("failed to connect to DB: %v", err)
+		log.Fatalf("Error al conectarse a la base de datos: %v", err)
 	}
 	defer db.Close()
 	queries := sqlc.New(db)
@@ -40,14 +40,14 @@ func TestServidorEstaticoConPG(t *testing.T) { //Firma std en _test.go (Test+May
 		})
 
 	if err != nil {
-		log.Fatalf("error al crear articulo: %v", err)
+		log.Fatalf("Error al crear articulo: %v", err)
 	}
 
 	fmt.Printf("Articulo creado: %+v\n", artCreado)
 
 	art, err := queries.GetArticuloByID(ctx, artCreado.ID)
 	if err != nil {
-		log.Fatalf("error al obtener articulo: %v", err)
+		log.Fatalf("Error al obtener articulo: %v", err)
 	}
 
 	fmt.Printf("Articulo obtenido: %v\n", art)
