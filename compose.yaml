@@ -1,0 +1,41 @@
+services:
+  api:
+    build: .                            ##Construir imagen usando el Dockerfile de ./
+    container_name: tan-bit-api
+    ports:
+      - "8080:8080"                     ##[puerto_anfitrion:puerto_contenedor]
+    environment:                        ##Pasa variables de entorno al contenedor para poder conectarse a la db
+      - DB_HOST=database
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=ayudanoentiendo
+      - DB_NAME=tan_bit
+    depends_on:                         ##Primero q arranque database
+        database:
+            condition: service_healthy
+
+    volumes:
+      - .:/app
+  database:
+    image: postgres:15                  ##Imagen oficial
+    container_name: tan-bit-pg
+    environment:
+      - POSTGRES_DB=tan_bit
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=ayudanoentiendo
+    ports:
+      - "5433:5432"
+    volumes:
+      ##Volumen persitente donde la bd queda guardada aunque apague el contenedor
+      - pgdata:/var/lib/postgresql/data
+      ##Primera vez q se crea el contenedor se crean las tablas
+      - ./db/schema/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    ##Evita raceconditions entre contenedores
+    healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U postgres -d tan_bit"]
+          interval: 2s
+          timeout: 2s
+          retries: 10
+
+volumes:
+  pgdata:
