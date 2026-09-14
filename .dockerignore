@@ -1,4 +1,5 @@
 .git
 tmp/
 .env
-*.log
+.gitignore
+README.md

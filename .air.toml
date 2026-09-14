@@ -1,8 +1,10 @@
 root = "."
 tmp_dir = "tmp"
+env_files = ["example.env"]
 
 [build]
-cmd = "make build"
-entrypoint = ["./tmp/tan-bit"]
-include_ext = ["go", "sql"]
-exclude_dir = ["tmp", "vendor"]
+  cmd = "mkdir -p tmp && go build -buildvcs=false -o tmp/tan-bit ."
+  entrypoint = ["./tmp/tan-bit"]
+  include_ext = ["go", "templ", "sql"]
+  exclude_dir = ["tmp", "vendor", ".git", "db/sqlc"]
+  exclude_file = ["go.sum", ".air.toml", "README.md"]
