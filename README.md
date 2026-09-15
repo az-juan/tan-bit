@@ -38,6 +38,14 @@ Para detener la aplicación:
 ```bash
   make stop
 ```
+Borrar volumenes, contenedores e imagenes de la app:
+```bash
+  make clean
+```
+Borrar cache:
+```bash
+  make clean_cache
+```
 
 ## Asegurarse de:
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`

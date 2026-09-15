@@ -13,6 +13,8 @@ services:
       - go-mod-cache:/go/pkg/mod
       # Cachea builds
       - go-build-cache:/root/.cache/go-build
+      # evita que tmp se sincronize con el codigo local para evitar conflictos
+      - /app/tmp
     env_file:
       - path: ./example.env
         required: true
