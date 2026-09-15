@@ -15,8 +15,11 @@ Por cada artículo:
 - Stock
 - Contacto
 
+[Documentación del proyecto](./docs/)
+
 ## Dependencias
 + docker
++ docker compose
 + go 1.26.5
 + sqlc: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
 + templ: `go install github.com/a-h/templ/cmd/templ@latest`
@@ -47,8 +50,9 @@ Borrar cache:
   make clean_cache
 ```
 
+Para acceder a la página: http://localhost:8080
+
 ## Asegurarse de:
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`
 + Tener el puerto 5432 libre
 
-Para acceder a la página: http://localhost:8080

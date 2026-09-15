@@ -2,7 +2,7 @@ APP_NAME := tan-bit
 ENV_FILE := example.env
 
 include $(ENV_FILE)
-.PHONY: all run generate migrate apply status test stop clean
+.PHONY: all run generate migrate apply status test stop clean clean_cache
 
 all: run
 

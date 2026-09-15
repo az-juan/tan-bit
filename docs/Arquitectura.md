@@ -3,7 +3,7 @@
 Herramientas empleadas: sqlc, air, atlas, templ
 
 Pensamos en diseñar una aplicación multi-contenedor, por un lado la lógica del servidor go y por otra parte la base de datos postgres, 
-así obtenemos una ejecución más controlada y aislada entre las partes.
+así obtenemos una ejecución más controlada y aislada en la aplicación.
 
 El contenedor app está construido de tal forma que, mientras esté corriendo, cada vez que se realiza una modificación en el código, ésta se aplique inmediatamente a través de air, agilizando el flujo de desarrollo.
 
