@@ -1,75 +1,81 @@
 package main
 
 import (
-	"context"         //Gestiona tiempos de vida y cancelaciones de peticiones a la base de datos
-	"database/sql"
-	"encoding/json"
-	"fmt"
+	"context" //Gestiona tiempos de vida y cancelaciones de peticiones a la base de datos
+	"database/sql" //Estandar para interactuar con la db
 	"log"
+	"fmt"
 	"net/http"
-	"os"              //Lectura de variables de entorno del sistema operativo
-
-	_ "github.com/jackc/pgx/v5/stdlib"  //driver estándar para postgreSQL
-	db "tp1.com/aplicacion_web/db/sqlc"
+	
+	sqlc "aplicacion_web/db/sqlc"      //Main sabe a donde ir a buscar el sqlc
+	_ "github.com/jackc/pgx/v5/stdlib" //Driver estándar para postgreSQL
 )
 
 func main() {
-	dbHost := os.Getenv("DB_HOST")
-	if dbHost == "" {
-		dbHost = "localhost"
-	}
+	connStr := "user=postgres password=ayudanoentiendo dbname=tan_bit"
 
-	dbPort := os.Getenv("DB_PORT")
-	if dbPort == "" {
-		dbPort = "5433"
-	}
-
-	dbUser := os.Getenv("DB_USER")
-	if dbUser == "" {
-		dbUser = "postgres"
-	}
-
-	dbPass := os.Getenv("DB_PASSWORD")
-	if dbPass == "" {
-		dbPass = "ayudanoentiendo"
-	}
-
-	dbName := os.Getenv("DB_NAME")
-	if dbName == "" {
-		dbName = "tan_bit"
-	}
-
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-				dbHost, dbPort, dbUser, dbPass, dbName)
-
-	dbConn, err := sql.Open("pgx", connStr)     //Inicializa el pool de conexiones usando pgx
+	db, err := sql.Open("pgx", connStr)
 	if err != nil {
-		log.Fatalf("Error al configurar conexion a la BD: %v", err)
-	}
-	defer dbConn.Close()                        //Cierre del pool de conexiones
-
-	if err := dbConn.Ping(); err != nil {
-		log.Printf("Aviso: No se pudo contactar la BD al inicio: %v", err)
-	} else {
-		fmt.Println("Conexión con PostgreSQL establecida correctamente.")
+		log.Fatalf("failed to connect to DB: %v", err)
 	}
 
-	queries := db.New(dbConn)                   //Instancia el cliente generado por sqlc
+	defer db.Close()
 
-	http.HandleFunc("/api/productos", func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.Background()
-		productos, err := queries.ListProducts(ctx, db.ListProductsParams{
-			Limit:  20,
-			Offset: 0,
+	queries := sqlc.New(db)
+	ctx := context.Background()
+
+	createdUser, err := queries.CreateUser(ctx, // Create
+		sqlc.CreateUserParams{
+			Nombre:   "Nikola",
+			Apellido: "Tesla",
+			Email:    "torreTesla@example.com",
 		})
-		if err != nil {
-			http.Error(w, "Error al consultar productos", http.StatusInternalServerError)
-			return
-		}
+	if err != nil {
+		log.Fatalf("failed to create user: %v", err)
+	}
+	fmt.Printf("Created user: %+v\n", createdUser)
 
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(productos)
+	user, err := queries.GetUserByID(ctx, createdUser.IDUsuario) // Read One
+	if err != nil {
+		log.Fatalf("failed to get user: %v", err)
+	}
+	fmt.Printf("Retrieved user: %+v\n", user)
+
+	users, err := queries.ListUsers(ctx) // Read Many
+	if err != nil {
+		log.Fatalf("failed to list users: %v", err)
+	}
+	fmt.Printf("All users: %+v\n", users)
+
+	err = queries.UpdateUser(ctx, sqlc.UpdateUserParams{ // Update
+		IDUsuario: createdUser.IDUsuario,
+		Nombre:     "Albert",
+		Apellido: "Einstein",
+		Email:    "montapuercos@example.com",
 	})
+	if err != nil {
+		log.Fatalf("failed to update user: %v", err)
+	}
+	fmt.Println("User updated successfully")
+
+	updatedUser, err := queries.GetUserByID(ctx, createdUser.IDUsuario)
+	if err != nil {
+		log.Fatalf("failed to get updated user: %v", err)
+	}
+	fmt.Printf("Updated user: %+v\n", updatedUser)
+
+	err = queries.DeleteUser(ctx, createdUser.IDUsuario) // Delete
+	if err != nil {
+		log.Fatalf("failed to delete user: %v", err)
+	}
+	fmt.Println("User deleted successfully")
+
+	_, err = queries.GetUserByID(ctx, createdUser.IDUsuario)
+	if err == sql.ErrNoRows {
+		fmt.Println("User not found after deletion")
+	} else if err != nil {
+		log.Fatalf("failed to get user after deletion: %v", err)
+	}
 
 	staticDir := "./static"
 	fileServer := http.FileServer(http.Dir(staticDir))

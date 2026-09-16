@@ -5,7 +5,6 @@
 package db
 
 import (
-	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"time"
@@ -80,10 +79,10 @@ type Producto struct {
 }
 
 type Usuario struct {
-	IDUsuario int32          `json:"id_usuario"`
-	Apellido  sql.NullString `json:"apellido"`
-	Nombre    sql.NullString `json:"nombre"`
-	Email     string         `json:"email"`
+	IDUsuario int32  `json:"id_usuario"`
+	Apellido  string `json:"apellido"`
+	Nombre    string `json:"nombre"`
+	Email     string `json:"email"`
 }
 
 type Vendedor struct {

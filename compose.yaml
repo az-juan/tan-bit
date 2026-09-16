@@ -5,11 +5,11 @@ services:
     ports:
       - "8080:8080"                     ##[puerto_anfitrion:puerto_contenedor]
     environment:                        ##Pasa variables de entorno al contenedor para poder conectarse a la db
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=ayudanoentiendo
-      - DB_NAME=tan_bit
+      - DB_HOST
+      - DB_PORT
+      - DB_USER
+      - DB_PASSWORD
+      - DB_NAME
     depends_on:                         ##Primero q arranque database
         database:
             condition: service_healthy

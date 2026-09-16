@@ -2,8 +2,8 @@ CREATE TYPE condicion_enum AS ENUM ('nuevo', 'usado', 'reacondicionado', 'roto')
 
 CREATE TABLE usuario (
     id_usuario SERIAL CONSTRAINT pk_usuario PRIMARY KEY,
-    apellido VARCHAR(50),
-    nombre VARCHAR(50),
+    apellido VARCHAR(50) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL
 );
 

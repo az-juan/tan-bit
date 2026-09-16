@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createSeller = `-- name: CreateSeller :one
@@ -46,11 +45,11 @@ WHERE v.id_vendedor = $1
 `
 
 type GetSellerByIDRow struct {
-	IDVendedor int32          `json:"id_vendedor"`
-	Telefono   string         `json:"telefono"`
-	Nombre     sql.NullString `json:"nombre"`
-	Apellido   sql.NullString `json:"apellido"`
-	Email      string         `json:"email"`
+	IDVendedor int32  `json:"id_vendedor"`
+	Telefono   string `json:"telefono"`
+	Nombre     string `json:"nombre"`
+	Apellido   string `json:"apellido"`
+	Email      string `json:"email"`
 }
 
 // Obtiene el vendedor junto con los datos de contacto del usuario
@@ -86,11 +85,11 @@ type ListSellersParams struct {
 }
 
 type ListSellersRow struct {
-	IDVendedor int32          `json:"id_vendedor"`
-	Telefono   string         `json:"telefono"`
-	Nombre     sql.NullString `json:"nombre"`
-	Apellido   sql.NullString `json:"apellido"`
-	Email      string         `json:"email"`
+	IDVendedor int32  `json:"id_vendedor"`
+	Telefono   string `json:"telefono"`
+	Nombre     string `json:"nombre"`
+	Apellido   string `json:"apellido"`
+	Email      string `json:"email"`
 }
 
 // Lista todos los vendedores junto con su información de usuario con paginación

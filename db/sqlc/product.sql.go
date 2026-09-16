@@ -129,17 +129,17 @@ WHERE p.id_producto = $1
 `
 
 type GetProductWithSellerDetailsRow struct {
-	IDProducto       int32          `json:"id_producto"`
-	Titulo           string         `json:"titulo"`
-	Descripcion      string         `json:"descripcion"`
-	Condicion        CondicionEnum  `json:"condicion"`
-	Precio           string         `json:"precio"`
-	Stock            int32          `json:"stock"`
-	IDVendedor       int32          `json:"id_vendedor"`
-	VendedorTelefono string         `json:"vendedor_telefono"`
-	VendedorNombre   sql.NullString `json:"vendedor_nombre"`
-	VendedorApellido sql.NullString `json:"vendedor_apellido"`
-	VendedorEmail    string         `json:"vendedor_email"`
+	IDProducto       int32         `json:"id_producto"`
+	Titulo           string        `json:"titulo"`
+	Descripcion      string        `json:"descripcion"`
+	Condicion        CondicionEnum `json:"condicion"`
+	Precio           string        `json:"precio"`
+	Stock            int32         `json:"stock"`
+	IDVendedor       int32         `json:"id_vendedor"`
+	VendedorTelefono string        `json:"vendedor_telefono"`
+	VendedorNombre   string        `json:"vendedor_nombre"`
+	VendedorApellido string        `json:"vendedor_apellido"`
+	VendedorEmail    string        `json:"vendedor_email"`
 }
 
 // Consulta con JOIN para traer información combinada del producto y de su vendedor/usuario

@@ -4,18 +4,11 @@ SELECT id_usuario, apellido, nombre, email
 FROM usuario
 WHERE id_usuario = $1;
 
--- name: GetUserByEmail :one
--- Obtiene un usuario a partir de su correo electrónico
-SELECT id_usuario, apellido, nombre, email
-FROM usuario
-WHERE email = $1;
-
 -- name: ListUsers :many
--- Lista usuarios con paginación
+-- Lista todos los usuarios
 SELECT id_usuario, apellido, nombre, email
 FROM usuario
-ORDER BY id_usuario
-LIMIT $1 OFFSET $2;
+ORDER BY id_usuario;
 
 -- name: CreateUser :one
 -- Inserta un nuevo usuario y retorna sus datos con el ID asignado
@@ -28,12 +21,16 @@ INSERT INTO usuario (
 )
 RETURNING id_usuario, apellido, nombre, email;
 
--- name: UpdateUser :one
+-- name: UpdateUser :exec
 -- Actualiza los datos de un usuario existente
 UPDATE usuario
 SET
     nombre = $2,
     apellido = $3,
     email = $4
-WHERE id_usuario = $1
-RETURNING id_usuario, apellido, nombre, email;
+WHERE id_usuario = $1;
+
+-- name: DeleteUser :exec
+-- Elimina un usuario por su clave primaria
+DELETE FROM usuario
+WHERE id_usuario = $1;

@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -22,9 +21,9 @@ RETURNING id_usuario, apellido, nombre, email
 `
 
 type CreateUserParams struct {
-	Nombre   sql.NullString `json:"nombre"`
-	Apellido sql.NullString `json:"apellido"`
-	Email    string         `json:"email"`
+	Nombre   string `json:"nombre"`
+	Apellido string `json:"apellido"`
+	Email    string `json:"email"`
 }
 
 // Inserta un nuevo usuario y retorna sus datos con el ID asignado
@@ -40,23 +39,15 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Usuario
 	return i, err
 }
 
-const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id_usuario, apellido, nombre, email
-FROM usuario
-WHERE email = $1
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM usuario
+WHERE id_usuario = $1
 `
 
-// Obtiene un usuario a partir de su correo electrónico
-func (q *Queries) GetUserByEmail(ctx context.Context, email string) (Usuario, error) {
-	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
-	var i Usuario
-	err := row.Scan(
-		&i.IDUsuario,
-		&i.Apellido,
-		&i.Nombre,
-		&i.Email,
-	)
-	return i, err
+// Elimina un usuario por su clave primaria
+func (q *Queries) DeleteUser(ctx context.Context, idUsuario int32) error {
+	_, err := q.db.ExecContext(ctx, deleteUser, idUsuario)
+	return err
 }
 
 const getUserByID = `-- name: GetUserByID :one
@@ -82,17 +73,11 @@ const listUsers = `-- name: ListUsers :many
 SELECT id_usuario, apellido, nombre, email
 FROM usuario
 ORDER BY id_usuario
-LIMIT $1 OFFSET $2
 `
 
-type ListUsersParams struct {
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
-}
-
-// Lista usuarios con paginación
-func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]Usuario, error) {
-	rows, err := q.db.QueryContext(ctx, listUsers, arg.Limit, arg.Offset)
+// Lista todos los usuarios
+func (q *Queries) ListUsers(ctx context.Context) ([]Usuario, error) {
+	rows, err := q.db.QueryContext(ctx, listUsers)
 	if err != nil {
 		return nil, err
 	}
@@ -119,37 +104,29 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]Usuario
 	return items, nil
 }
 
-const updateUser = `-- name: UpdateUser :one
+const updateUser = `-- name: UpdateUser :exec
 UPDATE usuario
 SET
     nombre = $2,
     apellido = $3,
     email = $4
 WHERE id_usuario = $1
-RETURNING id_usuario, apellido, nombre, email
 `
 
 type UpdateUserParams struct {
-	IDUsuario int32          `json:"id_usuario"`
-	Nombre    sql.NullString `json:"nombre"`
-	Apellido  sql.NullString `json:"apellido"`
-	Email     string         `json:"email"`
+	IDUsuario int32  `json:"id_usuario"`
+	Nombre    string `json:"nombre"`
+	Apellido  string `json:"apellido"`
+	Email     string `json:"email"`
 }
 
 // Actualiza los datos de un usuario existente
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (Usuario, error) {
-	row := q.db.QueryRowContext(ctx, updateUser,
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
+	_, err := q.db.ExecContext(ctx, updateUser,
 		arg.IDUsuario,
 		arg.Nombre,
 		arg.Apellido,
 		arg.Email,
 	)
-	var i Usuario
-	err := row.Scan(
-		&i.IDUsuario,
-		&i.Apellido,
-		&i.Nombre,
-		&i.Email,
-	)
-	return i, err
+	return err
 }
