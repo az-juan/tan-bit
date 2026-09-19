@@ -14,8 +14,8 @@ services:
         database:
             condition: service_healthy
 
-    volumes:
-      - .:/app
+    ##volumes:
+    ##  - .:/app
   database:
     image: postgres:15                  ##Imagen oficial
     container_name: tan-bit-pg

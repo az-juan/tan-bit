@@ -7,7 +7,7 @@ FROM golang:1.26-alpine AS builder
 ##Establece el directorio de trabajo dentro del contenedor, y se coloca ahi
 WORKDIR /app
 ##Copia las dependencias antes que el codigo en ./ (/app)
-COPY go.mod go.sum* ./
+COPY go.mod go.sum ./
 ##Descarga modulos de go requeridos
 RUN go mod download
 ##Copia el codigo fuente del proyecto en el contenedor (/api /app)
@@ -17,7 +17,7 @@ RUN CGO_ENABLED=0 go build -o /app/api .
 
 ## Etapa 2: imagen final (solo el binario)
 
-##Inicia desde una imagen minima
+##Inicia desde una imagen minima, solo tiene el binario en /app/api
 FROM alpine:3.24
 ##Directorio de ejecucion dentro del contenedor final
 WORKDIR /app

@@ -6,25 +6,34 @@ import (
 	"log"
 	"fmt"
 	"net/http"
+	"os" // Permite leer variables de entorno para usar el .env
+
 	
 	sqlc "aplicacion_web/db/sqlc"      //Main sabe a donde ir a buscar el sqlc
 	_ "github.com/jackc/pgx/v5/stdlib" //Driver estándar para postgreSQL
 )
 
 func main() {
-	connStr := "user=postgres password=ayudanoentiendo dbname=tan_bit"
+	connStr := fmt.Sprintf(           //Leemos el .env
+        "host=%s port=%s user=%s password=%s dbname=%s",
+        os.Getenv("DB_HOST"),
+        os.Getenv("DB_PORT"),
+        os.Getenv("DB_USER"),
+        os.Getenv("DB_PASSWORD"),
+        os.Getenv("DB_NAME"),
+    )
 
-	db, err := sql.Open("pgx", connStr)
+	db, err := sql.Open("pgx", connStr) //Inicializa el pool de conexiones a la base de datos usando el driver "pgx"
 	if err != nil {
 		log.Fatalf("failed to connect to DB: %v", err)
 	}
 
-	defer db.Close()
+	defer db.Close()                    //Cierra el pool cuando termine main
 
-	queries := sqlc.New(db)
+	queries := sqlc.New(db)             //Instanciamos queries para ejecutarse en nuestro pool
 	ctx := context.Background()
 
-	createdUser, err := queries.CreateUser(ctx, // Create
+	createdUser, err := queries.CreateUser(ctx,
 		sqlc.CreateUserParams{
 			Nombre:   "Nikola",
 			Apellido: "Tesla",
