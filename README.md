@@ -18,41 +18,22 @@ Por cada artículo:
 [Documentación del proyecto](./docs/)
 
 ## Dependencias
++ atlas: `curl -sSf https://atlasgo.sh | sh`
 + docker
 + docker compose
++ figlet
 + go 1.26.5
++ gum
 + sqlc: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
 + templ: `go install github.com/a-h/templ/cmd/templ@latest`
 
 Para ejecutar la aplicación:
 ```bash
-  make run
+  chmod u+x run.sh
+  ./run.sh
 ```
-Una vez corriendo, si todavía no se realizó, aplicar migraciones:
-```bash
-  make status
-  make apply
-```
-Luego, ejecutar tests:
-```bash
-  make test
-```
-Para detener la aplicación:
-```bash
-  make stop
-```
-Borrar volumenes, contenedores e imagenes de la app:
-```bash
-  make clean
-```
-Borrar cache:
-```bash
-  make clean_cache
-```
-
 Para acceder a la página: http://localhost:8080
 
-## Asegurarse de:
+## Asegurarse de
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`
-+ Tener el puerto 5432 libre
-
++ Tener los puertos 5432 y 8080 libres

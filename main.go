@@ -1,21 +1,21 @@
 package main
 
 import (
+	"charm.land/log/v2"
 	"database/sql"
 	"fmt"
 	_ "github.com/a-h/templ"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
-	"log"
 	"net/http"
 	"os"
 )
 
 func main() {
-	if err := godotenv.Load("example.env"); err != nil {
+	if err := godotenv.Load("./example.env"); err != nil {
 		log.Fatalf("Archivo .env no encontrado")
 	}
-	connStr := "host=database port=5432 user=" + os.Getenv("PG_USER") + " password=" + os.Getenv("PG_PASSWD") + " database=" + os.Getenv("PG_DB_NAME")
+	connStr := "host=database port=5432 user=" + os.Getenv("PG_USER") + " password=" + os.Getenv("PG_PASSWD") + " database=" + os.Getenv("DB_NAME")
 	db, err := sql.Open("pgx", connStr)
 	db.Ping()
 	if err != nil {
@@ -25,9 +25,9 @@ func main() {
 
 	staticDir := "./static"
 	fileServer := http.FileServer(http.Dir(staticDir))
+	http.HandleFunc("/health", handleHealth)
 	http.Handle("/", fileServer) //Maneja automaticamente los Content-Type
 	port := ":8080"              //de los archivos que sirve
-	http.HandleFunc("/health", handleHealth)
 
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
 

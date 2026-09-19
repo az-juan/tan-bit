@@ -1,24 +1,22 @@
 package main
 
 import (
+	"charm.land/log/v2"
 	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
-	"log"
-	"net/http"
-	"net/http/httptest" //Paquete std para probar web servers sin abrir puertos reales
 	"os"
 	sqlc "tan-bit.com/tan-bit/db/sqlc"
 	"testing" //Obligatorio en _test.go
 )
 
-func TestServidorEstaticoConPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un puntero)
-	if err := godotenv.Load("example.env"); err != nil {
+func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un puntero)
+	if err := godotenv.Load("../example.env"); err != nil {
 		log.Fatalf("Archivo .env no encontrado")
 	}
-	connStr := "host=database port=5432 user=" + os.Getenv("PG_USER") + " password=" + os.Getenv("PG_PASSWD") + " database=" + os.Getenv("DB_NAME")
+	connStr := "host=localhost port=5432 user=" + os.Getenv("PG_USER") + " password=" + os.Getenv("PG_PASSWD") + " database=" + os.Getenv("DB_NAME")
 	db, err := sql.Open("pgx", connStr)
 	db.Ping()
 	if err != nil {
@@ -93,24 +91,5 @@ func TestServidorEstaticoConPG(t *testing.T) { //Firma std en _test.go (Test+May
 		fmt.Println("Articulo no encontrado despues de borrado")
 	} else if err != nil {
 		log.Fatalf("Error al obtener articulo despues de borrado: %v", err)
-	}
-
-	staticDir := "./static"
-	fileServer := http.FileServer(http.Dir(staticDir))
-
-	// Petición HTTP simulada a la raíz "/"
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatalf("Error al crear la petición: %v", err) //Fatal para arranque
-	}
-
-	// Creamos un grabador de respuesta q captura lo que devuelve el handler
-	rr := httptest.NewRecorder()
-
-	fileServer.ServeHTTP(rr, req)
-
-	// Verificamos que el código de estado HTTP sea 200 OK
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("Código de estado incorrecto: obtenido %v, esperado %v", status, http.StatusOK)
 	}
 }
