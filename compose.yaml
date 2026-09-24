@@ -34,7 +34,12 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      broker:
+        condition: service_healthy
     restart: unless-stopped
+    networks:
+      - broker-net
+      # - api-net
   database:
     image: postgres:15-alpine
     container_name: pg
@@ -54,6 +59,26 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - db-net
+  broker:
+    image: nats:2.15-alpine
+    container_name: broker
+    env_file:
+      - path: ./example.env
+        required: true
+    ports:
+      - 4222:4222
+      - 8222:8222
+      - 6222:6222
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8222/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - broker-net
     
 volumes:
   go-mod-cache:
@@ -62,3 +87,11 @@ volumes:
     driver: local
   pgdata:
     driver: local
+
+networks:
+  # api-net:
+    # driver: bridge
+  db-net:
+    driver: bridge
+  broker-net:
+    driver: bridge

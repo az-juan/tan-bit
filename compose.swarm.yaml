@@ -1,0 +1,32 @@
+services:
+  api:
+    image: tan-bit-api:latest
+    restart: unless-stopped
+    deploy:
+      replicas: 4
+    update_config:
+      parallelism: 2
+      delay: 10s
+    restart_policy:
+      condition: on-failure
+    networks:
+      - broker-net
+      - api-net
+  database:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    networks:
+      - db-net
+  broker:
+    image: nats:2.15-alpine
+    restart: unless-stopped
+    networks:
+      - broker-net 
+  
+networks:
+  api-net:
+    driver: overlay
+  db-net:
+    driver: overlay
+  broker-net:
+    driver: overlay

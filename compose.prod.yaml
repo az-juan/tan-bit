@@ -7,3 +7,6 @@ services:
   database:
     image: postgres:15-alpine
     restart: unless-stopped
+  broker:
+    image: nats:2.15-alpine
+    restart: unless-stopped
