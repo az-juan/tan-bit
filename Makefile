@@ -19,7 +19,7 @@ generate:
 # No queremos incluirla dentro del build
 migrate:
 	@test -n "$(name)" || (echo "Uso: make migrate name=nombre" && exit 1)
-	atlas migrate diff "$(name)" --dir "file://db/migrations" --to \
+	@atlas migrate diff "$(name)" --dir "file://db/migrations" --to \
 	"file://db/schema/schema.sql" --dev-url "docker://postgres/15/dev?search_path=public"
 
 # Aplica las migraciones pendientes
@@ -41,3 +41,10 @@ test:
 # Limpia los artefactos de construcción
 clean:
 	@rm -rf tmp
+
+preCommit:
+	@go mod tidy
+	@go fmt
+	@go vet
+	@echo "Testing result:"
+	@go test
