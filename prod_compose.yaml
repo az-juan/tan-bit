@@ -13,9 +13,9 @@ services:
     depends_on:                         ##Primero q arranque database
         database:
             condition: service_healthy
-    volumes:                            ##Contenedor comparte el fileSystem con la maquina anfitriona
-      - .:/app                          ## Image run time
 
+    ##volumes:                            No quiero q el contenedor tenga acceso a
+    ##  - .:/app                          otros archivos ademas de lo que indico en Dockerfile
   database:
     image: postgres:15                  ##Imagen oficial
     container_name: tan-bit-pg

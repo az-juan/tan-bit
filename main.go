@@ -91,7 +91,7 @@ func main() {
 	http.Handle("/", fileServer)
 
 	port := ":8080"
-	fmt.Printf("Servidor TAN-BIT escuchando en http://localhost%s\n", port)
+	fmt.Printf("Servidor TAN-BIT con air escuchando en http://localhost%s\n", port)
 
 	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatalf("Error al iniciar el servidor web: %v", err)
