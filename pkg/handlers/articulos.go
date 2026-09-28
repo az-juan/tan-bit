@@ -4,13 +4,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"github.com/nats-io/nats.go"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"tan-bit.com/tan-bit/db/sqlc"
-	"time"
 )
 
 var articulos = []db.Articulo{
@@ -19,19 +16,6 @@ var articulos = []db.Articulo{
 	{3, "samsung a16", "200000.00", "celular con poco uso", "bueno", sql.NullString{}, "video", 1, "2494123456", sql.NullTime{}},
 	{4, "raspberry pi 4", "100000.00", "mini computadora con infinidad de usos", "muy bueno", sql.NullString{}, "electronica", 5, "2494778844", sql.NullTime{}},
 	{5, "auriculares logitech", "10000.00", "auriculares de buena calidad, necesitan cambiar almoadillas", "a reparar", sql.NullString{}, "audio", 1, "2494001122", sql.NullTime{}},
-}
-
-var nc *nats.Conn
-
-// Ejemplo didáctico: el estado global debe protegerse ante concurrencia
-// y reemplazarse por persistencia en una aplicación real.
-func ExecBroker() {
-	nc, err := nats.Connect("nats://broker:4222")
-	if err != nil {
-		log.Fatalf("Error en broker: %v", err)
-	}
-	defer nc.Close()
-
 }
 
 // Manejador para /articulos
@@ -82,60 +66,43 @@ func getArticulos(w http.ResponseWriter, r *http.Request) {
 
 // POST /articulos - Crear nuevo articulo
 func createArticulo(w http.ResponseWriter, r *http.Request) {
-	var art db.Articulo
-	err := json.NewDecoder(r.Body).Decode(&art)
+	var newArticulo db.Articulo
+
+	err := json.NewDecoder(r.Body).Decode(&newArticulo)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	// Publicar evento de creación
-	type ArticuloCreado struct {
-		Type     string      `json:"type"`
-		Articulo db.Articulo `json:"articulo"`
-		Time     time.Time   `json:"time"`
-	}
-
-	event := ArticuloCreado{Type: "articulo_creado", Articulo: art, Time: time.Now()}
-	eventData, err := json.Marshal(event)
-	if err != nil {
-		http.Error(w, "Error creando evento", http.StatusInternalServerError)
-		return
-	}
-	log.Printf("evento creado!")
-	if err := nc.Publish("articulos.events", eventData); err != nil {
-		http.Error(w, "Error procesando request", http.StatusInternalServerError)
-		log.Fatalf("%v", err)
-		return
-	}
-	art.ID = int32(len(articulos)) + 1
-	articulos = append(articulos, art)
+	newArticulo.ID = int32(len(articulos)) + 1
+	articulos = append(articulos, newArticulo)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{
-		"status":  "procesando",
-		"message": "Creacion de articulo en progreso",
-	})
+
+	json.NewEncoder(w).Encode(newArticulo)
 }
 
 // GET /articulos/{id} - Obtener articulo específico
 func getArticulo(w http.ResponseWriter, r *http.Request, id int) {
-	product, err := findArticuloByID(id)
+	articulo, err := findArticuloByID(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(product)
+	json.NewEncoder(w).Encode(articulo)
 }
 
 // PUT /articulos/{id} - Actualizar articulo
 func updateArticulo(w http.ResponseWriter, r *http.Request, id int) {
 	var updatedArticulo db.Articulo
+
 	err := json.NewDecoder(r.Body).Decode(&updatedArticulo)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	index, err := findArticuloIndexByID(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)

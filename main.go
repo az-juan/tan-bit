@@ -7,19 +7,15 @@ import (
 	_ "github.com/a-h/templ"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
-	"github.com/nats-io/nats.go"
 	"net/http"
 	"os"
-	"tan-bit.com/tan-bit/internal/middleware"
+	// "tan-bit.com/tan-bit/internal/middleware"
 	"tan-bit.com/tan-bit/pkg/handlers"
 )
 
-var nc *nats.Conn
-
 func main() {
 	execDB()
-	handlers.ExecBroker()
-	go middleware.ExecConsumer()
+	// go middleware.ExecBroker()
 
 	staticDir := "./static"
 	fileServer := http.FileServer(http.Dir(staticDir))
