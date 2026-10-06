@@ -12,3 +12,4 @@ Decidimos incluir únicamente 'air' y 'atlas' dentro del contenedor y tener 'sql
 Separamos el flujo de docker en desarrollo y producción para tener una mejor organización y facilitar el testing y debugging.
 
 Empleamos un archivo example.env como ejemplo para testear la aplicación sin exponer datos sensibles.
+

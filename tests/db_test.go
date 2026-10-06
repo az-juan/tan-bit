@@ -1,4 +1,4 @@
-package main
+package tests
 
 import (
 	"charm.land/log/v2"

@@ -47,7 +47,7 @@ fi
 # MENU
 echo "tan-bit" | figlet -f larry3d | gum style --foreground 110
 
-INPUT=$(gum choose "Ejecutar" "Ejecutar tests" "Detener" "Limpiar" "Limpiar cache")
+INPUT=$(gum choose "Ejecutar" "Ejecutar tests" "Detener" "Limpiar" "Limpiar cache" "Salir")
 
 case "$INPUT" in
   "Ejecutar")
@@ -61,9 +61,9 @@ case "$INPUT" in
     templ generate
     docker compose --env-file "$ENV_FILE" -f "$DEV_FILE" -f "$PROD_FILE" up -d
     atlas migrate apply --dir "file://db/migrations" --url "postgres://"$PG_USER":"$PG_PASSWD"@localhost:5432/"$DB_NAME"?sslmode=disable"
-    go test -v ./tests/
-    chmod u+x curl_tests.sh
-    ./curl_tests.sh
+    go test -v ./tests
+    chmod u+x ./tests/curl_test.sh
+    ./tests/curl_test.sh
   ;;
   "Detener")
     docker compose --env-file "$ENV_FILE" down
@@ -74,6 +74,10 @@ case "$INPUT" in
   "Limpiar cache")
     docker compose --env-file "$ENV_FILE" down -v --rmi local
     docker system prune
+  ;;
+  "Salir")
+    echo
+    gum style --foreground 115 "saliendo..."
   ;;
   *)
     echo "error"

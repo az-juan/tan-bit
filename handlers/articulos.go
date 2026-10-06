@@ -7,7 +7,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"tan-bit.com/tan-bit/db/sqlc"
+	db "tan-bit.com/tan-bit/db/sqlc"
+	_ "tan-bit.com/tan-bit/views"
 )
 
 var articulos = []db.Articulo{
@@ -144,3 +145,46 @@ func findArticuloIndexByID(id int) (int, error) {
 	}
 	return -1, errors.New("articulo no encontrado")
 }
+
+/*
+func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	sortColumn := r.URL.Query().Get("sort")
+	sortOrder := r.URL.Query().Get("order")
+	if sortOrder != "desc" {
+		sortOrder = "asc" // Valor por defecto
+	}
+	var users []db.Articulo
+	var err error
+	switch sortColumn {
+	case "id":
+		if sortOrder == "asc" {
+			users, err = h.queries.ListUsersOrderByIdAsc(ctx)
+		} else {
+			users, err = h.queries.ListUsersOrderByIdDesc(ctx)
+		}
+	case "name":
+		if sortOrder == "asc" {
+			users, err = h.queries.ListUsersOrderByNameAsc(ctx)
+		} else {
+			users, err = h.queries.ListUsersOrderByNameDesc(ctx)
+		}
+	case "email":
+		if sortOrder == "asc" {
+			users, err = h.queries.ListUsersOrderByEmailAsc(ctx)
+		} else {
+			users, err = h.queries.ListUsersOrderByEmailDesc(ctx)
+		}
+	default:
+		// Orden por defecto
+		users, err = h.queries.ListUsers(ctx)
+		sortColumn = "id" // Columna por defecto para resaltar
+		sortOrder = "asc"
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	views.UserPage(users, sortColumn, sortOrder).Render(r.Context(), w)
+}
+*/

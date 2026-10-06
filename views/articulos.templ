@@ -1,0 +1,80 @@
+package views
+
+import (
+    "tan-bit.com/tan-bit/db/sqlc"
+    "fmt"
+)
+
+func getNextSortOrder(columnName, currentSortColumn, currentSortOrder string) string {
+    if currentSortColumn == columnName && currentSortOrder == "asc" {
+        return "desc"
+    }
+    return "asc"
+}
+
+templ SortableHeader(columnName, displayName,
+    currentSortColumn, currentSortOrder string) {
+    <th scope="col"
+        class={ map[string] bool{
+            "sortable": true,
+            "sorted-" + currentSortOrder: currentSortColumn == columnName,
+        } }
+        hx-get={ fmt.Sprintf("/?sort=%s&order=%s", columnName,
+            getNextSortOrder(columnName, currentSortColumn, currentSortOrder)) }
+        hx-target="#articulos-table"
+        hx-swap="outerHTML"
+        hx-push-url="true"
+    >
+        <button type="button">{ displayName }</button>
+    </th>
+}
+
+templ ArticuloTable(articulos []db.Articulo, sortColumn, sortOrder string) {
+    <table id="articulos-table">
+    <thead>
+    <tr>
+    @SortableHeader("id", "ID", sortColumn, sortOrder)
+    @SortableHeader("nombre", "Nombre", sortColumn, sortOrder)
+    @SortableHeader("precio", "Precio", sortColumn, sortOrder)
+    </tr>
+    </thead>
+    <tbody>
+    for _, articulo := range articulos {
+    <tr> <td>{ fmt.Sprint(articulo.ID) }</td>
+    <td>{ articulo.Nombre }</td>
+    <td>{ articulo.Precio }</td> </tr>
+    }
+    if len(articulos) == 0 {
+    <tr> <td colspan="3">No se encontraron articulos.</td> </tr>
+    }
+    </tbody>
+    </table>
+}
+
+
+templ ArticuloPage(users []db.Articulo, sortColumn string, sortOrder string) {
+    <!DOCTYPE html>
+    ...
+    <html>
+        // <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0/dist/htmx.min.js"
+        //         integrity="sha384-BvJpBiO8Kh31EqtJe5DRIeWrHWnCGkwytKs9NKFi86Hhw96dEqdEMzZDeK9iEGTc"
+        //         crossorigin="anonymous"></script>
+        <style>
+            body { font-family: sans-serif; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left; }
+            th.sortable { cursor: pointer; }
+            th.sortable:hover { background-color: #f2f2f2; }
+            th.sorted-asc::after { content: " ↑"; }
+            th.sorted-desc::after { content: " ↓"; }
+        </style>
+        <head>
+            Pagina de articulos
+        </head>
+        <body>
+            <h1>Usuarios</h1>
+            @ArticuloTable(users, sortColumn, sortOrder)
+        </body>
+    </html>
+}
+

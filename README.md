@@ -22,8 +22,9 @@ Por cada artículo:
 + docker
 + docker compose
 + figlet
-+ go 1.26.5
++ go
 + gum
++ pnpm
 + sqlc: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
 + templ: `go install github.com/a-h/templ/cmd/templ@latest`
 
@@ -36,4 +37,4 @@ Para acceder a la página: http://localhost:8080
 
 ## Asegurarse de
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`
-+ Tener los puertos 5432 y 8080 libres
++ Tener puertos 5432 y 8080 libres

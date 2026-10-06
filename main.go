@@ -9,13 +9,11 @@ import (
 	"github.com/joho/godotenv"
 	"net/http"
 	"os"
-	// "tan-bit.com/tan-bit/internal/middleware"
-	"tan-bit.com/tan-bit/pkg/handlers"
+	"tan-bit.com/tan-bit/handlers"
 )
 
 func main() {
 	execDB()
-	// go middleware.ExecBroker()
 
 	staticDir := "./static"
 	fileServer := http.FileServer(http.Dir(staticDir))
