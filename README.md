@@ -22,6 +22,7 @@ Por cada artículo:
 + docker
 + docker compose
 + figlet
++ figlet-fonts
 + go
 + gum
 + pnpm
@@ -30,8 +31,8 @@ Por cada artículo:
 
 Para ejecutar la aplicación:
 ```bash
-  chmod u+x run.sh
-  ./run.sh
+  chmod u+x test-api.sh
+  ./test-api.sh
 ```
 Para acceder a la página: http://localhost:8080
 
