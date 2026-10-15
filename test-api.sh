@@ -45,7 +45,7 @@ if ! command -v go &>/dev/null; then
 fi
 
 # MENU
-echo "tan-bit" | figlet -f larry3d | gum style --foreground 110
+echo "tan-bit" | figlet -f standard | gum style --foreground 110
 
 while true; do
   INPUT=$(gum choose "Ejecutar" "Detener" "Salir")

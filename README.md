@@ -22,7 +22,6 @@ Por cada artículo:
 + docker
 + docker compose
 + figlet
-+ figlet-fonts
 + go
 + gum
 + pnpm
