@@ -37,4 +37,6 @@ Para acceder a la página: http://localhost:8080
 
 ## Asegurarse de
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`
+Al ejecutar `groups` tiene que listarse "docker", de lo contrario cierra la sesión actual e inicia otra.
 + Tener puertos 5432 y 8080 libres
++ Iniciar el Docker Daemon con: `sudo systemctl start docker`
