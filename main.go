@@ -1,12 +1,12 @@
 package main
 
 import (
-	"charm.land/log/v2"
 	"database/sql"
 	"fmt"
 	_ "github.com/a-h/templ"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
+	"log"
 	"net/http"
 	"os"
 	"tan-bit.com/tan-bit/handlers"

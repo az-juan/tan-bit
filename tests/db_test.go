@@ -1,12 +1,12 @@
 package tests
 
 import (
-	"charm.land/log/v2"
 	"context"
 	"database/sql"
 	"fmt"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/joho/godotenv"
+	"log"
 	"os"
 	sqlc "tan-bit.com/tan-bit/db/sqlc"
 	"testing" //Obligatorio en _test.go

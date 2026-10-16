@@ -13,3 +13,4 @@ Separamos el flujo de docker en desarrollo y producción para tener una mejor or
 
 Empleamos un archivo example.env como ejemplo para testear la aplicación sin exponer datos sensibles.
 
+Por cada operación, hay un handler que se encarga de manejar correctamente las modificaciones que se realizan sobre los articulos.
