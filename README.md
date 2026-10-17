@@ -22,6 +22,7 @@ Por cada artículo:
 + docker
 + docker compose
 + figlet
++ figlet font: larry3d: `curl -o larry3d.flf "https://raw.githubusercontent.com/xero/figlet-fonts/main/Larry%203D.flf"`
 + go
 + gum
 + pnpm

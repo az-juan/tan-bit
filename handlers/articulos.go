@@ -134,7 +134,7 @@ func findArticuloByID(id int) (*db.Articulo, error) {
 			return &articulos[i], nil
 		}
 	}
-	return nil, errors.New("articulo no encontrado")
+	return nil, errors.New("Articulo no encontrado")
 }
 
 func findArticuloIndexByID(id int) (int, error) {
