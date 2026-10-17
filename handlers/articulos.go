@@ -12,11 +12,11 @@ import (
 )
 
 var articulos = []db.Articulo{
-	{1, "Thinkpad T14", "300000.00", "notebook empresarial de buena calidad", "muy bueno", sql.NullString{}, "notebook", 1, "2494001122", sql.NullTime{}},
-	{2, "router tplink 300mb", "50000.00", "router ideal para uso domestico", "decente", sql.NullString{}, "internet", 2, "2494987654", sql.NullTime{}},
-	{3, "samsung a16", "200000.00", "celular con poco uso", "bueno", sql.NullString{}, "video", 1, "2494123456", sql.NullTime{}},
-	{4, "raspberry pi 4", "100000.00", "mini computadora con infinidad de usos", "muy bueno", sql.NullString{}, "electronica", 5, "2494778844", sql.NullTime{}},
-	{5, "auriculares logitech", "10000.00", "auriculares de buena calidad, necesitan cambiar almoadillas", "a reparar", sql.NullString{}, "audio", 1, "2494001122", sql.NullTime{}},
+	{1, "Thinkpad T14", "notebook empresarial de buena calidad", "muy bueno", "notebook", sql.NullString{}, "300000.00", 1, sql.NullTime{}, 777},
+	{2, "router tplink 300mb", "router ideal para uso domestico", "usado", "internet", sql.NullString{}, "50000.00", 2, sql.NullTime{}, 111},
+	{3, "samsung a16", "celular con poco uso", "usado", "video", sql.NullString{}, "200000.00", 1, sql.NullTime{}, 222},
+	{4, "raspberry pi 4", "mini computadora con infinidad de usos", "muy bueno", "electronica", sql.NullString{}, "100000.00", 5, sql.NullTime{}, 333},
+	{5, "auriculares logitech", "auriculares de buena calidad, necesitan cambiar almoadillas", "a reparar", "audio", sql.NullString{}, "10000.00", 1, sql.NullTime{}, 444},
 }
 
 // Manejador para /articulos
@@ -75,7 +75,7 @@ func createArticulo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	newArticulo.ID = int32(len(articulos)) + 1
+	newArticulo.IDArticulo = int32(len(articulos)) + 1
 	articulos = append(articulos, newArticulo)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -110,7 +110,7 @@ func updateArticulo(w http.ResponseWriter, r *http.Request, id int) {
 		return
 	}
 	// Mantener el ID original
-	updatedArticulo.ID = int32(id)
+	updatedArticulo.IDArticulo = int32(id)
 	articulos[index] = updatedArticulo
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(updatedArticulo)
@@ -130,7 +130,7 @@ func deleteArticulo(w http.ResponseWriter, r *http.Request, id int) {
 // Funciones auxiliares
 func findArticuloByID(id int) (*db.Articulo, error) {
 	for i := range articulos {
-		if articulos[i].ID == int32(id) {
+		if articulos[i].IDArticulo == int32(id) {
 			return &articulos[i], nil
 		}
 	}
@@ -139,7 +139,7 @@ func findArticuloByID(id int) (*db.Articulo, error) {
 
 func findArticuloIndexByID(id int) (int, error) {
 	for i, p := range articulos {
-		if p.ID == int32(id) {
+		if p.IDArticulo == int32(id) {
 			return i, nil
 		}
 	}

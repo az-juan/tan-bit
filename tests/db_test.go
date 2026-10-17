@@ -22,13 +22,15 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	artCreado, err := queries.CreateArticulo(ctx,
 		sqlc.CreateArticuloParams{
-			Nombre:      "thinkpad t480",
-			Precio:      "300000",
-			Descripcion: "notebook thinkpad util para cualquier trabajo de oficio y desarrollo, buena calidad de materiales, sin uso",
-			Condicion:   "nuevo",
-			Categoria:   "notebook",
-			Stock:       1,
-			Contacto:    "2494112233",
+			1, 
+			"Thinkpad T14", 
+			"notebook empresarial de buena calidad", 
+			"muy bueno", 
+			"notebook", 
+			"300000.00", 
+			1, 
+			sql.NullTime{}, 
+			777,
 		})
 
 	if err != nil {
@@ -37,7 +39,7 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	fmt.Printf("Articulo creado: %+v\n", artCreado)
 
-	art, err := queries.GetArticuloByID(ctx, artCreado.ID)
+	art, err := queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err != nil {
 		log.Fatalf("Error al obtener articulo: %v", err)
 	}
@@ -52,14 +54,12 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	fmt.Printf("Todos los articulos: %+v\n", arts)
 
 	err = queries.UpdateArticulo(ctx, sqlc.UpdateArticuloParams{
-		ID:          artCreado.ID,
-		Nombre:      artCreado.Nombre,
-		Precio:      "350.000",
+		IDArticulo:  artCreado.IDArticulo,
+		Titulo:      artCreado.Titulo,
 		Descripcion: artCreado.Descripcion,
 		Condicion:   artCreado.Condicion,
-		Categoria:   artCreado.Categoria,
 		Stock:       2,
-		Contacto:    artCreado.Contacto,
+		Precio:      "350.000",
 	})
 
 	if err != nil {
@@ -67,20 +67,20 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	}
 	fmt.Println("Articulo actualizado sin problemas.")
 
-	artActualizado, err := queries.GetArticuloByID(ctx, artCreado.ID)
+	artActualizado, err := queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err != nil {
 		log.Fatalf("Error al obtener articulo actualizado: %v", err)
 	}
 	fmt.Printf("Articulo actualizado: %+v\n", artActualizado)
 
-	err = queries.DeleteArticulo(ctx, artCreado.ID)
+	err = queries.DeleteArticulo(ctx, artCreado.IDArticulo)
 	if err != nil {
 		log.Fatalf("Error al borrar articulo: %v", err)
 	}
 
 	fmt.Println("Articulo borrado sin problemas.")
 
-	_, err = queries.GetArticuloByID(ctx, artCreado.ID)
+	_, err = queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err == sql.ErrNoRows {
 		fmt.Println("Articulo no encontrado despues de borrado")
 	} else if err != nil {

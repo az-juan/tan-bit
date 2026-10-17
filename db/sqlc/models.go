@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"time"
 )
 
 type Categoria string
@@ -61,10 +62,11 @@ func (ns NullCategoria) Value() (driver.Value, error) {
 type Condicion string
 
 const (
-	CondicionNuevo    Condicion = "nuevo"
-	CondicionMuybueno Condicion = "muy bueno"
-	CondicionDecente  Condicion = "decente"
-	CondicionAreparar Condicion = "a reparar"
+	CondicionNuevo           Condicion = "nuevo"
+	CondicionMuybueno        Condicion = "muy bueno"
+	CondicionUsado           Condicion = "usado"
+	CondicionReacondicionado Condicion = "reacondicionado"
+	CondicionAreparar        Condicion = "a reparar"
 )
 
 func (e *Condicion) Scan(src interface{}) error {
@@ -103,14 +105,40 @@ func (ns NullCondicion) Value() (driver.Value, error) {
 }
 
 type Articulo struct {
-	ID               int32          `json:"id"`
-	Nombre           string         `json:"nombre"`
-	Precio           string         `json:"precio"`
+	IDArticulo       int32          `json:"id_articulo"`
+	Titulo           string         `json:"titulo"`
 	Descripcion      string         `json:"descripcion"`
 	Condicion        Condicion      `json:"condicion"`
-	RutaImagen       sql.NullString `json:"ruta_imagen"`
 	Categoria        Categoria      `json:"categoria"`
+	RutaImagen       sql.NullString `json:"ruta_imagen"`
+	Precio           string         `json:"precio"`
 	Stock            int32          `json:"stock"`
-	Contacto         string         `json:"contacto"`
 	FechaPublicacion sql.NullTime   `json:"fecha_publicacion"`
+	IDVendedor       int32          `json:"id_vendedor"`
+}
+
+type Compra struct {
+	IDCompra    int32     `json:"id_compra"`
+	IDComprador int32     `json:"id_comprador"`
+	Fecha       time.Time `json:"fecha"`
+	Total       string    `json:"total"`
+}
+
+type DetalleCompra struct {
+	IDCompra                int32  `json:"id_compra"`
+	IDArticulo              int32  `json:"id_articulo"`
+	Cantidad                int32  `json:"cantidad"`
+	PrecioHistoricoUnitario string `json:"precio_historico_unitario"`
+}
+
+type Usuario struct {
+	IDUsuario int32  `json:"id_usuario"`
+	Apellido  string `json:"apellido"`
+	Nombre    string `json:"nombre"`
+	Email     string `json:"email"`
+}
+
+type Vendedor struct {
+	IDVendedor int32  `json:"id_vendedor"`
+	Telefono   string `json:"telefono"`
 }
