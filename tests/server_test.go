@@ -1,7 +1,6 @@
 package tests
 
 import (
-	_ "github.com/jackc/pgx/v5/stdlib"
 	"net/http"
 	"net/http/httptest" //Paquete std para probar web servers sin abrir puertos reales
 	"testing"           //Obligatorio en _test.go

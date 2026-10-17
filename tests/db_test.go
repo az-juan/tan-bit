@@ -5,25 +5,19 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/joho/godotenv"
-	"os"
 	sqlc "tan-bit.com/tan-bit/db/sqlc"
 	"testing" //Obligatorio en _test.go
+	"tan-bit.com/tan-bit/db/connection"
 )
 
 func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un puntero)
-	if err := godotenv.Load("../example.env"); err != nil {
-		log.Fatalf("Archivo .env no encontrado")
-	}
-	connStr := "host=localhost port=5432 user=" + os.Getenv("PG_USER") + " password=" + os.Getenv("PG_PASSWD") + " database=" + os.Getenv("DB_NAME")
-	db, err := sql.Open("pgx", connStr)
-	db.Ping()
+	db, err := connection.Open()
 	if err != nil {
-		log.Fatalf("Error al conectarse a la base de datos: %v", err)
+		log.Fatalf("Failed to connect to DB: %v", err)
 	}
 	defer db.Close()
-	queries := sqlc.New(db)
+
+	queries := sqlc.New(db) //Instanciamos queries para ejecutarse en nuestro pool
 	ctx := context.Background()
 
 	artCreado, err := queries.CreateArticulo(ctx,

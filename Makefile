@@ -36,3 +36,8 @@ clean:
 
 clean_cache: clean
 	@docker system prune
+
+preCommit:
+	@go mod tidy
+	@go fmt
+	@go vet
