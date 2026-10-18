@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: api
     ports:
-      - "8080:8080"
+      - "8080:8080"            #[puerto_anfitrion:puerto_contenedor]
     volumes:
-      # Montar todo el proyecto
+      # Contenedor comparte el filesystem con la maquina anfitriona
       - .:/app
       # Cachea paquetes instalados
       - go-mod-cache:/go/pkg/mod
@@ -24,13 +24,12 @@ services:
       - DB_USER=${PG_USER}
       - DB_PASSWORD=${PG_PASSWD}
       - DB_NAME=${DB_NAME}
-      - DATABASE_URL=${DB_URL}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
+      interval: 2s
+      timeout: 2s
       retries: 3
-      start_period: 40s
+      start_period: 1s
     depends_on:
       database:
         condition: service_healthy
@@ -50,9 +49,11 @@ services:
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD=${PG_PASSWD}
     volumes:
+    ##Volumen persitente donde la bd queda guardada aunque apague el contenedor
       - pgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
+    ##Evita raceconditions entre contenedores, primero inicia database
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${DB_NAME}"]
       interval: 5s

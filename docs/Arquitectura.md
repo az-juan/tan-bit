@@ -1,6 +1,16 @@
 # Decisiones y arquitectura de la aplicación
 
-Herramientas empleadas: sqlc, air, atlas, templ
+Architectural style: client/server (3 tiers: presentacion, business logic, db)
+Lenguaje para la API: Go
+Uso de Docker y Docker Compose
+Base de datos relacional: PostgreSQL
+Estrategia elegida para el modelo de la db: mapper: sqlc
+
+Generacion y apicacion de migraciones para la db: Atlas
+Recompilacion y reinicio automatico de la app: Air
+Automatizacion en el flujo de desarrollo: Makefile
+
+Herramientas empleadas para la capa de presentación: Templ
 
 Pensamos en diseñar una aplicación multi-contenedor, por un lado la lógica del servidor go y por otra parte la base de datos postgres, 
 así obtenemos una ejecución más controlada y aislada en la aplicación.

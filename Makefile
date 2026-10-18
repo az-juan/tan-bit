@@ -2,7 +2,7 @@ APP_NAME := tan-bit
 ENV_FILE := example.env
 
 include $(ENV_FILE)
-.PHONY: all run generate migrate apply status test stop clean clean_cache
+.PHONY: all run generate migrate apply status test stop clean clean_cache preCommit
 
 all: run
 
@@ -36,3 +36,8 @@ clean:
 
 clean_cache: clean
 	@docker system prune
+
+preCommit:
+	@go mod tidy
+	@go fmt
+	@go vet

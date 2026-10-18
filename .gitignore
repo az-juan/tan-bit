@@ -1,3 +1,4 @@
 .env
 tmp/*
 db/sqlc/*
+larry3d.flf

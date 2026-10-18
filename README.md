@@ -3,17 +3,17 @@
 
 ![Alt text](./images/tanbit_logo.png)
 
-Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circulación de articulos que aún tienen utilidad.
+Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circulación de articulos que aún tienen utilidad entre vecinos.
 
 Por cada artículo:
 - Título
-- Precio
 - Descripción
 - Condición
+- Categoria
 - Imagen/es
-- Categoría
+- Precio
 - Stock
-- Contacto
+- Fecha de publicación
 
 [Documentación del proyecto](./docs/)
 
@@ -22,7 +22,7 @@ Por cada artículo:
 + docker
 + docker compose
 + figlet
-+ figlet-fonts
++ figlet font: larry3d: `curl -o larry3d.flf "https://raw.githubusercontent.com/xero/figlet-fonts/main/Larry%203D.flf"`
 + go
 + gum
 + pnpm
@@ -37,5 +37,7 @@ Para ejecutar la aplicación:
 Para acceder a la página: http://localhost:8080
 
 ## Asegurarse de
-+ Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`
-+ Tener puertos 5432 y 8080 libres
++ Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`.
+Al ejecutar `groups` tiene que listarse "docker", de lo contrario cierra la sesión actual e inicia otra.
++ Tener puertos 5433 y 8080 libres
++ Iniciar el Docker Daemon con: `sudo systemctl start docker`

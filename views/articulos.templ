@@ -40,8 +40,8 @@ templ ArticuloTable(articulos []db.Articulo, sortColumn, sortOrder string) {
     </thead>
     <tbody>
     for _, articulo := range articulos {
-    <tr> <td>{ fmt.Sprint(articulo.ID) }</td>
-    <td>{ articulo.Nombre }</td>
+    <tr> <td>{ fmt.Sprint(articulo.IDArticulo) }</td>
+    <td>{ articulo.Titulo }</td>
     <td>{ articulo.Precio }</td> </tr>
     }
     if len(articulos) == 0 {

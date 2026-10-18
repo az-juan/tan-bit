@@ -5,90 +5,112 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	_ "github.com/jackc/pgx/v5/stdlib"
-	"github.com/joho/godotenv"
-	"os"
 	sqlc "tan-bit.com/tan-bit/db/sqlc"
 	"testing" //Obligatorio en _test.go
+	"tan-bit.com/tan-bit/db/connection"
 )
 
 func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un puntero)
-	if err := godotenv.Load("../example.env"); err != nil {
-		log.Fatalf("Archivo .env no encontrado")
-	}
-	connStr := "host=localhost port=5432 user=" + os.Getenv("PG_USER") + " password=" + os.Getenv("PG_PASSWD") + " database=" + os.Getenv("DB_NAME")
-	db, err := sql.Open("pgx", connStr)
-	db.Ping()
+	db, err := connection.Open()
 	if err != nil {
-		log.Fatalf("Error al conectarse a la base de datos: %v", err)
+		log.Fatalf("Failed to connect to DB: %v", err)
 	}
 	defer db.Close()
-	queries := sqlc.New(db)
+
+	queries := sqlc.New(db) //Instanciamos queries para ejecutarse en nuestro pool
 	ctx := context.Background()
+
+	usuarioCreado, err := queries.CreateUsuario(ctx,
+		sqlc.CreateUsuarioParams{
+			777,
+			"Messi",
+			"Leonel",
+			"leo@gmail.com",
+		})
+	if err != nil {
+		log.Fatalf("Error al crear usuario: %v", err)
+	}
+	fmt.Printf("Usuario creado: %+v\n", usuarioCreado)
+
+	vendCreado, err := queries.CreateVendedor(ctx,
+		sqlc.CreateVendedorParams{
+			usuarioCreado.IDUsuario,
+			2494777777,
+		})
+	if err != nil {
+		log.Fatalf("Error al crear vendedor: %v", err)
+	}
+	fmt.Printf("Vendedor creado: %+v\n", vendCreado)
 
 	artCreado, err := queries.CreateArticulo(ctx,
 		sqlc.CreateArticuloParams{
-			Nombre:      "thinkpad t480",
-			Precio:      "300000",
-			Descripcion: "notebook thinkpad util para cualquier trabajo de oficio y desarrollo, buena calidad de materiales, sin uso",
-			Condicion:   "nuevo",
-			Categoria:   "notebook",
-			Stock:       1,
-			Contacto:    "2494112233",
+			1, 
+			"Thinkpad T14", 
+			"notebook empresarial de buena calidad", 
+			"muy bueno", 
+			"notebook", 
+			"300000.00", 
+			1, 
+			sql.NullTime{}, 
+			777,
 		})
-
 	if err != nil {
 		log.Fatalf("Error al crear articulo: %v", err)
 	}
-
 	fmt.Printf("Articulo creado: %+v\n", artCreado)
 
-	art, err := queries.GetArticuloByID(ctx, artCreado.ID)
+	art, err := queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err != nil {
 		log.Fatalf("Error al obtener articulo: %v", err)
 	}
-
 	fmt.Printf("Articulo obtenido: %v\n", art)
 
 	arts, err := queries.ListArticulos(ctx)
-
 	if err != nil {
 		log.Fatalf("Error al listar articulos: %v", err)
 	}
 	fmt.Printf("Todos los articulos: %+v\n", arts)
 
 	err = queries.UpdateArticulo(ctx, sqlc.UpdateArticuloParams{
-		ID:          artCreado.ID,
-		Nombre:      artCreado.Nombre,
-		Precio:      "350.000",
+		IDArticulo:  artCreado.IDArticulo,
+		Titulo:      artCreado.Titulo,
 		Descripcion: artCreado.Descripcion,
 		Condicion:   artCreado.Condicion,
-		Categoria:   artCreado.Categoria,
+		Precio:      "350.000",
 		Stock:       2,
-		Contacto:    artCreado.Contacto,
 	})
-
 	if err != nil {
 		log.Fatalf("Error al actualizar articulo: %v", err)
 	}
 	fmt.Println("Articulo actualizado sin problemas.")
 
-	artActualizado, err := queries.GetArticuloByID(ctx, artCreado.ID)
+	artActualizado, err := queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err != nil {
 		log.Fatalf("Error al obtener articulo actualizado: %v", err)
 	}
 	fmt.Printf("Articulo actualizado: %+v\n", artActualizado)
 
-	err = queries.DeleteArticulo(ctx, artCreado.ID)
+	err = queries.DeleteArticulo(ctx, artCreado.IDArticulo)
 	if err != nil {
 		log.Fatalf("Error al borrar articulo: %v", err)
 	}
-
 	fmt.Println("Articulo borrado sin problemas.")
 
-	_, err = queries.GetArticuloByID(ctx, artCreado.ID)
+	err = queries.DeleteVendedor(ctx, vendCreado.IDVendedor)
+	if err != nil {
+		log.Fatalf("Error al borrar vendedor: %v", err)
+	}
+	fmt.Println("Vendedor borrado sin problemas.")
+
+	err = queries.DeleteUsuario(ctx, usuarioCreado.IDUsuario)
+	if err != nil {
+		log.Fatalf("Error al borrar usuario: %v", err)
+	}
+	fmt.Println("Usuario borrado sin problemas.")
+
+	_, err = queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err == sql.ErrNoRows {
-		fmt.Println("Articulo no encontrado despues de borrado")
+		fmt.Println("Articulo no encontrado despues de borrado.")
 	} else if err != nil {
 		log.Fatalf("Error al obtener articulo despues de borrado: %v", err)
 	}
