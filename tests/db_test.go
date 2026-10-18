@@ -20,6 +20,28 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	queries := sqlc.New(db) //Instanciamos queries para ejecutarse en nuestro pool
 	ctx := context.Background()
 
+	usuarioCreado, err := queries.CreateUsuario(ctx,
+		sqlc.CreateUsuarioParams{
+			777,
+			"Messi",
+			"Leonel",
+			"leo@gmail.com",
+		})
+	if err != nil {
+		log.Fatalf("Error al crear usuario: %v", err)
+	}
+	fmt.Printf("Usuario creado: %+v\n", usuarioCreado)
+
+	vendCreado, err := queries.CreateVendedor(ctx,
+		sqlc.CreateVendedorParams{
+			usuarioCreado.IDUsuario,
+			"777777",
+		})
+	if err != nil {
+		log.Fatalf("Error al crear vendedor: %v", err)
+	}
+	fmt.Printf("Vendedor creado: %+v\n", vendCreado)
+
 	artCreado, err := queries.CreateArticulo(ctx,
 		sqlc.CreateArticuloParams{
 			1, 
@@ -32,22 +54,18 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 			sql.NullTime{}, 
 			777,
 		})
-
 	if err != nil {
 		log.Fatalf("Error al crear articulo: %v", err)
 	}
-
 	fmt.Printf("Articulo creado: %+v\n", artCreado)
 
 	art, err := queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err != nil {
 		log.Fatalf("Error al obtener articulo: %v", err)
 	}
-
 	fmt.Printf("Articulo obtenido: %v\n", art)
 
 	arts, err := queries.ListArticulos(ctx)
-
 	if err != nil {
 		log.Fatalf("Error al listar articulos: %v", err)
 	}
@@ -58,10 +76,9 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 		Titulo:      artCreado.Titulo,
 		Descripcion: artCreado.Descripcion,
 		Condicion:   artCreado.Condicion,
-		Stock:       2,
 		Precio:      "350.000",
+		Stock:       2,
 	})
-
 	if err != nil {
 		log.Fatalf("Error al actualizar articulo: %v", err)
 	}
@@ -77,8 +94,19 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	if err != nil {
 		log.Fatalf("Error al borrar articulo: %v", err)
 	}
-
 	fmt.Println("Articulo borrado sin problemas.")
+
+	err = queries.DeleteVendedor(ctx, vendCreado.IDVendedor)
+	if err != nil {
+		log.Fatalf("Error al borrar vendedor: %v", err)
+	}
+	fmt.Println("Vendedor borrado sin problemas.")
+
+	err = queries.DeleteUsuario(ctx, usuarioCreado.IDUsuario)
+	if err != nil {
+		log.Fatalf("Error al borrar usuario: %v", err)
+	}
+	fmt.Println("Usuario borrado sin problemas.")
 
 	_, err = queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err == sql.ErrNoRows {
