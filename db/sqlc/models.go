@@ -139,6 +139,6 @@ type Usuario struct {
 }
 
 type Vendedor struct {
-	IDVendedor int32  `json:"id_vendedor"`
-	Telefono   string `json:"telefono"`
+	IDVendedor int32 `json:"id_vendedor"`
+	Telefono   int64 `json:"telefono"`
 }

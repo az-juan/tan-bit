@@ -35,7 +35,7 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	vendCreado, err := queries.CreateVendedor(ctx,
 		sqlc.CreateVendedorParams{
 			usuarioCreado.IDUsuario,
-			"777777",
+			2494777777,
 		})
 	if err != nil {
 		log.Fatalf("Error al crear vendedor: %v", err)
