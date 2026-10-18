@@ -110,7 +110,7 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	_, err = queries.GetArticuloByID(ctx, artCreado.IDArticulo)
 	if err == sql.ErrNoRows {
-		fmt.Println("Articulo no encontrado despues de borrado")
+		fmt.Println("Articulo no encontrado despues de borrado.")
 	} else if err != nil {
 		log.Fatalf("Error al obtener articulo despues de borrado: %v", err)
 	}

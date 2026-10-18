@@ -3,17 +3,17 @@
 
 ![Alt text](./images/tanbit_logo.png)
 
-Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circulación de articulos que aún tienen utilidad.
+Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circulación de articulos que aún tienen utilidad entre vecinos.
 
 Por cada artículo:
 - Título
-- Precio
 - Descripción
 - Condición
+- Categoria
 - Imagen/es
-- Categoría
+- Precio
 - Stock
-- Contacto
+- Fecha de publicación
 
 [Documentación del proyecto](./docs/)
 

@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: api
     ports:
-      - "8080:8080"                         ##[puerto_anfitrion:puerto_contenedor]
+      - "8080:8080"            #[puerto_anfitrion:puerto_contenedor]
     volumes:
-      # Montar todo el proyecto
+      # Contenedor comparte el filesystem con la maquina anfitriona
       - .:/app
       # Cachea paquetes instalados
       - go-mod-cache:/go/pkg/mod
