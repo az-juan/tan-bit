@@ -53,7 +53,8 @@ while true; do
     "Ejecutar")
       sqlc generate
       templ generate
-      docker compose --env-file "$ENV_FILE" -f "$DEV_FILE" -f "$PROD_FILE" up -d
+      # wait no permite que el script siga sin que los dos contenedores esten arriba
+      docker compose --env-file "$ENV_FILE" -f "$DEV_FILE" -f "$PROD_FILE" up -d --wait
       atlas migrate apply --dir "file://db/migrations" --url "postgres://"$PG_USER":"$PG_PASSWD"@"$DB_HOST":"$DB_PORT"/"$DB_NAME"?sslmode=disable"
       go test -v ./tests
       chmod u+x ./tests/curl_test.sh
