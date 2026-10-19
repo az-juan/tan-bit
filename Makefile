@@ -30,7 +30,7 @@ test:
 stop:
 	@docker compose --env-file $(ENV_FILE) down
 
-clean:
+clear:
 	@docker compose --env-file $(ENV_FILE) down --volumes --rmi local
 	@rm -rf tmp
 
