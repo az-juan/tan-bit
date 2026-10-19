@@ -1,13 +1,16 @@
 package handlers
 
 import (
-	"database/sql"
+	"charm.land/log/v2"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
 	"strings"
-	db "tan-bit.com/tan-bit/db/sqlc"
+	"context"
+	db "tan-bit.com/tan-bit/db/sqlc"        //Sacar dsps
+	sqlc "tan-bit.com/tan-bit/db/sqlc"
+	"tan-bit.com/tan-bit/db/connection"
 	_ "tan-bit.com/tan-bit/views"
 )
 
@@ -21,9 +24,18 @@ var articulos = []db.Articulo{
 
 // Manejador para /articulos
 func ArtsHandler(w http.ResponseWriter, r *http.Request) {
+	db, err := connection.Open()
+	if err != nil {
+		log.Fatalf("Failed to connect to DB: %v", err)
+	}
+	defer db.Close()
+
+	queries := sqlc.New(db)
+	ctx := context.Background()
+
 	switch r.Method {
 	case http.MethodGet:
-		getArticulos(w, r)
+		getArticulos(w, r, queries, ctx)
 	case http.MethodPost:
 		createArticulo(w, r)
 	default:
@@ -60,7 +72,11 @@ func ArtHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /articulos - Listar todos los articulo
-func getArticulos(w http.ResponseWriter, r *http.Request) {
+func getArticulos(w http.ResponseWriter, r *http.Request, queries *Queries, ctx context.Context) {
+	articulos, err := queries.ListArticulos(ctx)
+	if err != nil {
+		log.Fatalf("Error al listar articulos: %v", err)
+	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(articulos)
 }
