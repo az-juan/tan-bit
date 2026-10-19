@@ -15,8 +15,11 @@ func main() {
 	http.HandleFunc("/articulos", handlers.ArtsHandler)
 	http.HandleFunc("/articulos/", handlers.ArtHandler)
 	http.HandleFunc("/health", healthHandler)
-	http.Handle("/", fileServer) //Maneja automaticamente los Content-Type
-	port := ":8080"              //de los archivos que sirve
+	
+	http.Handle("GET /{$}", fileServer)   	//Maneja automaticamente los Content-Type
+	   										//de los archivos que sirve
+	http.HandleFunc("/", notFoundHandler)
+	port := ":8080"              
 
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
 
@@ -27,5 +30,16 @@ func main() {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Servidor andando!"))
+	switch r.Method {
+	case http.MethodGet:
+		w.Write([]byte("Servidor andando!"))
+	default:
+		http.Error(w, "Metodo no permitido",
+		http.StatusMethodNotAllowed)
+	}
+}
+
+func notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+    fmt.Fprintf(w, "La ruta %s es inválida, por favor, vuelve a la anterior.%s\n", r.URL.Path)
 }
