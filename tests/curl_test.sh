@@ -16,5 +16,5 @@ echo
 gum style --foreground 150 --bold "Agregar un nuevo articulo"
 curl -X POST http://localhost:8080/articulos \
 -H "Content-Type: application/json" \
--d '{"nombre": "LoRa RNode", "precio": "50000.00", "descripcion": "dispositivo para comunicacion offgrid", "condicion": "nuevo", "categoria": "electronica", "stock": 1, "contacto": "offgrid_tan@gmail.com"}'
+-d '{"titulo": "Thinkpad T14", "descripcion": "notebook empresarial de buena calidad", "condicion": "muy bueno", "categoria": "notebook", "precio": "300000.00", "stock": 1, "id_vendedor": 1}'
 echo
