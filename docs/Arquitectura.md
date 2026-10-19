@@ -4,7 +4,9 @@ Architectural style: client/server (3 tiers: presentacion, business logic, db)
 Lenguaje para la API: Go
 Uso de Docker y Docker Compose
 Base de datos relacional: PostgreSQL
+
 Estrategia elegida para el modelo de la db: mapper: sqlc
+Notamos la dependencia que tiene el proyecto a esta herramienta, al hacer las consultas utilizando queries. No escala muy bien.
 
 Generacion y apicacion de migraciones para la db: Atlas
 Recompilacion y reinicio automatico de la app: Air
@@ -22,4 +24,3 @@ Decidimos incluir únicamente 'air' y 'atlas' dentro del contenedor y tener 'sql
 Separamos el flujo de docker en desarrollo y producción para tener una mejor organización y facilitar el testing y debugging.
 
 Empleamos un archivo example.env como ejemplo para testear la aplicación sin exponer datos sensibles.
-

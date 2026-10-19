@@ -6,3 +6,8 @@ RETURNING id_usuario, apellido, nombre, email;
 -- name: DeleteUsuario :exec
 DELETE FROM usuario
 WHERE id_usuario = $1;
+
+-- name: ListUsuarios :many
+SELECT apellido, nombre
+FROM usuario
+ORDER BY apellido;

@@ -2,24 +2,22 @@ package main
 
 import (
 	"fmt"
-	_ "github.com/a-h/templ"
 	"net/http"
 	"tan-bit.com/tan-bit/handlers"
 )
 
 func main() {
-	staticDir := "./static"
-	fileServer := http.FileServer(http.Dir(staticDir))
+	staticDir := "./static"                            //Maneja automaticamente los Content-Type
+	fileServer := http.FileServer(http.Dir(staticDir)) //de los archivos que sirve
 
 	// Configurar rutas
 	http.HandleFunc("/articulos", handlers.ArtsHandler)
 	http.HandleFunc("/articulos/", handlers.ArtHandler)
 	http.HandleFunc("/health", healthHandler)
-	
-	http.Handle("GET /{$}", fileServer)   	//Maneja automaticamente los Content-Type
-	   										//de los archivos que sirve
+
+	http.Handle("GET /{$}", fileServer)
 	http.HandleFunc("/", notFoundHandler)
-	port := ":8080"              
+	port := ":8080"
 
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
 
@@ -35,11 +33,11 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Servidor andando!"))
 	default:
 		http.Error(w, "Metodo no permitido",
-		http.StatusMethodNotAllowed)
+			http.StatusMethodNotAllowed)
 	}
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-    fmt.Fprintf(w, "La ruta %s es inválida, por favor, vuelve a la anterior.%s\n", r.URL.Path)
+	fmt.Fprintf(w, "La ruta %s es inválida, por favor, vuelve a la anterior.\n", r.URL.Path)
 }

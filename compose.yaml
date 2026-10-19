@@ -7,13 +7,13 @@ services:
     ports:
       - "8080:8080"            #[puerto_anfitrion:puerto_contenedor]
     volumes:
-      # Contenedor comparte el filesystem con la maquina anfitriona
+      # Contenedor sincronizado con filesystem de la maquina anfitriona
       - .:/app
       # Cachea paquetes instalados
       - go-mod-cache:/go/pkg/mod
       # Cachea builds
       - go-build-cache:/root/.cache/go-build
-      # evita que tmp se sincronize con el codigo local para evitar conflictos
+      # Evita que tmp se sincronize con el codigo local para evitar conflictos
       - /app/tmp
     env_file:
       - path: ./example.env
