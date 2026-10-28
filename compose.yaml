@@ -34,9 +34,6 @@ services:
       database:
         condition: service_healthy
     restart: unless-stopped
-    networks:
-      - api-net
-      - db-net
 
   database:
     image: postgres:15-alpine
@@ -59,18 +56,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - db-net
+
 volumes:
   go-mod-cache:
-    driver: local
   go-build-cache:
-    driver: local
   pgdata:
-    driver: local
-
-networks:
-  api-net:
-    driver: bridge
-  db-net:
-    driver: bridge
