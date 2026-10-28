@@ -25,7 +25,7 @@ status:
 	@docker compose --env-file $(ENV_FILE) exec api atlas migrate status --dir "file://db/migrations" --url "$(DB_URL)"
 
 test:
-	@docker compose --env-file $(ENV_FILE) exec api go test -v ./cmd/server/
+	@docker compose --env-file $(ENV_FILE) exec api go test -v ./tests
 
 stop:
 	@docker compose --env-file $(ENV_FILE) down

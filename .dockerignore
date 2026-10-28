@@ -5,3 +5,9 @@ README.md
 tmp/
 docs/
 images/
+.dockerignore
+test-api.sh
+Makefile
+Dockerfile*
+compose*
+sqlc.yaml

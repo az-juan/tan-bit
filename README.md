@@ -18,14 +18,9 @@ Por cada artículo:
 [Documentación del proyecto](./docs/)
 
 ## Dependencias
-+ atlas: `curl -sSf https://atlasgo.sh | sh`
 + docker
 + docker compose
-+ figlet
-+ figlet font: larry3d: `curl -o larry3d.flf "https://raw.githubusercontent.com/xero/figlet-fonts/main/Larry%203D.flf"`
 + go
-+ gum
-+ pnpm
 + sqlc: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
 + templ: `go install github.com/a-h/templ/cmd/templ@latest`
 
