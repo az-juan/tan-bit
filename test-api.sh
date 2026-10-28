@@ -31,13 +31,16 @@ if ! command -v go &>/dev/null; then
 fi
 
 # MENU
+echo
 echo "tan-bit"
+echo
 
 while true; do
-  read -r -n 1 -p "¿Iniciar servidor? [Y/n] " INPUT
+  echo -e "¿Iniciar servidor y ejecutar tests? [Y/n]\n"n" para bajar Docker\n"
+  read -r INPUT
     echo ""
     INPUT="${INPUT:-Y}"
-    if [[ "$response" =~ ^[yY]$ ]]; then
+    if [[ "$INPUT" =~ ^[yY]$ ]]; then
       sqlc generate
       templ generate
       # wait no permite que el script siga sin que los dos contenedores esten arriba

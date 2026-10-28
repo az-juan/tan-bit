@@ -1,31 +1,30 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
-	"errors"
 	"net/http"
 	"strconv"
 	"strings"
 	db "tan-bit.com/tan-bit/db/sqlc"
-	_ "tan-bit.com/tan-bit/views"
 )
 
-var articulos = []db.Articulo{
-	{1, "Thinkpad T14", "notebook empresarial de buena calidad", "muy bueno", "notebook", sql.NullString{}, "300000.00", 1, sql.NullTime{}, 777},
-	{2, "router tplink 300mb", "router ideal para uso domestico", "usado", "internet", sql.NullString{}, "50000.00", 2, sql.NullTime{}, 111},
-	{3, "samsung a16", "celular con poco uso", "usado", "video", sql.NullString{}, "200000.00", 1, sql.NullTime{}, 222},
-	{4, "raspberry pi 4", "mini computadora con infinidad de usos", "muy bueno", "electronica", sql.NullString{}, "100000.00", 5, sql.NullTime{}, 333},
-	{5, "auriculares logitech", "auriculares de buena calidad, necesitan cambiar almoadillas", "a reparar", "audio", sql.NullString{}, "10000.00", 1, sql.NullTime{}, 444},
+type ArticuloHandler struct {
+	queries *db.Queries
+}
+
+func NewArticuloHandler(queries *db.Queries) *ArticuloHandler {
+	return &ArticuloHandler{
+		queries: queries,
+	}
 }
 
 // Manejador para /articulos
-func ArtsHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ArticuloHandler) ArtsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
-		getArticulos(w, r)
+		h.getArticulos(w, r)
 	case http.MethodPost:
-		createArticulo(w, r)
+		h.createArticulo(w, r)
 	default:
 		http.Error(w, "Metodo no permitido",
 			http.StatusMethodNotAllowed)
@@ -33,7 +32,7 @@ func ArtsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Manejador para /articulos/{id}
-func ArtHandler(w http.ResponseWriter, r *http.Request) {
+func (h *ArticuloHandler) ArtHandler(w http.ResponseWriter, r *http.Request) {
 	// Extraer ID del path
 	parts := strings.Split(r.URL.Path, "/")
 	if len(parts) != 3 {
@@ -48,46 +47,54 @@ func ArtHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	switch r.Method {
 	case http.MethodGet:
-		getArticulo(w, r, id)
+		h.getArticulo(w, r, int32(id))
 	case http.MethodPut:
-		updateArticulo(w, r, id)
+		h.updateArticulo(w, r, int32(id))
 	case http.MethodDelete:
-		deleteArticulo(w, r, id)
+		h.deleteArticulo(w, r, int32(id))
 	default:
 		http.Error(w, "Metodo no permitido",
 			http.StatusMethodNotAllowed)
 	}
 }
 
-// GET /articulos - Listar todos los articulo
-func getArticulos(w http.ResponseWriter, r *http.Request) {
+// GET /articulos - Obtener todos los articulo
+func (h *ArticuloHandler) getArticulos(w http.ResponseWriter, r *http.Request) {
+	arts, err := h.queries.GetArticulos(r.Context())
+	if err != nil {
+		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(articulos)
+    json.NewEncoder(w).Encode(arts)
 }
 
 // POST /articulos - Crear nuevo articulo
-func createArticulo(w http.ResponseWriter, r *http.Request) {
-	var newArticulo db.Articulo
+func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request) {
+	var params db.CreateArticuloParams
 
-	err := json.NewDecoder(r.Body).Decode(&newArticulo)
-
+	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "JSON inválido: "+ err.Error(), http.StatusBadRequest)
 		return
 	}
-	newArticulo.IDArticulo = int32(len(articulos)) + 1
-	articulos = append(articulos, newArticulo)
+
+	nuevoArticulo, err := h.queries.CreateArticulo(r.Context(), params)
+	if err != nil {
+		http.Error(w, "Error al crear el artículo: "+ err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-
-	json.NewEncoder(w).Encode(newArticulo)
+	json.NewEncoder(w).Encode(nuevoArticulo)
 }
 
 // GET /articulos/{id} - Obtener articulo específico
-func getArticulo(w http.ResponseWriter, r *http.Request, id int) {
-	articulo, err := findArticuloByID(id)
+func (h *ArticuloHandler) getArticulo(w http.ResponseWriter, r *http.Request, id int32) {
+	articulo, err := h.queries.GetArticuloByID(r.Context(), id)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
+		http.Error(w, "Articulo no encontrado", http.StatusNotFound)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -95,8 +102,8 @@ func getArticulo(w http.ResponseWriter, r *http.Request, id int) {
 }
 
 // PUT /articulos/{id} - Actualizar articulo
-func updateArticulo(w http.ResponseWriter, r *http.Request, id int) {
-	var updatedArticulo db.Articulo
+func (h *ArticuloHandler) updateArticulo(w http.ResponseWriter, r *http.Request, id int32) {
+	/*var updatedArticulo db.Articulo
 
 	err := json.NewDecoder(r.Body).Decode(&updatedArticulo)
 	if err != nil {
@@ -113,37 +120,18 @@ func updateArticulo(w http.ResponseWriter, r *http.Request, id int) {
 	updatedArticulo.IDArticulo = int32(id)
 	articulos[index] = updatedArticulo
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(updatedArticulo)
+	json.NewEncoder(w).Encode(updatedArticulo)*/
 }
 
 // DELETE /articulos/{id} - Eliminar articulo
-func deleteArticulo(w http.ResponseWriter, r *http.Request, id int) {
-	index, err := findArticuloIndexByID(id)
+func (h *ArticuloHandler) deleteArticulo(w http.ResponseWriter, r *http.Request, id int32) {
+	/*index, err := findArticuloIndexByID(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 	articulos = append(articulos[:index], articulos[index+1:]...)
-	w.WriteHeader(http.StatusNoContent)
-}
-
-// Funciones auxiliares
-func findArticuloByID(id int) (*db.Articulo, error) {
-	for i := range articulos {
-		if articulos[i].IDArticulo == int32(id) {
-			return &articulos[i], nil
-		}
-	}
-	return nil, errors.New("Articulo no encontrado")
-}
-
-func findArticuloIndexByID(id int) (int, error) {
-	for i, p := range articulos {
-		if p.IDArticulo == int32(id) {
-			return i, nil
-		}
-	}
-	return -1, errors.New("articulo no encontrado")
+	w.WriteHeader(http.StatusNoContent)*/
 }
 
 /*

@@ -2,7 +2,7 @@ package connection
 
 import (
 	"fmt"
-	"charm.land/log/v2"
+	"log"
 	"os"
 	"database/sql" //Estandar para interactuar con la db
 	_ "github.com/jackc/pgx/v5/stdlib" //Driver estándar para postgreSQL

@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"charm.land/log/v2"
+	"log"
 	"context"
 	"database/sql"
 	"fmt"
@@ -22,7 +22,6 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	usuarioCreado, err := queries.CreateUsuario(ctx,
 		sqlc.CreateUsuarioParams{
-			777,
 			"Messi",
 			"Leonel",
 			"leo@gmail.com",
@@ -34,7 +33,7 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	vendCreado, err := queries.CreateVendedor(ctx,
 		sqlc.CreateVendedorParams{
-			usuarioCreado.IDUsuario,
+			1,
 			2494777777,
 		})
 	if err != nil {
@@ -44,35 +43,33 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	artCreado, err := queries.CreateArticulo(ctx,
 		sqlc.CreateArticuloParams{
-			1, 
 			"Thinkpad T14", 
 			"notebook empresarial de buena calidad", 
 			"muy bueno", 
 			"notebook", 
 			"300000.00", 
 			1, 
-			sql.NullTime{}, 
-			777,
+			1,
 		})
 	if err != nil {
 		log.Fatalf("Error al crear articulo: %v", err)
 	}
 	fmt.Printf("Articulo creado: %+v\n", artCreado)
 
-	art, err := queries.GetArticuloByID(ctx, artCreado.IDArticulo)
+	art, err := queries.GetArticuloByID(ctx, 1)
 	if err != nil {
 		log.Fatalf("Error al obtener articulo: %v", err)
 	}
 	fmt.Printf("Articulo obtenido: %v\n", art)
 
-	arts, err := queries.ListArticulos(ctx)
+	arts, err := queries.GetArticulos(ctx)
 	if err != nil {
 		log.Fatalf("Error al listar articulos: %v", err)
 	}
 	fmt.Printf("Todos los articulos: %+v\n", arts)
 
 	err = queries.UpdateArticulo(ctx, sqlc.UpdateArticuloParams{
-		IDArticulo:  artCreado.IDArticulo,
+		IDArticulo:  1,
 		Titulo:      artCreado.Titulo,
 		Descripcion: artCreado.Descripcion,
 		Condicion:   artCreado.Condicion,
@@ -84,13 +81,13 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	}
 	fmt.Println("Articulo actualizado sin problemas.")
 
-	artActualizado, err := queries.GetArticuloByID(ctx, artCreado.IDArticulo)
+	artActualizado, err := queries.GetArticuloByID(ctx, 1)
 	if err != nil {
 		log.Fatalf("Error al obtener articulo actualizado: %v", err)
 	}
 	fmt.Printf("Articulo actualizado: %+v\n", artActualizado)
 
-	err = queries.DeleteArticulo(ctx, artCreado.IDArticulo)
+	err = queries.DeleteArticulo(ctx, 1)
 	if err != nil {
 		log.Fatalf("Error al borrar articulo: %v", err)
 	}
@@ -102,16 +99,23 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	}
 	fmt.Println("Vendedor borrado sin problemas.")
 
-	err = queries.DeleteUsuario(ctx, usuarioCreado.IDUsuario)
+	err = queries.DeleteUsuario(ctx, 1)
 	if err != nil {
 		log.Fatalf("Error al borrar usuario: %v", err)
 	}
 	fmt.Println("Usuario borrado sin problemas.")
 
-	_, err = queries.GetArticuloByID(ctx, artCreado.IDArticulo)
+	_, err = queries.GetArticuloByID(ctx, 1)
 	if err == sql.ErrNoRows {
 		fmt.Println("Articulo no encontrado despues de borrado.")
 	} else if err != nil {
 		log.Fatalf("Error al obtener articulo despues de borrado: %v", err)
 	}
+
+	usuarios, err := queries.GetUsuarios(ctx)
+	if err != nil {
+		log.Fatalf("Error al obtener usuarios: %v", err)
+		return
+	}
+	fmt.Printf("Usuarios existentes: %v\n", usuarios)
 }

@@ -48,6 +48,8 @@ services:
     volumes:
     ##Volumen persitente donde la bd queda guardada aunque apague el contenedor
       - pgdata:/var/lib/postgresql/data
+    ##Se ejecuta solo la primera vez (db vacía)
+      - ./db/schema/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     ports:
       - "5433:5432"
     ##Evita raceconditions entre contenedores, primero inicia database

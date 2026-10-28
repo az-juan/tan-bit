@@ -34,7 +34,7 @@ clear:
 	@docker compose --env-file $(ENV_FILE) down --volumes --rmi local
 	@rm -rf tmp
 
-clear_cache: clean
+clear_cache: clear
 	@docker system prune
 
 preCommit:
