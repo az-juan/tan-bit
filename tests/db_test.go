@@ -6,16 +6,18 @@ import (
 	"database/sql"
 	"fmt"
 	sqlc "tan-bit.com/tan-bit/db/sqlc"
+	_ "github.com/jackc/pgx/v5/stdlib" //Driver estándar para postgreSQL
 	"testing" //Obligatorio en _test.go
-	"tan-bit.com/tan-bit/db/connection"
 )
 
 func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un puntero)
-	db, err := connection.Open()
+
+	connStr := "host=localhost port=5433 user=azjuan password=1234 dbname=tan_bit"
+	db, err := sql.Open("pgx", connStr)
 	if err != nil {
-		log.Fatalf("Failed to connect to DB: %v", err)
+		log.Fatalf("No se pudo abrir conexion con la db: %v", err)
+		return
 	}
-	defer db.Close()
 
 	queries := sqlc.New(db) //Instanciamos queries para ejecutarse en nuestro pool
 	ctx := context.Background()

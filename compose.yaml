@@ -19,10 +19,10 @@ services:
       - path: ./example.env
         required: true
     environment:
-      - DB_HOST=database
-      - DB_PORT=5432
-      - DB_USER=${PG_USER}
-      - DB_PASSWORD=${PG_PASSWD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
@@ -43,8 +43,8 @@ services:
         required: true
     environment:
       - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${PG_USER}
-      - POSTGRES_PASSWORD=${PG_PASSWD}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
     ##Volumen persitente donde la bd queda guardada aunque apague el contenedor
       - pgdata:/var/lib/postgresql/data
@@ -54,10 +54,10 @@ services:
       - "5433:5432"
     ##Evita raceconditions entre contenedores, primero inicia database
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PG_USER} -d ${DB_NAME}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 2s
+      timeout: 2s
+      retries: 3
 
 volumes:
   go-mod-cache:
