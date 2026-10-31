@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 	"strings"
@@ -80,6 +82,10 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 	}
 
 	nuevoArticulo, err := h.queries.CreateArticulo(r.Context(), params)
+	if esViolacionFK(err) {
+		http.Error(w, "No existe tal vendedor", http.StatusBadRequest)
+		return
+	}
 	if err != nil {
 		http.Error(w, "Error al crear el artículo: "+ err.Error(), http.StatusInternalServerError)
 		return
@@ -93,8 +99,12 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 // GET /articulos/{id} - Obtener articulo específico
 func (h *ArticuloHandler) getArticulo(w http.ResponseWriter, r *http.Request, id int32) {
 	articulo, err := h.queries.GetArticuloByID(r.Context(), id)
-	if err != nil {
+	if errors.Is(err, sql.ErrNoRows) {
 		http.Error(w, "Articulo no encontrado", http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		http.Error(w, "Error al obtener el articulo", http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -103,8 +113,41 @@ func (h *ArticuloHandler) getArticulo(w http.ResponseWriter, r *http.Request, id
 
 // PUT /articulos/{id} - Actualizar articulo
 func (h *ArticuloHandler) updateArticulo(w http.ResponseWriter, r *http.Request, id int32) {
+	var params db.UpdateArticuloParams
+
+	err := json.NewDecoder(r.Body).Decode(&params)
+	if err != nil {
+		http.Error(w, "JSON inválido: "+ err.Error(), http.StatusBadRequest)
+		return
+	}
+	params.IDArticulo = id
+
+	filas, err := h.queries.UpdateArticulo(r.Context(), params)
+	if err != nil {
+		http.Error(w, "Error al actualizar el artículo: "+ err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if filas == 0 {
+		http.Error(w, "Articulo no encontrado", http.StatusNotFound)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // DELETE /articulos/{id} - Eliminar articulo
 func (h *ArticuloHandler) deleteArticulo(w http.ResponseWriter, r *http.Request, id int32) {
+	filas, err := h.queries.DeleteArticulo(r.Context(), id)
+	if esViolacionFK(err) {
+		http.Error(w, "El articulo tiene compras asociadas", http.StatusConflict)
+		return
+	}
+	if err != nil {
+		http.Error(w, "Error al eliminar el artículo: "+ err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if filas == 0 {
+		http.Error(w, "Articulo no encontrado", http.StatusNotFound)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }

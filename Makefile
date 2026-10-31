@@ -11,7 +11,6 @@ run: generate
 
 generate:
 	@sqlc generate
-	@templ generate
 
 migrate:
 	@test -n "$(name)" || (echo "Uso: make migrate name=nombre" && exit 1)

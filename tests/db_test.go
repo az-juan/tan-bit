@@ -48,7 +48,7 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 			"muy bueno", 
 			"notebook", 
 			"300000.00", 
-			1, 
+			3, 
 			1,
 		})
 	if err != nil {
@@ -68,11 +68,12 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	}
 	fmt.Printf("Todos los articulos: %+v\n", arts)
 
-	err = queries.UpdateArticulo(ctx, sqlc.UpdateArticuloParams{
+	_, err = queries.UpdateArticulo(ctx, sqlc.UpdateArticuloParams{
 		IDArticulo:  1,
 		Titulo:      artCreado.Titulo,
 		Descripcion: artCreado.Descripcion,
 		Condicion:   artCreado.Condicion,
+		Categoria:   artCreado.Categoria,
 		Precio:      "350.000",
 		Stock:       2,
 	})
@@ -87,19 +88,19 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 	}
 	fmt.Printf("Articulo actualizado: %+v\n", artActualizado)
 
-	err = queries.DeleteArticulo(ctx, 1)
+	_, err = queries.DeleteArticulo(ctx, 1)
 	if err != nil {
 		log.Fatalf("Error al borrar articulo: %v", err)
 	}
 	fmt.Println("Articulo borrado sin problemas.")
 
-	err = queries.DeleteVendedor(ctx, vendCreado.IDVendedor)
+	_, err = queries.DeleteVendedor(ctx, vendCreado.IDVendedor)
 	if err != nil {
 		log.Fatalf("Error al borrar vendedor: %v", err)
 	}
 	fmt.Println("Vendedor borrado sin problemas.")
 
-	err = queries.DeleteUsuario(ctx, 1)
+	_, err = queries.DeleteUsuario(ctx, 1)
 	if err != nil {
 		log.Fatalf("Error al borrar usuario: %v", err)
 	}

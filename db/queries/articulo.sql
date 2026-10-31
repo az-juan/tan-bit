@@ -13,11 +13,11 @@ INSERT INTO articulo (titulo, descripcion, condicion, categoria, precio, stock, 
 VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING titulo, descripcion, condicion, categoria, precio, stock, id_vendedor;
 
--- name: UpdateArticulo :exec
+-- name: UpdateArticulo :execrows
 UPDATE articulo
-SET titulo = $2, descripcion = $3, condicion = $4, precio = $5, stock = $6
+SET titulo = $2, descripcion = $3, condicion = $4, categoria = $5, precio = $6, stock = $7
 WHERE id_articulo = $1;
 
--- name: DeleteArticulo :exec
+-- name: DeleteArticulo :execrows
 DELETE FROM articulo
 WHERE id_articulo = $1;

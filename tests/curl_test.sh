@@ -38,3 +38,6 @@ echo
 echo "Listar todos los articulos"
 curl localhost:8080/articulos
 echo
+
+echo "Trato de eliminar al usuario Messi..."
+curl -X DELETE http://localhost:8080/usuarios/1

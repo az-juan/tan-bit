@@ -22,7 +22,6 @@ Por cada artículo:
 + docker compose
 + go
 + sqlc: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
-+ templ: `go install github.com/a-h/templ/cmd/templ@latest`
 
 Para ejecutar la aplicación:
 ```bash
