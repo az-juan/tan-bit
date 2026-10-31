@@ -22,8 +22,8 @@ func main() {
 	userHandler := handlers.NewUsuarioHandler(queries)
 
 
-	staticDir := "./static"                            //Maneja automaticamente los Content-Type
-	fileServer := http.FileServer(http.Dir(staticDir)) //de los archivos que sirve
+	staticDir := "./static"                            
+	fileServer := http.FileServer(http.Dir(staticDir)) //Maneja Content-Type automaticamente
 
 	// Configurar rutas
 	http.HandleFunc("/articulos", artHandler.ArtsHandler)

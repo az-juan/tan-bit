@@ -103,76 +103,8 @@ func (h *ArticuloHandler) getArticulo(w http.ResponseWriter, r *http.Request, id
 
 // PUT /articulos/{id} - Actualizar articulo
 func (h *ArticuloHandler) updateArticulo(w http.ResponseWriter, r *http.Request, id int32) {
-	/*var updatedArticulo db.Articulo
-
-	err := json.NewDecoder(r.Body).Decode(&updatedArticulo)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	index, err := findArticuloIndexByID(id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	// Mantener el ID original
-	updatedArticulo.IDArticulo = int32(id)
-	articulos[index] = updatedArticulo
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(updatedArticulo)*/
 }
 
 // DELETE /articulos/{id} - Eliminar articulo
 func (h *ArticuloHandler) deleteArticulo(w http.ResponseWriter, r *http.Request, id int32) {
-	/*index, err := findArticuloIndexByID(id)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	}
-	articulos = append(articulos[:index], articulos[index+1:]...)
-	w.WriteHeader(http.StatusNoContent)*/
 }
-
-/*
-func (h *UserHandler) ListUsers(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	sortColumn := r.URL.Query().Get("sort")
-	sortOrder := r.URL.Query().Get("order")
-	if sortOrder != "desc" {
-		sortOrder = "asc" // Valor por defecto
-	}
-	var users []db.Articulo
-	var err error
-	switch sortColumn {
-	case "id":
-		if sortOrder == "asc" {
-			users, err = h.queries.ListUsersOrderByIdAsc(ctx)
-		} else {
-			users, err = h.queries.ListUsersOrderByIdDesc(ctx)
-		}
-	case "name":
-		if sortOrder == "asc" {
-			users, err = h.queries.ListUsersOrderByNameAsc(ctx)
-		} else {
-			users, err = h.queries.ListUsersOrderByNameDesc(ctx)
-		}
-	case "email":
-		if sortOrder == "asc" {
-			users, err = h.queries.ListUsersOrderByEmailAsc(ctx)
-		} else {
-			users, err = h.queries.ListUsersOrderByEmailDesc(ctx)
-		}
-	default:
-		// Orden por defecto
-		users, err = h.queries.ListUsers(ctx)
-		sortColumn = "id" // Columna por defecto para resaltar
-		sortOrder = "asc"
-	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	views.UserPage(users, sortColumn, sortOrder).Render(r.Context(), w)
-}
-*/
