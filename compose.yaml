@@ -15,15 +15,10 @@ services:
       - go-build-cache:/root/.cache/go-build
       # Evita que tmp se sincronize con el codigo local para evitar conflictos
       - /app/tmp
+    ##env_file carga sus variables al contenedor
     env_file:
       - path: ./example.env
         required: true
-    environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 2s
@@ -31,6 +26,7 @@ services:
       retries: 3
       start_period: 1s
     depends_on:
+    ##Evita raceconditions entre contenedores, primero inicia database
       database:
         condition: service_healthy
     restart: unless-stopped
@@ -38,9 +34,7 @@ services:
   database:
     image: postgres:15-alpine
     container_name: pg
-    env_file:
-      - path: ./example.env
-        required: true
+    ##Environment carga esas variables al contenedor
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -52,11 +46,10 @@ services:
       - ./db/schema/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     ports:
       - "5433:5432"
-    ##Evita raceconditions entre contenedores, primero inicia database
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-      interval: 2s
-      timeout: 2s
+      interval: 5s
+      timeout: 5s
       retries: 3
 
 volumes:
