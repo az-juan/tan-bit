@@ -1,12 +1,13 @@
 package main
 
 import (
-	"log"
 	"fmt"
+	"log"
 	"net/http"
-	"tan-bit.com/tan-bit/handlers"
 	"tan-bit.com/tan-bit/db/connection"
 	sqlc "tan-bit.com/tan-bit/db/sqlc"
+	"tan-bit.com/tan-bit/handlers"
+	_ "tan-bit.com/tan-bit/views"
 )
 
 func main() {
@@ -21,7 +22,6 @@ func main() {
 	vendHandler := handlers.NewVendedorHandler(queries)
 	userHandler := handlers.NewUsuarioHandler(queries)
 
-
 	staticDir := "./static"                            //Maneja automaticamente los Content-Type
 	fileServer := http.FileServer(http.Dir(staticDir)) //de los archivos que sirve
 
@@ -29,7 +29,7 @@ func main() {
 	http.HandleFunc("/articulos", artHandler.ArtsHandler)
 	http.HandleFunc("/articulos/", artHandler.ArtHandler)
 	http.HandleFunc("/vendedores", vendHandler.VendsHandler)
-    http.HandleFunc("/usuarios", userHandler.UsersHandler)
+	http.HandleFunc("/usuarios", userHandler.UsersHandler)
 	http.HandleFunc("/health", healthHandler)
 
 	http.Handle("GET /{$}", fileServer)

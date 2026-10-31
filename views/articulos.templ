@@ -1,0 +1,79 @@
+package views
+
+import (
+    "tan-bit.com/tan-bit/db/sqlc"
+    "fmt"
+)
+
+func getNextSortOrder(columnName, currentSortColumn, currentSortOrder string) string {
+    if currentSortColumn == columnName && currentSortOrder == "asc" {
+        return "desc"
+    }
+    return "asc"
+}
+
+templ SortableHeader(columnName, displayName,
+    currentSortColumn, currentSortOrder string) {
+    <th scope="col"
+        class={ map[string] bool{
+            "sortable": true,
+            "sorted-" + currentSortOrder: currentSortColumn == columnName,
+        } }
+        hx-get={ fmt.Sprintf("/?sort=%s&order=%s", columnName,
+            getNextSortOrder(columnName, currentSortColumn, currentSortOrder)) }
+        hx-target="#articulos-table"
+        hx-swap="outerHTML"
+        hx-push-url="true"
+    >
+        <button type="button">{ displayName }</button>
+    </th>
+}
+
+templ Articulos(articulos []db.Articulo) {
+  <div class="catalog-panel">
+    <div class="product-grid">
+      for _,articulo := range articulos {
+        <articulo class="articulo">
+          <div class="articulo-media">
+            <img
+            src="./assets/memoria.jpg"
+            alt="Dos módulos de memoria DDR5"
+            width="316"
+            height="228"
+            loading="lazy"
+          >
+          <button class="favorite" type="button"> //aria-label="Guardar Memoria DDR5 de 32 GB">
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-heart"></use>
+            </svg>
+          </button>
+        </div>
+
+        <div class="articulo-content">
+          <div class="articulo-meta">
+            <span>RM-032</span>
+            <span>▪ EN STOCK</span>
+          </div>
+
+          <h2>{ articulo.Titulo }</h2>
+          <p class="articulo-descripcion">{ articulo.Descripcion }</p>
+          <p class="articulo-precio">{ articulo.Precio }</p>
+          <p class="arituculo-cripto">XMR 0.5</p>
+
+          <div class="articulo-acciones">
+            <button class="add-button" type="button" aria-label="Agregar Memoria DDR5 de 32 GB">
+              Agregar
+              <svg class="icon" aria-hidden="true">
+                <use href="#icon-arrow"></use>
+              </svg>
+            </button>
+            <a class="details-link" href="./articulos/memoria-ddr5.html">
+              Ver ficha <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+        </articulo>
+      }
+    </div>
+  </div>
+}

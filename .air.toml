@@ -3,7 +3,7 @@ tmp_dir = "tmp"
 env_files = ["example.env"]
 
 [build]
-  cmd = "mkdir -p tmp && go build -o tmp/tan-bit ."
+  cmd = "mkdir -p tmp && go build -o tmp/tan-bit ./cmd"
   entrypoint = ["./tmp/tan-bit"]
   include_ext = ["go", "templ", "sql"]
   exclude_dir = ["tmp", "vendor", "db/sqlc", "docs", "images"]

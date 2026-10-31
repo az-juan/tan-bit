@@ -5,15 +5,7 @@
 
 Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circulación de articulos que aún tienen utilidad entre vecinos.
 
-Por cada artículo:
-- Título
-- Descripción
-- Condición
-- Categoria
-- Imagen/es
-- Precio
-- Stock
-- Fecha de publicación
+DESCENTRALIZADO - CONFIANZA - 
 
 [Documentación del proyecto](./docs/)
 

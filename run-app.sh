@@ -12,25 +12,28 @@ export $(grep -v '^#' "$ENV_FILE" | xargs)
 # Checkear que esten las dependencias instaladas
 if ! command -v docker &>/dev/null; then
   echo "Docker no instalado!, por favor, instalar docker y volver a intentar"
+  echo "https://docs.docker.com/get-started/get-docker/"
   exit 1
 fi
 
 if ! command -v sqlc &>/dev/null; then
   echo "sqlc no instalado!, por favor, instalar sqlc y volver a intentar"
+  echo "https://docs.sqlc.dev/en/latest/overview/install.html"
   exit 1
 fi
 
 if ! command -v templ &>/dev/null; then
   echo "templ no instalado!, por favor, instalar templ y volver a intentar"
+  echo "https://templ.guide/quick-start/installation"
   exit 1
 fi
 
 if ! command -v go &>/dev/null; then
   echo "Go no instalado!, por favor, instalar go y volver a intentar"
+  echo "https://go.dev/dl/"
   exit 1
 fi
 
-# MENU
 echo
 echo "tan-bit"
 echo
@@ -46,8 +49,8 @@ while true; do
       # wait no permite que el script siga sin que los dos contenedores esten arriba
       docker compose --env-file "$ENV_FILE" -f "$DEV_FILE" -f "$PROD_FILE" up -d --wait
       go test -v ./tests
-      chmod u+x ./tests/curl_test.sh
-      ./tests/curl_test.sh
+      chmod u+x ./tests/requests.sh
+      ./tests/requests.sh
     else
       docker compose --env-file "$ENV_FILE" down -v --rmi local
       docker system prune
