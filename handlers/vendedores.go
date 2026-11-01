@@ -82,6 +82,14 @@ func (h *VendedorHandler) createVendedor(w http.ResponseWriter, r *http.Request)
 	}
 
 	nuevoVendedor, err := h.queries.CreateVendedor(r.Context(), params)
+	if esViolacionFK(err) {
+		http.Error(w, "No existe tal usuario", http.StatusBadRequest)
+		return
+	}
+	if esViolacionUnique(err) {
+		http.Error(w, "El usuario ya es vendedor", http.StatusConflict)
+		return
+	}
 	if err != nil {
 		http.Error(w, "Error al crear el vendedor: "+ err.Error(), http.StatusInternalServerError)
 		return

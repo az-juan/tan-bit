@@ -4,26 +4,21 @@
 set -euo pipefail
 
 ENV_FILE=example.env
-DEV_FILE=compose.yaml
-PROD_FILE=compose.prod.yaml
+COMPOSE=(docker compose --env-file "$ENV_FILE" -f compose.prod.yaml)
+HOST=http://localhost:8080
 
-export $(grep -v '^#' "$ENV_FILE" | xargs)
+# Checkear que estan las dependencias instaladas
+for dep in docker sqlc go hurl; do
+  if ! command -v "$dep" &>/dev/null; then
+    echo "$dep no instalado!, por favor, instalar $dep y volver a intentar"
+    exit 1
+  fi
+done
 
-# Checkear que esten las dependencias instaladas
-if ! command -v docker &>/dev/null; then
-  echo "Docker no instalado!, por favor, instalar docker y volver a intentar"
-  exit 1
-fi
-
-if ! command -v sqlc &>/dev/null; then
-  echo "sqlc no instalado!, por favor, instalar sqlc y volver a intentar"
-  exit 1
-fi
-
-if ! command -v go &>/dev/null; then
-  echo "Go no instalado!, por favor, instalar go y volver a intentar"
-  exit 1
-fi
+# Exporta las credenciales para que go test (en anfitrion) las lea
+set -a
+source "$ENV_FILE"
+set +a
 
 # MENU
 echo
@@ -37,13 +32,17 @@ while true; do
   INPUT="${INPUT:-Y}"
   if [[ "$INPUT" =~ ^[yY]$ ]]; then
     sqlc generate
-    # wait no permite que el script siga sin que los dos contenedores esten arriba
-    docker compose --env-file "$ENV_FILE" -f "$DEV_FILE" -f "$PROD_FILE" up -d --wait
-    go test -v ./tests
-    chmod u+x ./tests/curl_test.sh
-    ./tests/curl_test.sh
+    # Bajamos volumenes previos
+    "${COMPOSE[@]}" down -v
+    # --build: la imagen incluye el codigo/sqlc recien generado
+    # --wait: no sigue hasta que ambos contenedores esten healthy
+    "${COMPOSE[@]}" up -d --build --wait
+    # Sobreescibe variables para que el anfitrion pueda usar ./db/connection/connection.go
+    DB_HOST=localhost DB_PORT=5433 go test -count=1 -v ./tests
+    hurl --test --variable host="$HOST" tests/hurl_test.hurl
+    echo "Servidor de produccion corriendo en $HOST"
   else
-    docker compose --env-file "$ENV_FILE" down -v --rmi local
+    "${COMPOSE[@]}" down -v --rmi local
     docker system prune
     echo "Saliendo..."
     break

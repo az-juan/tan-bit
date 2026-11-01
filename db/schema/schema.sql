@@ -10,7 +10,7 @@ CREATE TABLE usuario (
 
 CREATE TABLE vendedor (
     id_vendedor     INTEGER     CONSTRAINT pk_vendedor PRIMARY KEY CONSTRAINT fk_vendedor_usuario REFERENCES usuario(id_usuario),
-    telefono        BIGINT     NOT NULL
+    telefono        BIGINT      NOT NULL
 );
 
 CREATE TABLE articulo (

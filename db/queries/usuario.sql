@@ -1,14 +1,14 @@
 -- name: CreateUsuario :one
 INSERT INTO usuario (apellido, nombre, email)
 VALUES ($1, $2, $3)
-RETURNING apellido, nombre, email;
+RETURNING id_usuario, apellido, nombre, email;
 
 -- name: DeleteUsuario :execrows
 DELETE FROM usuario
 WHERE id_usuario = $1;
 
 -- name: GetUsuarios :many
-SELECT id_usuario, apellido, nombre
+SELECT id_usuario, apellido, nombre, email
 FROM usuario
 ORDER BY apellido;
 

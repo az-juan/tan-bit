@@ -4,7 +4,7 @@ VALUES ($1, $2)
 RETURNING id_vendedor, telefono;
 
 -- name: GetVendedores :many
-SELECT id_vendedor
+SELECT id_vendedor, telefono
 FROM vendedor
 ORDER BY id_vendedor;
 
