@@ -23,9 +23,9 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	usuarioCreado, err := queries.CreateUsuario(ctx,
 		sqlc.CreateUsuarioParams{
-			"Messi",
-			"Leonel",
-			"leo@gmail.com",
+			Apellido: "Messi",
+			Nombre:   "Leonel",
+			Email:    "leo@gmail.com",
 		})
 	if err != nil {
 		log.Fatalf("Error al crear usuario: %v", err)
@@ -34,8 +34,8 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	vendedorCreado, err := queries.CreateVendedor(ctx,
 		sqlc.CreateVendedorParams{
-			usuarioCreado.IDUsuario,
-			2494777777,
+			IDVendedor: usuarioCreado.IDUsuario,
+			Telefono:   2494777777,
 		})
 	if err != nil {
 		log.Fatalf("Error al crear vendedor: %v", err)
@@ -44,13 +44,13 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	articuloCreado, err := queries.CreateArticulo(ctx,
 		sqlc.CreateArticuloParams{
-			"Thinkpad T14",
-			"notebook empresarial de buena calidad",
-			"muy bueno",
-			"notebook",
-			"3000000.00",
-			3,
-			vendedorCreado.IDVendedor,
+			Titulo:      "Thinkpad T14",
+			Descripcion: "notebook empresarial de buena calidad",
+			Condicion:   "muy bueno",
+			Categoria:   "notebook",
+			Precio:      "3000000.00",
+			Stock:       3,
+			IDVendedor:  vendedorCreado.IDVendedor,
 		})
 	if err != nil {
 		log.Fatalf("Error al crear articulo: %v", err)

@@ -16,6 +16,7 @@ for dep in docker sqlc go hurl; do
 done
 
 # Exporta las credenciales para que go test (en anfitrion) las lea
+# y para que el compose las pueda interpolar
 set -a
 source "$ENV_FILE"
 set +a
