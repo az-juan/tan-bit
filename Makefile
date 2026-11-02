@@ -19,7 +19,7 @@ generate:
 api_logs:
 	@$(COMPOSE) logs api
 
-# --- Solo desarrollo: atlas vive en la imagen dev (COMPOSE_FILE=compose.yaml) ---
+# --- Solo desarrollo: atlas es para dev (COMPOSE_FILE=compose.yaml) ---
 migrate:
 	@test -n "$(name)" || (echo "Uso: make migrate name=nombre" && exit 1)
 	@$(COMPOSE) exec api atlas migrate diff "$(name)" --dir "file://db/migrations" --to \

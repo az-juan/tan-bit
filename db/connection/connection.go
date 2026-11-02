@@ -1,10 +1,10 @@
 package connection
 
 import (
-	"fmt"
-	"os"
 	"database/sql" //Estandar para interactuar con la db
+	"fmt"
 	_ "github.com/jackc/pgx/v5/stdlib" //Driver estándar para postgreSQL
+	"os"
 )
 
 func Open() (*sql.DB, error) {

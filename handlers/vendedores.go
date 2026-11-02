@@ -68,7 +68,7 @@ func (h *VendedorHandler) getVendedores(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(vends)
+	json.NewEncoder(w).Encode(vends)
 }
 
 // POST /vendedores - Crear nuevo vendedor
@@ -77,7 +77,7 @@ func (h *VendedorHandler) createVendedor(w http.ResponseWriter, r *http.Request)
 
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
-		http.Error(w, "JSON inválido: "+ err.Error(), http.StatusBadRequest)
+		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -91,7 +91,7 @@ func (h *VendedorHandler) createVendedor(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	if err != nil {
-		http.Error(w, "Error al crear el vendedor: "+ err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error al crear el vendedor: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -99,7 +99,6 @@ func (h *VendedorHandler) createVendedor(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(nuevoVendedor)
 }
-
 
 // GET /vendedores/{id} - Obtener vendedor específico
 func (h *VendedorHandler) getVendedor(w http.ResponseWriter, r *http.Request, id int32) {
@@ -122,14 +121,14 @@ func (h *VendedorHandler) updateVendedor(w http.ResponseWriter, r *http.Request,
 
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
-		http.Error(w, "JSON inválido: "+ err.Error(), http.StatusBadRequest)
+		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 	params.IDVendedor = id
 
 	filas, err := h.queries.UpdateVendedor(r.Context(), params)
 	if err != nil {
-		http.Error(w, "Error al actualizar el vendedor: "+ err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error al actualizar el vendedor: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if filas == 0 {
@@ -147,7 +146,7 @@ func (h *VendedorHandler) deleteVendedor(w http.ResponseWriter, r *http.Request,
 		return
 	}
 	if err != nil {
-		http.Error(w, "Error al eliminar el vendedor: "+ err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error al eliminar el vendedor: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if filas == 0 {

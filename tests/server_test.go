@@ -2,7 +2,7 @@ package tests
 
 import (
 	"net/http"
-	"testing"           //Obligatorio en _test.go
+	"testing" //Obligatorio en _test.go
 )
 
 func TestAPI(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un puntero)
@@ -11,12 +11,12 @@ func TestAPI(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un pun
 	if err != nil {
 		t.Fatalf("Error al crear la petición: %v", err) //Fatal para arranque
 	}
-	
+
 	// Abre socket TCP para solicitar, luego lo cierra
 	ans, err := http.DefaultClient.Do(req)
-        if err != nil {
-            t.Fatalf("Error al conectar con el servidor en el contenedor: %v", err)
-        }
+	if err != nil {
+		t.Fatalf("Error al conectar con el servidor en el contenedor: %v", err)
+	}
 	defer ans.Body.Close()
 
 	// Verificamos que el código de estado HTTP sea 200 OK

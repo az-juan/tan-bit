@@ -1,5 +1,5 @@
 package handlers
-    
+
 import (
 	"database/sql"
 	"encoding/json"

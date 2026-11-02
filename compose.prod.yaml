@@ -15,7 +15,7 @@ services:
       interval: 2s
       timeout: 2s
       retries: 3
-      start_period: 2s  ##Binario compilado arranca rapido
+      start_period: 3s  ##Binario compilado arranca rapido
     depends_on:
     ##Evita raceconditions entre contenedores, primero inicia database
       database:

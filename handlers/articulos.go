@@ -68,7 +68,7 @@ func (h *ArticuloHandler) getArticulos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(arts)
+	json.NewEncoder(w).Encode(arts)
 }
 
 // POST /articulos - Crear nuevo articulo
@@ -77,7 +77,7 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
-		http.Error(w, "JSON inválido: "+ err.Error(), http.StatusBadRequest)
+		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -87,7 +87,7 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	if err != nil {
-		http.Error(w, "Error al crear el artículo: "+ err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error al crear el artículo: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -117,14 +117,14 @@ func (h *ArticuloHandler) updateArticulo(w http.ResponseWriter, r *http.Request,
 
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
-		http.Error(w, "JSON inválido: "+ err.Error(), http.StatusBadRequest)
+		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 	params.IDArticulo = id
 
 	filas, err := h.queries.UpdateArticulo(r.Context(), params)
 	if err != nil {
-		http.Error(w, "Error al actualizar el artículo: "+ err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error al actualizar el artículo: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if filas == 0 {
@@ -142,7 +142,7 @@ func (h *ArticuloHandler) deleteArticulo(w http.ResponseWriter, r *http.Request,
 		return
 	}
 	if err != nil {
-		http.Error(w, "Error al eliminar el artículo: "+ err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error al eliminar el artículo: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if filas == 0 {
