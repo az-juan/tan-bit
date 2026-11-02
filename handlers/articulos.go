@@ -7,11 +7,94 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 	db "tan-bit.com/tan-bit/db/sqlc"
 )
 
 type ArticuloHandler struct {
 	queries *db.Queries
+}
+
+type CreateArticuloRequest struct {
+	Titulo      string `json:"titulo"`
+	Descripcion string `json:"descripcion"`
+	Condicion   string `json:"condicion"`
+	Categoria   string `json:"categoria"`
+	Precio      string `json:"precio"`
+	Stock       int32  `json:"stock"`
+	IDVendedor  int32  `json:"id_vendedor"`
+}
+
+type UpdateArticuloRequest struct {
+	Titulo      string `json:"titulo"`
+	Descripcion string `json:"descripcion"`
+	Condicion   string `json:"condicion"`
+	Categoria   string `json:"categoria"`
+	Precio      string `json:"precio"`
+	Stock       int32  `json:"stock"`
+}
+
+type ArticuloResponse struct {
+	IDArticulo       int32      `json:"id_articulo"`
+	Titulo           string     `json:"titulo"`
+	Descripcion      string     `json:"descripcion"`
+	Condicion        string     `json:"condicion"`
+	Categoria        string     `json:"categoria"`
+	Precio           string     `json:"precio"`
+	Stock            int32      `json:"stock"`
+	IDVendedor       int32      `json:"id_vendedor,omitempty"`
+	FechaPublicacion *time.Time `json:"fecha_publicacion,omitempty"`
+}
+
+func toArticuloFromCreate(a db.CreateArticuloRow) ArticuloResponse {
+	return ArticuloResponse{
+		IDArticulo:  a.IDArticulo,
+		Titulo:      a.Titulo,
+		Descripcion: a.Descripcion,
+		Condicion:   string(a.Condicion),
+		Categoria:   string(a.Categoria),
+		Precio:      a.Precio,
+		Stock:       a.Stock,
+		IDVendedor:  a.IDVendedor,
+	}
+}
+
+func toArticuloFromGetByID(a db.GetArticuloByIDRow) ArticuloResponse {
+	var fecha *time.Time
+	if a.FechaPublicacion.Valid {
+		fecha = &a.FechaPublicacion.Time
+	}
+	return ArticuloResponse{
+		IDArticulo:       a.IDArticulo,
+		Titulo:           a.Titulo,
+		Descripcion:      a.Descripcion,
+		Condicion:        string(a.Condicion),
+		Categoria:        string(a.Categoria),
+		Precio:           a.Precio,
+		Stock:            a.Stock,
+		FechaPublicacion: fecha,
+	}
+}
+
+func toArticulosFromGet(arts []db.GetArticulosRow) []ArticuloResponse {
+	res := make([]ArticuloResponse, 0, len(arts))
+	for _, a := range arts {
+		var fecha *time.Time
+		if a.FechaPublicacion.Valid {
+			fecha = &a.FechaPublicacion.Time
+		}
+		res = append(res, ArticuloResponse{
+			IDArticulo:       a.IDArticulo,
+			Titulo:           a.Titulo,
+			Descripcion:      a.Descripcion,
+			Condicion:        string(a.Condicion),
+			Categoria:        string(a.Categoria),
+			Precio:           a.Precio,
+			Stock:            a.Stock,
+			FechaPublicacion: fecha,
+		})
+	}
+	return res
 }
 
 func NewArticuloHandler(queries *db.Queries) *ArticuloHandler {
@@ -68,17 +151,27 @@ func (h *ArticuloHandler) getArticulos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(arts)
+	json.NewEncoder(w).Encode(toArticulosFromGet(arts))
 }
 
 // POST /articulos - Crear nuevo articulo
 func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request) {
-	var params db.CreateArticuloParams
+	var req CreateArticuloRequest
 
-	err := json.NewDecoder(r.Body).Decode(&params)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	params := db.CreateArticuloParams{
+		Titulo:      req.Titulo,
+		Descripcion: req.Descripcion,
+		Condicion:   db.Condicion(req.Condicion),
+		Categoria:   db.Categoria(req.Categoria),
+		Precio:      req.Precio,
+		Stock:       req.Stock,
+		IDVendedor:  req.IDVendedor,
 	}
 
 	nuevoArticulo, err := h.queries.CreateArticulo(r.Context(), params)
@@ -93,7 +186,7 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(nuevoArticulo)
+	json.NewEncoder(w).Encode(toArticuloFromCreate(nuevoArticulo))
 }
 
 // GET /articulos/{id} - Obtener articulo específico
@@ -108,19 +201,28 @@ func (h *ArticuloHandler) getArticulo(w http.ResponseWriter, r *http.Request, id
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(articulo)
+	json.NewEncoder(w).Encode(toArticuloFromGetByID(articulo))
 }
 
 // PUT /articulos/{id} - Actualizar articulo
 func (h *ArticuloHandler) updateArticulo(w http.ResponseWriter, r *http.Request, id int32) {
-	var params db.UpdateArticuloParams
+	var req UpdateArticuloRequest
 
-	err := json.NewDecoder(r.Body).Decode(&params)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	params.IDArticulo = id
+
+	params := db.UpdateArticuloParams{
+		IDArticulo:  id,
+		Titulo:      req.Titulo,
+		Descripcion: req.Descripcion,
+		Condicion:   db.Condicion(req.Condicion),
+		Categoria:   db.Categoria(req.Categoria),
+		Precio:      req.Precio,
+		Stock:       req.Stock,
+	}
 
 	filas, err := h.queries.UpdateArticulo(r.Context(), params)
 	if err != nil {

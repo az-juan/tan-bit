@@ -16,8 +16,8 @@ services:
       timeout: 2s
       retries: 3
       start_period: 3s  ##Binario compilado arranca rapido
-    depends_on:
     ##Evita raceconditions entre contenedores, primero inicia database
+    depends_on:
       database:
         condition: service_healthy
     restart: unless-stopped

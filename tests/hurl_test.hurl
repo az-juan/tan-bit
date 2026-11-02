@@ -223,7 +223,7 @@ HTTP 200
 [Asserts]
 jsonpath "$.id_articulo" == {{art_id}}
 jsonpath "$.titulo" == "Thinkpad T14"
-jsonpath "$.fecha_publicacion.Valid" == true
+jsonpath "$.fecha_publicacion" isString
 
 # GetByID inexistente -> 404
 GET {{host}}/articulos/999999

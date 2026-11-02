@@ -14,6 +14,35 @@ type VendedorHandler struct {
 	queries *db.Queries
 }
 
+type CreateVendedorRequest struct {
+	IDVendedor int32 `json:"id_vendedor"`
+	Telefono   int64 `json:"telefono"`
+}
+
+type UpdateVendedorRequest struct {
+	Telefono int64 `json:"telefono"`
+}
+
+type VendedorResponse struct {
+	IDVendedor int32 `json:"id_vendedor"`
+	Telefono   int64 `json:"telefono"`
+}
+
+func toVendedorResponse(v db.Vendedor) VendedorResponse {
+	return VendedorResponse{
+		IDVendedor: v.IDVendedor,
+		Telefono:   v.Telefono,
+	}
+}
+
+func toVendedoresFromGet(vends []db.Vendedor) []VendedorResponse {
+	res := make([]VendedorResponse, 0, len(vends))
+	for _, v := range vends {
+		res = append(res, toVendedorResponse(v))
+	}
+	return res
+}
+
 func NewVendedorHandler(queries *db.Queries) *VendedorHandler {
 	return &VendedorHandler{
 		queries: queries,
@@ -68,17 +97,22 @@ func (h *VendedorHandler) getVendedores(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(vends)
+	json.NewEncoder(w).Encode(toVendedoresFromGet(vends))
 }
 
 // POST /vendedores - Crear nuevo vendedor
 func (h *VendedorHandler) createVendedor(w http.ResponseWriter, r *http.Request) {
-	var params db.CreateVendedorParams
+	var req CreateVendedorRequest
 
-	err := json.NewDecoder(r.Body).Decode(&params)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	params := db.CreateVendedorParams{
+		IDVendedor: req.IDVendedor,
+		Telefono:   req.Telefono,
 	}
 
 	nuevoVendedor, err := h.queries.CreateVendedor(r.Context(), params)
@@ -97,7 +131,7 @@ func (h *VendedorHandler) createVendedor(w http.ResponseWriter, r *http.Request)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(nuevoVendedor)
+	json.NewEncoder(w).Encode(toVendedorResponse(nuevoVendedor))
 }
 
 // GET /vendedores/{id} - Obtener vendedor específico
@@ -112,19 +146,23 @@ func (h *VendedorHandler) getVendedor(w http.ResponseWriter, r *http.Request, id
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(vendedor)
+	json.NewEncoder(w).Encode(toVendedorResponse(vendedor))
 }
 
 // PUT /vendedores/{id} - Actualizar vendedor
 func (h *VendedorHandler) updateVendedor(w http.ResponseWriter, r *http.Request, id int32) {
-	var params db.UpdateVendedorParams
+	var req UpdateVendedorRequest
 
-	err := json.NewDecoder(r.Body).Decode(&params)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	params.IDVendedor = id
+
+	params := db.UpdateVendedorParams{
+		IDVendedor: id,
+		Telefono:   req.Telefono,
+	}
 
 	filas, err := h.queries.UpdateVendedor(r.Context(), params)
 	if err != nil {

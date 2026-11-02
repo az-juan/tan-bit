@@ -14,6 +14,36 @@ type UsuarioHandler struct {
 	queries *db.Queries
 }
 
+type UsuarioRequest struct {
+	Apellido string `json:"apellido"`
+	Nombre   string `json:"nombre"`
+	Email    string `json:"email"`
+}
+
+type UsuarioResponse struct {
+	IDUsuario int32  `json:"id_usuario"`
+	Apellido  string `json:"apellido"`
+	Nombre    string `json:"nombre"`
+	Email     string `json:"email"`
+}
+
+func toUsuarioResponse(u db.Usuario) UsuarioResponse {
+	return UsuarioResponse{
+		IDUsuario: u.IDUsuario,
+		Apellido:  u.Apellido,
+		Nombre:    u.Nombre,
+		Email:     u.Email,
+	}
+}
+
+func toUsuariosFromGet(usuarios []db.Usuario) []UsuarioResponse {
+	res := make([]UsuarioResponse, 0, len(usuarios))
+	for _, u := range usuarios {
+		res = append(res, toUsuarioResponse(u))
+	}
+	return res
+}
+
 func NewUsuarioHandler(queries *db.Queries) *UsuarioHandler {
 	return &UsuarioHandler{
 		queries: queries,
@@ -67,17 +97,23 @@ func (h *UsuarioHandler) getUsuarios(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(usuarios)
+	json.NewEncoder(w).Encode(toUsuariosFromGet(usuarios))
 }
 
 // POST /usuarios - Crear nuevo usuario
 func (h *UsuarioHandler) createUsuario(w http.ResponseWriter, r *http.Request) {
-	var params db.CreateUsuarioParams
+	var req UsuarioRequest
 
-	err := json.NewDecoder(r.Body).Decode(&params)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
+	}
+
+	params := db.CreateUsuarioParams{
+		Apellido: req.Apellido,
+		Nombre:   req.Nombre,
+		Email:    req.Email,
 	}
 
 	nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
@@ -92,7 +128,7 @@ func (h *UsuarioHandler) createUsuario(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(nuevoUsuario)
+	json.NewEncoder(w).Encode(toUsuarioResponse(nuevoUsuario))
 }
 
 // GET /usuarios/{id} - Obtener usuario específico
@@ -107,19 +143,25 @@ func (h *UsuarioHandler) getUsuario(w http.ResponseWriter, r *http.Request, id i
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(usuario)
+	json.NewEncoder(w).Encode(toUsuarioResponse(usuario))
 }
 
 // PUT /usuarios/{id} - Actualizar usuario
 func (h *UsuarioHandler) updateUsuario(w http.ResponseWriter, r *http.Request, id int32) {
-	var params db.UpdateUsuarioParams
+	var req UsuarioRequest
 
-	err := json.NewDecoder(r.Body).Decode(&params)
+	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	params.IDUsuario = id
+
+	params := db.UpdateUsuarioParams{
+		IDUsuario: id,
+		Apellido:  req.Apellido,
+		Nombre:    req.Nombre,
+		Email:     req.Email,
+	}
 
 	filas, err := h.queries.UpdateUsuario(r.Context(), params)
 	if esViolacionUnique(err) {
