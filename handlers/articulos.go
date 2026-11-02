@@ -143,7 +143,7 @@ func (h *ArticuloHandler) ArtHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// GET /articulos - Obtener todos los articulo
+// GET /articulos - Obtener todos los articulos
 func (h *ArticuloHandler) getArticulos(w http.ResponseWriter, r *http.Request) {
 	arts, err := h.queries.GetArticulos(r.Context())
 	if err != nil {

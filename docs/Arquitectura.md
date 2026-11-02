@@ -17,10 +17,13 @@ Herramientas empleadas para la capa de presentación: Templ
 Pensamos en diseñar una aplicación multi-contenedor, por un lado la lógica del servidor go y por otra parte la base de datos postgres, 
 así obtenemos una ejecución más controlada y aislada en la aplicación.
 
+### Dockerfile de desarrollo
 El contenedor app está construido de tal forma que, mientras esté corriendo, cada vez que se realiza una modificación en el código, ésta se aplique inmediatamente a través de air, agilizando el flujo de desarrollo.
 
 Decidimos incluir únicamente 'air' y 'atlas' dentro del contenedor y tener 'sqlc' y 'templ' en el host local para reducir el tamaño y el tiempo de compilación inicial de la imagen.
 
-Separamos el flujo de docker en desarrollo y producción para tener una mejor organización y facilitar el testing y debugging.
+--- 
+
+Separamos el flujo de docker en desarrollo y producción para tener una mejor organización y facilitar el testing y debugging. Se publica únicamente el proyecto de producción. 
 
 Empleamos un archivo example.env como ejemplo para testear la aplicación sin exponer datos sensibles.
