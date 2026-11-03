@@ -12,12 +12,13 @@ Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circul
 + docker compose
 + go
 + sqlc: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
++ templ: `go install github.com/`
 + hurl: https://hurl.dev
 
 Para ejecutar la aplicación:
 ```bash
-  chmod u+x test-api.sh
-  ./test-api.sh
+  chmod u+x run-app.sh
+  ./run-app.sh
 ```
 Para acceder a la página: http://localhost:8080
 

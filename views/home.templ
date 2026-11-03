@@ -1,0 +1,58 @@
+package views
+
+import "tan-bit.com/tan-bit/db/sqlc"
+
+templ Home(articulos []db.Articulo) {
+  <html lang="es">
+    @HtmlHead()
+    <body>
+      @Header()
+      <main class="main">
+        <section class="hero pixel-frame" aria-labelledby="hero-title">
+          <div class="hero-layout">
+            <div class="hero-content">
+              <h1 id="hero-title">
+                TU PRÓXIMA JOYA DEL<br>
+                HARDWARE.
+              </h1>
+
+              <nav class="hero-links" aria-label="Accesos principales">
+                <a href="./vender.html">·&gt; VENDER</a>
+                <a href="./evento.html">·&gt; IR A EVENTO</a>
+                <a href="#catalogo">·&gt; ARTICULOS RECIENTES</a>
+              </nav>
+            </div>
+
+            <div class="hero-space" aria-hidden="true">
+              <img
+                src="assets/decoracion.jpg"
+                alt="decoracion de inicio"
+              >
+            </div>
+          </div>
+        </section>
+
+        <section class="marketplace" id="catalogo" aria-label="Catálogo">
+          <nav class="categories" aria-label="Categorías">
+            <button class="category is-active" type="button" aria-pressed="true">
+              TODOS
+            </button>
+            <button class="category" type="button" aria-pressed="false">
+              ELECTRÓNICA
+            </button>
+            <button class="category" type="button" aria-pressed="false">
+              VIDEO
+            </button>
+            <button class="category" type="button" aria-pressed="false">
+              AUDIO
+            </button>
+          </nav>
+        @Articulos(articulos)
+        </section>
+      </main>
+      @Footer()
+    </body>
+  </html>
+}
+
+

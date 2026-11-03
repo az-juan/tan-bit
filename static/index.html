@@ -1,12 +1,540 @@
 <!DOCTYPE html>
-<html>
-<head><title>Inicio</title>
-<style> body { background-color: black; color: white; } </style>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>TAN-BIT — Mercado de hardware</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=VT323&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="css/style.css">
+  <!-- <link rel="stylesheet" href="css/index.css"> -->
 </head>
+
 <body>
-  <h1>Bienvenido a TAN-BIT</h1>
-  <p>Mercado de compra-venta de productos tecnológicos.</p>
-  <p>Información disponible por publicación: título, descripción, precio, 
-   condición, imagen/es, categoría, stock, contacto.</p>
+  <!-- Iconos construidos sobre una cuadrícula, sin curvas. -->
+  <svg
+    class="svg-library"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <symbol id="icon-search" viewBox="0 0 16 16">
+      <path d="
+        M3 1h6v2H3z
+        M1 3h2v6H1z
+        M9 3h2v6H9z
+        M3 9h6v2H3z
+        M10 10h2v2h-2z
+        M12 12h2v2h-2z
+        M14 14h2v2h-2z
+      "/>
+    </symbol>
+
+    <symbol id="icon-heart" viewBox="0 0 16 16">
+      <path d="
+        M2 2h4v2H2z M10 2h4v2h-4z
+        M0 4h2v4H0z M6 4h4v2H6z M14 4h2v4h-2z
+        M2 8h2v2H2z M12 8h2v2h-2z
+        M4 10h2v2H4z M10 10h2v2h-2z
+        M6 12h4v2H6z
+      "/>
+    </symbol>
+
+    <symbol id="icon-cart" viewBox="0 0 16 16">
+      <path d="
+        M0 1h4v2H0z M2 3h2v8H2z
+        M4 4h12v2H4z M14 6h2v4h-2z
+        M4 10h10v2H4z
+        M4 14h2v2H4z M12 14h2v2h-2z
+      "/>
+    </symbol>
+
+    <symbol id="icon-user" viewBox="0 0 16 16">
+      <path d="
+        M6 1h4v2H6z M4 3h2v4H4z M10 3h2v4h-2z
+        M6 7h4v2H6z M2 11h4v2H2z
+        M10 11h4v2h-4z M0 13h2v3H0z
+        M14 13h2v3h-2z M2 14h12v2H2z
+      "/>
+    </symbol>
+
+    <symbol id="icon-arrow" viewBox="0 0 16 16">
+      <path d="
+        M6 2h8v8h-2V6h-2V4H6z
+        M8 6h2v2H8z M6 8h2v2H6z
+        M4 10h2v2H4z M2 12h2v2H2z
+      "/>
+    </symbol>
+  </svg>
+
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="TAN-BIT, inicio">
+      <img
+        class="pixel-logo"
+        src="assets/logo.png"
+        alt="TAN-BIT"
+        width="50"
+        height="50"
+      >
+      <span>TAN-BIT</span>
+    </a>
+
+    <form class="search" role="search">
+      <label class="sr-only" for="search">Buscar productos</label>
+
+      <svg class="icon" aria-hidden="true">
+        <use href="#icon-search"></use>
+      </svg>
+
+      <input id="search" name="q" type="search">
+    </form>
+
+    <nav class="header-actions" aria-label="Cuenta y compras">
+      <a class="icon-button" href="./favoritos.html" aria-label="Favoritos">
+        <svg class="icon" aria-hidden="true">
+          <use href="#icon-heart"></use>
+        </svg>
+      </a>
+
+      <a class="cart-button" href="./carrito.html" aria-label="Carrito">
+        <svg class="icon" aria-hidden="true">
+          <use href="#icon-cart"></use>
+        </svg>
+        <span>CARRITO [0]</span>
+      </a>
+
+      <a class="account-button" href="./login.html">
+        <svg class="icon" aria-hidden="true">
+          <use href="#icon-user"></use>
+        </svg>
+      </a>
+    </nav>
+  </header>
+
+  <main class="main">
+    <section class="hero pixel-frame" aria-labelledby="hero-title">
+      <div class="hero-layout">
+        <div class="hero-content">
+          <h1 id="hero-title">
+            TU PRÓXIMA JOYA DEL<br>
+            HARDWARE.
+          </h1>
+
+          <nav class="hero-links" aria-label="Accesos principales">
+            <a href="./vender.html">·&gt; VENDER</a>
+            <a href="./evento.html">·&gt; IR A EVENTO</a>
+            <a href="#catalogo">·&gt; ARTICULOS RECIENTES</a>
+          </nav>
+        </div>
+
+        <div class="hero-space" aria-hidden="true">
+          <img
+            src="assets/decoracion.jpg"
+            alt="decoracion de inicio"
+          >
+        </div>
+      </div>
+    </section>
+
+    <section class="marketplace" id="catalogo" aria-label="Catálogo">
+      <nav class="categories" aria-label="Categorías">
+        <button class="category is-active" type="button" aria-pressed="true">
+          TODOS
+        </button>
+        <button class="category" type="button" aria-pressed="false">
+          ELECTRÓNICA
+        </button>
+        <button class="category" type="button" aria-pressed="false">
+          VIDEO
+        </button>
+        <button class="category" type="button" aria-pressed="false">
+          AUDIO
+        </button>
+      </nav>
+
+      <div class="catalog-panel">
+        <div class="product-grid">
+
+          <article class="product">
+            <div class="product-media">
+              <img
+                src="assets/teclado.jpg"
+                alt="Teclado mecánico con marco de cobre"
+                width="316"
+                height="228"
+              >
+              <button class="favorite" type="button" aria-label="Guardar Teclado Cobre 75">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-heart"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="product-content">
+              <div class="product-meta">
+                <span>KB-016</span>
+                <span>▪ EN STOCK</span>
+              </div>
+
+              <h2>Teclado Cobre 75</h2>
+              <p class="product-description">Mecánico · hot-swap · USB-C</p>
+              <p class="product-price">$189.000 · XMR 0.15</p>
+              <p class="product-installments">3 × $63.000 sin interés</p>
+
+              <div class="product-actions">
+                <button class="add-button" type="button" aria-label="Agregar Teclado Cobre 75">
+                  Agregar
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-arrow"></use>
+                  </svg>
+                </button>
+                <a class="details-link" href="./productos/teclado-cobre-75.html">
+                  Ver ficha <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product">
+            <div class="product-media">
+              <img
+                src="assets/disipador.jpg"
+                alt="Disipador de cobre con ventilador negro"
+                width="316"
+                height="228"
+              >
+              <button class="favorite" type="button" aria-label="Guardar Disipador Cu-120">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-heart"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="product-content">
+              <div class="product-meta">
+                <span>CL-012</span>
+                <span>▪ EN STOCK</span>
+              </div>
+
+              <h2>Disipador Cu-120</h2>
+              <p class="product-description">6 heatpipes · 120 mm · AM5 / LGA</p>
+              <p class="product-price">$89.900 · XMR 0.8</p>
+              <p class="product-installments">3 × $29.966,67 sin interés</p>
+
+              <div class="product-actions">
+                <button class="add-button" type="button" aria-label="Agregar Disipador Cu-120">
+                  Agregar
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-arrow"></use>
+                  </svg>
+                </button>
+                <a class="details-link" href="./productos/disipador-cu-120.html">
+                  Ver ficha <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product">
+            <div class="product-media">
+              <img
+                src="assets/mother.jpg"
+                alt="Placa madre B650M"
+                width="316"
+                height="228"
+              >
+              <button class="favorite" type="button" aria-label="Guardar Mother B650M Taller">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-heart"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="product-content">
+              <div class="product-meta">
+                <span>MB-042</span>
+                <span>▪ EN STOCK</span>
+              </div>
+
+              <h2>Mother B650M Taller</h2>
+              <p class="product-description">AM5 · DDR5 · PCIe 4.0 · mATX</p>
+              <p class="product-price">$249.900</p>
+              <p class="product-installments">3 × $83.300 sin interés</p>
+
+              <div class="product-actions">
+                <button class="add-button" type="button" aria-label="Agregar Mother B650M Taller">
+                  Agregar
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-arrow"></use>
+                  </svg>
+                </button>
+                <a class="details-link" href="./productos/mother-b650m.html">
+                  Ver ficha <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product">
+            <div class="product-media">
+              <img
+                src="assets/gabinete.jpg"
+                alt="Gabinete de computadora de nogal"
+                width="316"
+                height="228"
+              >
+              <button class="favorite" type="button" aria-label="Guardar Gabinete Nogal T-01">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-heart"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="product-content">
+              <div class="product-meta">
+                <span>CS-001</span>
+                <span>▪ EN STOCK</span>
+              </div>
+
+              <h2>Gabinete Nogal T-01</h2>
+              <p class="product-description">mATX · nogal macizo · sin fuente</p>
+              <p class="product-price">$329.000</p>
+              <p class="product-installments">3 × $109.666,67 sin interés</p>
+
+              <div class="product-actions">
+                <button class="add-button" type="button" aria-label="Agregar Gabinete Nogal T-01">
+                  Agregar
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-arrow"></use>
+                  </svg>
+                </button>
+                <a class="details-link" href="./productos/gabinete-nogal.html">
+                  Ver ficha <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product">
+            <div class="product-media">
+              <img
+                src="assets/deskmat.jpg"
+                alt="Desk mat de cuero marrón"
+                width="316"
+                height="228"
+                loading="lazy"
+              >
+              <button class="favorite" type="button" aria-label="Guardar Desk mat de cuero">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-heart"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="product-content">
+              <div class="product-meta">
+                <span>DK-004</span>
+                <span>▪ EN STOCK</span>
+              </div>
+
+              <h2>Desk mat de cuero</h2>
+              <p class="product-description">80 × 35 cm · cuero curtido vegetal</p>
+              <p class="product-price">$64.900</p>
+              <p class="product-installments">3 × $21.633,33 sin interés</p>
+
+              <div class="product-actions">
+                <button class="add-button" type="button" aria-label="Agregar Desk mat de cuero">
+                  Agregar
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-arrow"></use>
+                  </svg>
+                </button>
+                <a class="details-link" href="./productos/deskmat.html">
+                  Ver ficha <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product">
+            <div class="product-media">
+              <img
+                src="assets/memoria.jpg"
+                alt="Dos módulos de memoria DDR5"
+                width="316"
+                height="228"
+                loading="lazy"
+              >
+              <button class="favorite" type="button" aria-label="Guardar Memoria DDR5 de 32 GB">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-heart"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="product-content">
+              <div class="product-meta">
+                <span>RM-032</span>
+                <span>▪ EN STOCK</span>
+              </div>
+
+              <h2>Memoria DDR5 · 32 GB</h2>
+              <p class="product-description">2 × 16 GB · 6000 MHz · CL36</p>
+              <p class="product-price">$119.900</p>
+              <p class="product-installments">3 × $39.966,67 sin interés</p>
+
+              <div class="product-actions">
+                <button class="add-button" type="button" aria-label="Agregar Memoria DDR5 de 32 GB">
+                  Agregar
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-arrow"></use>
+                  </svg>
+                </button>
+                <a class="details-link" href="./productos/memoria-ddr5.html">
+                  Ver ficha <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="product">
+            <div class="product-media">
+              <img
+                src="assets/base.jpg"
+                alt="Soporte de auriculares de cobre y granito"
+                width="316"
+                height="228"
+                loading="lazy"
+              >
+              <button class="favorite" type="button" aria-label="Guardar Base Granito G-01">
+                <svg class="icon" aria-hidden="true">
+                  <use href="#icon-heart"></use>
+                </svg>
+              </button>
+            </div>
+
+            <div class="product-content">
+              <div class="product-meta">
+                <span>ST-008</span>
+                <span>▪ EN STOCK</span>
+              </div>
+
+              <h2>Base Granito G-01</h2>
+              <p class="product-description">Soporte de auriculares · cobre + piedra</p>
+              <p class="product-price">$54.900</p>
+              <p class="product-installments">3 × $18.300 sin interés</p>
+
+              <div class="product-actions">
+                <button class="add-button" type="button" aria-label="Agregar Base Granito G-01">
+                  Agregar
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#icon-arrow"></use>
+                  </svg>
+                </button>
+                <a class="details-link" href="./productos/base-granito.html">
+                  Ver ficha <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="assurances">
+      <div class="assurance">
+        <span class="pixel-mark" aria-hidden="true"></span>
+        <div>
+          <h2>DESCENTRALIZADO.</h2>
+          <p>Sin intermediarios entre clientes y vendedores.</p>
+        </div>
+      </div>
+
+      <div class="assurance">
+        <span class="pixel-mark" aria-hidden="true"></span>
+        <div>
+          <h2>CONFIANZA.</h2>
+          <p>Comunidad de Tandil, confianza de Tandil.</p>
+        </div>
+      </div>
+
+      <div class="assurance">
+        <span class="pixel-mark" aria-hidden="true"></span>
+        <div>
+          <h2>OPORTUNIDAD.</h2>
+          <p>Darle otra vida a aquello que dabas por descartado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="./">
+          <img
+            class="pixel-logo"
+            src="assets/logo.png"
+            alt=""
+            width="30"
+            height="30"
+          >
+          <span>TAN-BIT</span>
+        </a>
+        <p>Con el fin de facilitar la circulación del hardware.</p>
+      </div>
+
+      <nav class="footer-column" aria-label="Ayuda">
+        <h2>AYUDA</h2>
+        <a href="./contacto.html">Contactanos</a>
+        <a href="./vender.html">Quiero vender</a>
+      </nav>
+
+      <nav class="footer-column" aria-label="Sobre TAN-BIT">
+        <h2>CONOCE TAN-BIT</h2>
+        <a href="./historia.html">Historia</a>
+        <a href="./makers.html">Creadores</a>
+      </nav>
+
+      <div class="newsletter">
+        <h2>INCOMING TRANSMISSION</h2>
+        <p>Recibi novedades y eventos.</p>
+
+        <form class="newsletter-form">
+          <label class="sr-only" for="email">Correo electrónico</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="your.signal@address.com"
+            autocomplete="email"
+            required
+          >
+          <button type="submit" aria-label="Suscribirme">
+            <svg class="icon" aria-hidden="true">
+              <use href="#icon-arrow"></use>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="footer-legal">
+      <p>© 2026 TAN-BIT. Todos los derechos reservados.</p>
+      <div class="legal-links">
+        <a href="./privacidad.html">Política de privacidad</a>
+        <a href="./terminos.html">Términos del servicio</a>
+        <span>Argentina · Pesos $ · Crypto</span>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

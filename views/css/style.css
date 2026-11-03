@@ -1,0 +1,876 @@
+@import url("./colors.css");
+
+/* =========================================
+   CONFIGURACIÓN
+   Modificar estas variables cambia el layout.
+   ========================================= */
+
+:root {
+  --page-max-width: 1440px;
+  --page-gutter: 50px;
+
+  --catalog-columns: 4;
+  --catalog-gap: 14px;
+  --catalog-padding: 16px;
+
+  --hero-max-width: 1035px;
+  --hero-content-width: 400px;
+
+  --font-retro: "VT323", monospace;
+  --font-body: "IBM Plex Mono", monospace;
+
+  /*
+   * Contorno escalonado.
+   * Todos los segmentos son horizontales
+   * o verticales: no hay diagonales.
+   */
+  --pixel-outline: polygon(
+    24px 0,
+    calc(100% - 24px) 0,
+
+    calc(100% - 24px) 8px,
+    calc(100% - 16px) 8px,
+    calc(100% - 16px) 16px,
+    calc(100% - 8px) 16px,
+    calc(100% - 8px) 24px,
+    100% 24px,
+
+    100% calc(100% - 24px),
+    calc(100% - 8px) calc(100% - 24px),
+    calc(100% - 8px) calc(100% - 16px),
+    calc(100% - 16px) calc(100% - 16px),
+    calc(100% - 16px) calc(100% - 8px),
+    calc(100% - 24px) calc(100% - 8px),
+
+    calc(100% - 24px) 100%,
+    24px 100%,
+
+    24px calc(100% - 8px),
+    16px calc(100% - 8px),
+    16px calc(100% - 16px),
+    8px calc(100% - 16px),
+    8px calc(100% - 24px),
+    0 calc(100% - 24px),
+
+    0 24px,
+    8px 24px,
+    8px 16px,
+    16px 16px,
+    16px 8px,
+    24px 8px
+  );
+}
+
+/* =========================================
+   BASE
+   ========================================= */
+
+body {
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input {
+  font: inherit;
+  border-radius: 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: var(--color-transparent);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================================
+   ELEMENTOS PIXELADOS
+   ========================================= */
+
+.svg-library {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: currentColor;
+  shape-rendering: crispEdges;
+}
+
+.pixel-logo {
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+/*
+ * Marco escalonado reutilizable.
+ * El pseudo-elemento crea el interior;
+ * el fondo del contenedor queda como borde.
+ */
+.pixel-frame {
+  position: relative;
+  isolation: isolate;
+  padding: 30px;
+  background: var(--color-border);
+  clip-path: var(--pixel-outline);
+}
+
+.pixel-frame::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 4px;
+  background: var(--color-background);
+  clip-path: var(--pixel-outline);
+}
+
+/* =========================================
+   CABECERA — GRID + FLEXBOX
+   ========================================= */
+
+.site-header {
+  min-height: 80px;
+  padding: 10px 30px;
+  display: grid;
+  grid-template-columns:
+    minmax(60px, 1fr)
+    minmax(200px, 450px)
+    minmax(250px, 1fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.brand {
+  /* display: inline-flex; */
+  /* align-items: center; */
+  /* gap: 10px; */
+  /* justify-self: start; */
+  /* color: var(--color-text-light); */
+  min-height: 40px;
+  display: inline-flex;
+  justify-content: left;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: var(--color-transparent);
+  color: var(--color-header-accent);
+  /* padding: 0; */
+  font-family: var(--font-retro);
+  font-size: 25px;
+  white-space: nowrap;
+}
+
+.search {
+  min-width: 0;
+  min-height: 40px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-panel);
+  border: 4px solid var(--color-search-border);
+  color: var(--color-search-border);
+}
+
+.search input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  background: var(--color-transparent);
+  color: var(--color-text-light);
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+}
+
+.icon-button,
+.cart-button,
+.account-button {
+  min-height: 40px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: var(--color-transparent);
+  color: var(--color-header-accent);
+}
+
+.icon-button {
+  min-width: 40px;
+}
+
+.cart-button {
+  padding: 0;
+  font-family: var(--font-retro);
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.account-button {
+  width: 60px;
+  height: 44px;
+  border: 2px solid var(--color-search-border);
+  background: var(--color-account);
+  color: var(--color-background);
+}
+
+.header-actions button:hover {
+  color: var(--color-accent-light);
+}
+
+/* =========================================
+   ÁREA PRINCIPAL
+   ========================================= */
+
+.main {
+  position: relative;
+  isolation: isolate;
+  padding-top: 60px;
+  display: grid;
+  gap: 40px;
+}
+
+/* =========================================
+   HERO — GRID + FLEXBOX
+   ========================================= */
+
+.hero {
+  width: min(
+    var(--hero-max-width),
+    calc(100% - 48px)
+  );
+  justify-self: center;
+}
+
+.hero-layout {
+  min-height: 340px;
+  display: grid;
+  grid-template-columns:
+    minmax(0, var(--hero-content-width))
+    minmax(0, 1fr);
+  background: var(--color-panel);
+}
+
+.hero-content {
+  min-width: 0;
+  padding: 24px 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.hero h1 {
+  color: var(--color-accent-light);
+  font-family: var(--font-retro);
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.hero-links {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.hero-links a {
+  width: 200px;
+  max-width: 100%;
+  min-height: 40px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  background: var(--color-hero-button);
+  color: var(--color-text-light);
+  font-family: var(--font-retro);
+  font-size: 18px;
+}
+
+.hero-links a:hover {
+  background: var(--color-accent);
+  color: var(--color-background);
+}
+
+.hero-space {
+  display: flex;
+  border-left: 4px solid var(--color-border);
+  justify-content: space-around;
+  align-items: center;
+}
+
+/* =========================================
+   CATEGORÍAS — FLEXBOX
+   ========================================= */
+
+.marketplace {
+  min-width: 0;
+  margin: 0 var(--page-gutter) 40px;
+  scroll-margin-top: 24px;
+}
+
+.categories {
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.category {
+  min-height: 30px;
+  padding: 12px;
+  border: 0;
+  background: var(--color-card);
+  color: var(--color-background);
+  font-family: var(--font-retro);
+  font-size: 16px;
+
+  /* Esquinas superiores en forma de escalera. */
+  /* clip-path: polygon( */
+    /* 8px 0, */
+    /* calc(100% - 8px) 0, */
+    /* calc(100% - 8px) 4px, */
+    /* calc(100% - 4px) 4px, */
+    /* calc(100% - 4px) 8px, */
+    /* 100% 8px, */
+    /* 100% 100%, */
+    /* 0 100%, */
+    /* 0 8px, */
+    /* 4px 8px, */
+    /* 4px 4px, */
+    /* 8px 4px */
+  /* ); */
+}
+
+.category.is-active {
+  background: var(--color-tab-active);
+}
+
+.category:hover {
+  background: var(--color-accent);
+}
+
+/* Foco interior para que no lo corte el clip-path. */
+.category:focus-visible {
+  outline-offset: -5px;
+}
+
+/* =========================================
+   CATÁLOGO — GRID
+   ========================================= */
+
+.catalog-panel {
+  position: relative;
+  padding:
+    20px
+    var(--catalog-padding)
+    78px;
+  background: var(--color-catalog);
+}
+
+/* Detalles cuadrados en las esquinas superiores. */
+.catalog-panel::before,
+.catalog-panel::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-top: 4px solid var(--color-border);
+}
+
+.catalog-panel::before {
+  left: 4px;
+  border-left: 4px solid var(--color-border);
+}
+
+.catalog-panel::after {
+  right: 4px;
+  border-right: 4px solid var(--color-border);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(var(--catalog-columns), minmax(0, 1fr));
+  gap: var(--catalog-gap);
+  align-items: stretch;
+}
+
+/* =========================================
+   TARJETAS — FLEXBOX
+   ========================================= */
+
+.product {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-card);
+}
+
+.product-media {
+  position: relative;
+  aspect-ratio: 316 / 228;
+  overflow: hidden;
+  background: var(--color-catalog);
+}
+
+.product-media > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.favorite {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--color-panel);
+  color: var(--color-card);
+}
+
+.favorite:hover {
+  color: var(--color-accent-light);
+}
+
+.product-content {
+  flex: 1;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.product-meta > :first-child {
+  color: var(--color-text-muted);
+}
+
+.product h2 {
+  font-family: var(--font-retro);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.product-description,
+.product-installments {
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.product-price {
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.product-actions {
+  margin-top: auto;
+  padding-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.add-button {
+  min-width: 109px;
+  min-height: 40px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 0;
+  background: var(--color-accent);
+  color: var(--color-background);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.add-button .icon {
+  width: 12px;
+  height: 12px;
+}
+
+.add-button:hover {
+  background: var(--color-accent-light);
+}
+
+.details-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.details-link:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   FOOTER — GRID + FLEXBOX
+   ========================================= */
+
+.site-footer {
+  color: var(--color-footer-text);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.site-footer h2 {
+  margin-bottom: 6px;
+  color: var(--color-accent-light);
+  font-family: var(--font-retro);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.assurances {
+  padding: 26px 64px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 40px;
+  background: var(--color-assurances-bg);
+}
+
+.assurance {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.assurance h2 {
+  color: var(--color-assurances-title);
+  font-size: 15px;
+}
+
+/* Marca decorativa formada únicamente por cuadrados. */
+.pixel-mark {
+  width: 8px;
+  height: 8px;
+  margin: 8px;
+  flex: 0 0 8px;
+  background: var(--color-accent);
+  box-shadow:
+    -8px 0 0 var(--color-accent),
+    8px 0 0 var(--color-accent),
+    0 -8px 0 var(--color-accent),
+    0 8px 0 var(--color-accent);
+}
+
+.footer-grid {
+  padding: 32px 64px;
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1.6fr)
+    minmax(0, 0.85fr)
+    minmax(0, 0.85fr)
+    minmax(0, 1.3fr);
+  gap: 40px;
+  background: var(--color-footer-bg);
+}
+
+.footer-brand .brand {
+  margin-bottom: 12px;
+  color: var(--color-accent-light);
+  font-family: var(--font-retro);
+  font-size: 22px;
+}
+
+.footer-brand p {
+  max-width: 280px;
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.footer-column a:hover,
+.legal-links a:hover {
+  color: var(--color-accent-light);
+}
+
+.newsletter {
+  min-width: 0;
+}
+
+.newsletter-form {
+  min-height: 42px;
+  margin-top: 12px;
+  display: flex;
+  border: 2px solid var(--color-footer-muted);
+  background: var(--color-input-bg);
+}
+
+.newsletter-form input {
+  min-width: 0;
+  flex: 1;
+  padding: 10px 12px;
+  border: 0;
+  background: var(--color-transparent);
+  color: var(--color-card);
+  font-size: 12px;
+}
+
+.newsletter-form input::placeholder {
+  color: var(--color-footer-muted);
+  opacity: 1;
+}
+
+.newsletter-form button {
+  width: 40px;
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: var(--color-transparent);
+  color: var(--color-accent);
+}
+
+.newsletter-form button:hover {
+  color: var(--color-accent-light);
+}
+
+.footer-legal {
+  padding: 14px 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  background: var(--color-legal-bg);
+  color: var(--color-footer-muted);
+  font-size: 10px;
+}
+
+.legal-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 1100px) {
+  :root {
+    --page-gutter: 24px;
+    --catalog-columns: 2;
+    --catalog-gap: 16px;
+  }
+
+  .site-header {
+    grid-template-columns:
+      auto
+      minmax(160px, 1fr)
+      auto;
+    gap: 16px;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+
+  .hero-layout {
+    grid-template-columns:
+      minmax(0, 400px)
+      minmax(0, 1fr);
+  }
+
+  .catalog-panel {
+    padding-bottom: 32px;
+  }
+
+  .assurances {
+    padding-inline: 32px;
+    gap: 24px;
+  }
+
+  .footer-grid {
+    padding-inline: 32px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+
+  .footer-legal {
+    padding-inline: 32px;
+  }
+}
+
+/* =========================================
+   MÓVIL
+   ========================================= */
+
+@media (max-width: 600px) {
+  :root {
+    --page-gutter: 16px;
+    --catalog-columns: 1;
+    --catalog-padding: 12px;
+  }
+
+  .site-header {
+    padding: 12px 16px;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+  }
+
+  .search {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .account-button {
+    width: 40px;
+  }
+
+  .main {
+    padding-top: 24px;
+    gap: 28px;
+  }
+
+  .hero {
+    width: calc(100% - 32px);
+    padding: 24px;
+  }
+
+  .hero-layout {
+    min-height: auto;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-content {
+    padding: 20px 12px;
+    gap: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 8vw, 40px);
+  }
+
+  .hero-links {
+    gap: 16px;
+  }
+
+  .hero-space {
+    display: none;
+  }
+
+  .marketplace {
+    margin-bottom: 24px;
+  }
+
+  .categories {
+    padding-left: 4px;
+    gap: 4px;
+  }
+
+  .category {
+    padding-inline: 8px;
+    font-size: 15px;
+  }
+
+  .catalog-panel {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+
+  .assurances,
+  .footer-grid {
+    padding: 28px 24px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .footer-legal {
+    padding: 20px 24px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+

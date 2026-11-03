@@ -31,7 +31,7 @@ while true; do
   read -r INPUT
   echo
   INPUT="${INPUT:-Y}"
-  if [[ "$INPUT" =~ ^[yY]$ ]]; then
+  if [[ "$INPUT" =~ ^[yY]$|\n ]]; then
     sqlc generate
     # Bajamos volumenes previos
     "${COMPOSE[@]}" down -v

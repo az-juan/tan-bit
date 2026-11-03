@@ -1,0 +1,74 @@
+:root {
+  --marron-0: #2f1e1a;
+  --marron-1: #4f3322;
+  --rojo-0: #723627;
+  --rojo-1: #95392c;
+  --naranja-0: #c75533;
+  --naranja-1: #e76d46;
+  --marron-2: #934e28;
+  --marron-3: #a2663c;
+  --marron-4: #c87d40;
+  --amarillo: #f5a95b;
+  --verde-0: #6b8b8c;
+  --verde-1: #81a38e;
+  --verde-2: #aac39e;
+  --blanco: #ffffff;
+  --gris-0: #d1d0ce;
+  --gris-1: #bab7b2;
+  --gris-2: #898a8a;
+  --gris-3: #686461;
+  --gris-4: #554d4b;
+  --gris-5: #3c3d3b;
+  --gris-6: #343230;
+  --celeste: #87d1ef;
+  --azul-0: #64a1c2;
+  --azul-1: #466480;
+  --azul-2: #2f485c;
+  --azul-3: #242e35;
+  --azul-4: #1b2026;
+  --marron-5: #aa9c8a;
+  --marron-6: #917f6d;
+  --marron-7: #86624a;
+  --marron-8: #715b48;
+  --marron-9: #5e4835;
+  
+  /* Superficies */
+  --color-background: #1b2026;
+  --color-panel: #242e35;
+  --color-catalog: #686461;
+  --color-card: #d1d0cf;
+
+  /* Texto */
+  --color-text: #242e35;
+  --color-text-muted: #64635f;
+  --color-text-light: #ffffff;
+
+  /* Acentos */
+  --color-accent: #c47e3e;
+  --color-accent-light: #f5a95b;
+  --color-header-accent: #ea9e54;
+  --color-tab-active: #984832;
+
+  /* Controles */
+  --color-hero-button: #5e4835;
+  --color-account: #30495b;
+
+  /* Bordes y decoración */
+  --color-border: #d1d0cf;
+  --color-search-border: #9a8b76;
+  --color-decoration: #26343b;
+
+  /* Footer */
+  --color-assurances-bg: #343230;
+  --color-assurances-title: #c8a84b;
+  --color-footer-bg: #2f1e1a;
+  --color-footer-text: #7a7060;
+  --color-footer-muted: #5c4a38;
+  --color-input-bg: #1a1614;
+  --color-legal-bg: #0d0b0a;
+
+  /* Estados */
+  --color-focus: #f5a95b;
+  --color-transparent: transparent;
+}
+
