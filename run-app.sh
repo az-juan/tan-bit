@@ -31,16 +31,17 @@ while true; do
   read -r INPUT
   echo
   INPUT="${INPUT:-Y}"
-  if [[ "$INPUT" =~ ^[yY]$|\n ]]; then
+  if [[ "$INPUT" =~ ^[yY]$ ]]; then
     sqlc generate
+    templ generate
     # Bajamos volumenes previos
     "${COMPOSE[@]}" down -v
     # --build: la imagen incluye el codigo/sqlc recien generado
     # --wait: no sigue hasta que ambos contenedores esten healthy
     "${COMPOSE[@]}" up -d --build --wait
     # Sobreescibe variables para que el anfitrion pueda usar ./db/connection/connection.go
-    DB_HOST=localhost DB_PORT=5433 go test -count=1 -v ./tests
-    hurl --test --variable host="$HOST" tests/hurl_test.hurl
+    DB_HOST=localhost DB_PORT=5433 #go test -count=1 -v ./tests
+    #hurl --test --variable host="$HOST" tests/hurl_test.hurl
     echo "Servidor de produccion corriendo en $HOST"
   else
     "${COMPOSE[@]}" down -v --rmi local

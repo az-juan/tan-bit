@@ -1,0 +1,51 @@
+package views
+
+templ Favoritos() {
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TAN-BIT · Favoritos</title>
+    <link rel="stylesheet" href="/static/css/shared.css" />
+    <link rel="stylesheet" href="/static/css/favoritos.css" />
+  </head>
+  <body>
+    <div class="page favorites-page">
+    @Header()
+     <main class="container favorites-main">
+        <section>
+          <div class="route">
+            <span>INICIO / FAVORITOS</span><span class="green">■ COLECCIÓN PERSONAL</span>
+          </div>
+          <h1 class="display page-title">TUS JOYAS, A MANO.</h1>
+        </section>
+        <div class="favorite-controls">
+          <div class="filters">
+            <button class="active">TODOS [4]</button><button>ELECTRÓNICA [2]</button><button>ESCRITORIO [2]</button>
+          </div>
+          <span>ORDENAR: GUARDADOS RECIENTEMENTE ↓</span>
+        </div>
+        <section class="pixel-frame favorites-articulos">
+          <div class="articulo-grid">
+            // articulos guardados
+          </div>
+        </section>
+        <div class="saved-note">
+          <span>♥ &nbsp;4 piezas guardadas. Los favoritos no reservan stock.</span><a href="./marketplace">Seguir explorando ↗</a>
+        </div>
+        <section class="maker-cta">
+          <div>
+            <h2 class="display">DETRÁS DE CADA PIEZA, UN MAKER.</h2>
+            <p>
+              Conocé los talleres y las personas que hacen distinto el hardware de todos los días.
+            </p>
+          </div>
+          <button class="btn">Conocer makers ↗</button>
+        </section>
+      </main>
+      @Footer()
+    </div>
+  </body>
+</html>}

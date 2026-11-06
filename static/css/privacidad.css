@@ -1,0 +1,138 @@
+.privacy-page {
+  --page-height: 2530px;
+}
+.privacy-main {
+  gap: 32px;
+}
+.privacy-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.privacy-intro > p {
+  width: 100%;
+  max-width: 850px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.draft {
+  display: flex;
+  gap: 24px;
+  padding: 20px;
+  border-left: 4px solid var(--copper);
+  background: var(--brown);
+  line-height: 1.7;
+}
+.draft strong {
+  flex: none;
+  color: var(--orange);
+}
+.privacy-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  align-items: start;
+  gap: 40px;
+}
+.privacy-index {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.privacy-index nav {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+}
+.privacy-index h2 {
+  font-size: 28px;
+}
+.privacy-index a {
+  font-size: 12px;
+}
+.privacy-index a:first-of-type {
+  color: var(--orange);
+}
+.privacy-index hr {
+  width: 100%;
+  border: 0;
+  border-top: 2px solid var(--line);
+}
+.privacy-index > p {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.legal-document {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  padding: 48px;
+  background: var(--paper);
+  color: var(--panel);
+}
+.legal-document > small {
+  color: var(--muted);
+}
+.legal-document section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #aaa8a3;
+}
+.legal-document section:last-of-type {
+  border: 0;
+}
+.legal-document h2 {
+  color: var(--panel);
+  font-size: 34px;
+}
+.legal-document p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.document-end {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 16px;
+  font-size: 11px;
+}
+.rules-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px;
+  border: 3px solid var(--line);
+  background: var(--panel);
+}
+.rules-cta div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.rules-cta h2 {
+  font-size: 32px;
+}
+@media (max-width: 900px) {
+  .privacy-intro > p {
+    width: auto;
+  }
+  .privacy-layout {
+    grid-template-columns: 1fr;
+  }
+  .privacy-index {
+    position: static;
+  }
+  .legal-document {
+    padding: 28px;
+  }
+  .draft,
+  .rules-cta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .privacy-index nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

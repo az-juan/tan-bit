@@ -1,0 +1,124 @@
+.marketplace-page {
+  --page-height: 1680px;
+}
+.market-header {
+  display: flex;
+  height: 80px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--sand);
+}
+.market-main {
+  padding: 60px 50px;
+}
+.hero {
+  display: grid;
+  width: 1030px;
+  min-height: 400px;
+  grid-template-columns: 42% 58%;
+  margin: 0 auto 28px;
+}
+.hero-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+  padding: 36px;
+  border-right: 5px solid var(--paper);
+}
+.hero-copy h1 {
+  font-size: 44px;
+}
+.hero-links {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.hero-links a {
+  width: 200px;
+  padding: 12px 8px;
+  background: #5e4835;
+  color: white;
+  font-family: "VT323:Regular";
+  font-size: 18px;
+}
+.hero-art {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  /* display: flex; */
+  /* border-left: 4px solid var(--color-border); */
+  /* justify-content: space-around; */
+  /* align-items: center; */
+}
+.hero-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.92;
+}
+.catalog {
+  position: relative;
+  padding-top: 46px;
+  background: #686461;
+}
+.filters {
+  position: absolute;
+  top: -10px;
+  left: 0;
+  display: flex;
+  gap: 12px;
+}
+.filters button {
+  padding: 12px 20px;
+  border: 0;
+  border-top: 4px solid var(--sand);
+  background: var(--paper);
+  color: var(--panel);
+  font-family: "VT323:Regular";
+  font-size: 22px;
+}
+.filters .active {
+  background: #95392c;
+  color: #e5dfd5;
+}
+.market-products {
+  grid-auto-rows: 451px;
+  gap: 12px;
+  padding: 18px;
+}
+@media (max-width: 900px) {
+  .market-header {
+    height: auto;
+    min-height: 80px;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px 20px;
+  }
+  .market-main {
+    padding: 40px 20px;
+  }
+  .hero {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+  .hero-copy {
+    border-right: 0;
+    border-bottom: 4px solid var(--paper);
+  }
+  .hero-art {
+    min-height: 320px;
+  }
+  .filters {
+    position: static;
+    flex-wrap: wrap;
+    padding: 12px;
+  }
+  .catalog {
+    padding-top: 0;
+  }
+  .market-products {
+    grid-auto-rows: auto;
+  }
+}

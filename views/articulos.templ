@@ -29,51 +29,26 @@ templ SortableHeader(columnName, displayName,
     </th>
 }
 
-templ Articulos(articulos []db.Articulo) {
-  <div class="catalog-panel">
-    <div class="product-grid">
+templ Articulos(articulos []db.GetArticulosRow) {
+    <div class="articulo-grid">
       for _,articulo := range articulos {
-        <articulo class="articulo">
-          <div class="articulo-media">
-            <img
-            src="./assets/memoria.jpg"
-            alt="Dos módulos de memoria DDR5"
-            width="316"
-            height="228"
-            loading="lazy"
-          >
-          <button class="favorite" type="button"> //aria-label="Guardar Memoria DDR5 de 32 GB">
-            <svg class="icon" aria-hidden="true">
-              <use href="#icon-heart"></use>
-            </svg>
-          </button>
-        </div>
-
-        <div class="articulo-content">
-          <div class="articulo-meta">
-            <span>RM-032</span>
-            <span>▪ EN STOCK</span>
+        <article class="product-card">
+          <div class="product-image">
+            <img src={ articulo.RutaImagen.String } alt={ articulo.Titulo } /><span class="heart-badge"
+              ><img src="/static/assets/heart.svg" alt="Guardar"
+            /></span>
           </div>
-
-          <h2>{ articulo.Nombre }</h2>
-          <p class="articulo-descripcion">{ articulo.Descripcion }</p>
-          <p class="articulo-precio">{ articulo.Precio }</p>
-          <p class="arituculo-cripto">XMR 0.5</p>
-
-          <div class="articulo-acciones">
-            <button class="add-button" type="button" aria-label="Agregar Memoria DDR5 de 32 GB">
-              Agregar
-              <svg class="icon" aria-hidden="true">
-                <use href="#icon-arrow"></use>
-              </svg>
-            </button>
-            <a class="details-link" href="./articulos/memoria-ddr5.html">
-              Ver ficha <span aria-hidden="true">↗</span>
-            </a>
+          <div class="product-info">
+            <div class="product-meta"><span>{ articulo.IDArticulo }</span><span>▪ EN STOCK</span></div>
+            <h2 class="product-name">{ articulo.Titulo }</h2>
+            <p class="product-description">{ articulo.Descripcion }</p>
+            <p class="product-price">{ articulo.Precio }</p>
+            // <p class="installments">3 × $63.000 sin interés</p>
+            <div class="product-actions">
+              <button class="btn">Agregar ↗</button><a class="text-link" href="#">Ver ficha ↗</a>
+            </div>
           </div>
-        </div>
-        </articulo>
+        </article>
       }
-    </div>
   </div>
 }

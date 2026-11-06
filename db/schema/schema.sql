@@ -40,3 +40,18 @@ CREATE TABLE detalle_compra (
     precio_historico_unitario NUMERIC(10, 2) NOT NULL,
     CONSTRAINT pk_detalle_compra PRIMARY KEY (id_compra, id_articulo)
 );
+
+CREATE TABLE carrito (
+  id_usuario   int NOT NULL CONSTRAINT fk_usuario REFERENCES usuario(id_usuario),
+  id_articulo  int NOT NULL CONSTRAINT fk_articulo REFERENCES articulo(id_articulo),
+  cantidad     int NOT NULL DEFAULT 1,
+  fecha_agregado TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_usuario, id_articulo)
+);
+
+CREATE TABLE favorito (
+  id_usuario  int NOT NULL CONSTRAINT fk_usuario REFERENCES usuario(id_usuario),
+  id_articulo int NOT NULL CONSTRAINT fk_articulo REFERENCES articulo(id_articulo),
+  fecha       TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id_usuario, id_articulo)
+);

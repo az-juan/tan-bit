@@ -1,6 +1,7 @@
 .env
 tmp/
 db/sqlc/
+views/*.go
 # Solo desarrollo
 Dockerfile
 compose.yaml

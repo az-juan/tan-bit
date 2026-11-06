@@ -1,0 +1,58 @@
+package views
+
+templ Login() {
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TAN-BIT · Acceso</title>
+    <link rel="stylesheet" href="/static/css/shared.css" />
+    <link rel="stylesheet" href="/static/css/login.css" />
+  </head>
+  <body>
+    <div class="page login-page">
+    @Header()
+      <main class="login-main">
+        <div class="route">
+          <span>INICIO / MI CUENTA</span><span class="green">■ CONEXIÓN SEGURA</span>
+        </div>
+        <div class="login-grid">
+          <section class="login-intro">
+            <p class="eyebrow">HARDWARE CON IDENTIDAD.</p>
+            <h1 class="display">VOLVÉ A<br />CONECTAR.</h1>
+            <p>Tus favoritos, tus piezas y la gente que las hace. Todo en el mismo circuito.</p>
+            <img src="/static/assets/e0654.png" alt="Teclado Cobre 75" />
+          </section>
+          <section class="login-form-wrap">
+            <form class="pixel-frame login-form">
+              <p class="eyebrow">[ ACCESO A TU CUENTA ]</p>
+              <h2 class="display">HOLA DE NUEVO, MAKER.</h2>
+              <p>Ingresá para seguir donde lo dejaste.</p>
+              <label class="form-group"
+                ><span class="field-label">EMAIL</span><input class="field" type="email" placeholder="tu.señal@correo.com"
+              /></label>
+              <label class="form-group"
+                ><span class="field-label">CONTRASEÑA</span><input class="field" type="password" value="hardware2026"
+              /></label>
+              <div class="remember">
+                <label><input type="checkbox" /> Recordarme</label><a href="#">Olvidé mi contraseña</a>
+              </div>
+              <button class="btn" type="submit">Iniciar sesión &nbsp; ↗</button>
+              <hr />
+              <p>¿Primera vez por acá?</p>
+              <a class="btn ghost" href="#">Crear una cuenta &nbsp; ↗</a>
+            </form>
+            <p class="form-legal">
+              Al ingresar, accedés a un espacio de intercambio respetuoso. Consultá los términos y
+              la política de privacidad.
+            </p>
+          </section>
+        </div>
+      </main>
+    @Footer()
+    </div>
+  </body>
+</html>
+}

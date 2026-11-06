@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: TAN-BIT API
+  version: 1.0.0
+  description: Marketplace de hardware TAN-BIT
+servers:
+  - url: http://localhost:8080
+paths:
+  /articulos:
+    get:
+      summary: Listar artículos
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Crear artículo
+      responses:
+        '201':
+          description: Creado
+  /articulos/{id}:
+    get:
+      summary: Obtener artículo
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+  /vendedores:
+    get:
+      summary: Listar vendedores
+      responses:
+        '200':
+          description: OK
+  /vendedores/{id}:
+    get:
+      summary: Obtener vendedor
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+  /usuarios:
+    get:
+      summary: Listar usuarios
+      responses:
+        '200':
+          description: OK
+  /usuarios/{id}:
+    get:
+      summary: Obtener usuario
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: OK
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200':
+          description: OK

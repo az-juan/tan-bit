@@ -1,0 +1,138 @@
+.sell-page {
+  --page-height: 1780px;
+}
+.sell-main {
+  gap: 46px;
+}
+.sell-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.sell-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.sell-steps span {
+  padding: 18px;
+  border: 2px solid var(--line);
+  background: var(--panel);
+  font-family: "VT323:Regular";
+  font-size: 23px;
+}
+.sell-steps .active {
+  background: var(--copper);
+  color: var(--night);
+}
+.sell-layout {
+  display: grid;
+  grid-template-columns: 832px 1fr;
+  gap: 32px;
+}
+.sell-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px;
+}
+.sell-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sell-form label > span,
+.sell-form small {
+  font-size: 10px;
+  line-height: 1.7;
+}
+.form-title,
+.form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.form-title h2,
+.preview h2,
+.tips h2,
+.honesty h2 {
+  font-size: 28px;
+}
+.form-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.sell-form textarea {
+  resize: none;
+}
+.sell-form h3 {
+  font-size: 26px;
+}
+.upload {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px;
+  border: 2px dashed var(--sand);
+}
+.upload > strong {
+  color: var(--orange);
+  font-size: 34px;
+}
+.upload div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.upload a {
+  color: var(--orange);
+}
+.form-submit {
+  padding-top: 20px;
+  border-top: 2px solid var(--line);
+}
+.sell-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 24px;
+}
+.preview img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+.preview p,
+.tips p {
+  line-height: 1.7;
+}
+.tips {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 0 24px;
+}
+.honesty {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 24px;
+  background: var(--brown);
+}
+.honesty p {
+  line-height: 1.7;
+}
+@media (max-width: 900px) {
+  .sell-steps,
+  .sell-layout,
+  .form-columns,
+  .honesty {
+    grid-template-columns: 1fr;
+  }
+}

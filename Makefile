@@ -15,6 +15,7 @@ run: generate
 
 generate:
 	@sqlc generate
+	@templ generate
 
 api_logs:
 	@$(COMPOSE) logs api

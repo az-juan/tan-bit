@@ -7,8 +7,9 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	db "tan-bit.com/tan-bit/db/sqlc"
 	"time"
+
+	db "tan-bit.com/tan-bit/db/sqlc"
 )
 
 type ArticuloHandler struct {
@@ -106,8 +107,8 @@ func NewArticuloHandler(queries *db.Queries) *ArticuloHandler {
 // Manejador para /articulos
 func (h *ArticuloHandler) ArtsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	case http.MethodGet:
-		h.getArticulos(w, r)
+	// case http.MethodGet:
+	// h.GetArticulos(w, r)
 	case http.MethodPost:
 		h.createArticulo(w, r)
 	default:
@@ -141,18 +142,18 @@ func (h *ArticuloHandler) ArtHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Metodo no permitido",
 			http.StatusMethodNotAllowed)
 	}
+	// templ.Handler(views.UserPage(models.Users)).ServeHTTP(w, r)
 }
 
 // GET /articulos - Obtener todos los articulos
-func (h *ArticuloHandler) getArticulos(w http.ResponseWriter, r *http.Request) {
-	arts, err := h.queries.GetArticulos(r.Context())
-	if err != nil {
-		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(toArticulosFromGet(arts))
-}
+// func (h *ArticuloHandler) GetArticulos(w http.ResponseWriter, r *http.Request) {
+// 	arts, err := h.queries.GetArticulos(r.Context())
+// 	if err != nil {
+// 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
+// 		return
+// 	}
+// 	views.Marketplace(arts).Render(r.Context(), w)
+// }
 
 // POST /articulos - Crear nuevo articulo
 func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request) {

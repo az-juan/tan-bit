@@ -1,0 +1,65 @@
+package views
+
+templ Carrito() {
+ <!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>TAN-BIT · Carrito</title>
+    <link rel="stylesheet" href="/static/css/shared.css" />
+    <link rel="stylesheet" href="/static/css/carrito.css" />
+  </head>
+  <body>
+    <div class="page cart-page">
+      @Header()
+      <main class="container cart-main">
+        <div class="route">
+          <span>INICIO / CARRITO</span><span class="green">■ 02 PIEZAS SELECCIONADAS</span>
+        </div>
+        <nav class="checkout-steps">
+          <span class="active">01 / CARRITO</span><span>02 / DATOS Y ENTREGA</span><span>03 / CONFIRMACIÓN</span>
+        </nav>
+        <div class="cart-layout">
+          <section class="cart-items">
+            // articulos guardados
+            <section class="shipping">
+              <div>
+                <h2 class="display">¿A DÓNDE VIAJA TU HARDWARE?</h2>
+                <p>Consultá las opciones de entrega disponibles.</p>
+              </div>
+              <label><span>CÓDIGO POSTAL</span><input class="field" value="7000" /></label><button class="btn ghost">Calcular ↗</button>
+            </section>
+          </section>
+          <aside class="summary-wrap">
+            <div class="pixel-frame copper cart-summary">
+              <h2 class="display">TU CARRITO [0]</h2>
+              <hr />
+              <div><span>Productos (0)</span><span>$0</span></div>
+              <div><span>Envío</span><span>A coordinar</span></div>
+              <hr />
+              <small>TOTAL DE PRODUCTOS</small><strong>$0</strong>
+              <p>
+                El envío no está incluido. Vas a ver el detalle de cada vendedor antes de confirmar.
+              </p>
+              <button class="btn">Continuar con la compra &nbsp; ↗</button><small>Pesos argentinos · Otros medios de pago según el vendedor.</small>
+            </div>
+            <p class="direct">[✓] <span>Contacto directo con quien hizo tu pieza.</span></p>
+          </aside>
+        </div>
+        <section class="return-cta">
+          <div>
+            <h2 class="display">¿TODAVÍA ESTÁS EXPLORANDO?</h2>
+            <p>
+              Tu próximo hallazgo puede estar a un clic. Las piezas guardadas te esperan en
+              favoritos.
+            </p>
+          </div>
+          <a class="btn" href="./marketplace">Volver al marketplace ↗</a>
+        </section>
+      </main>
+      @Footer()
+    </div>
+  </body>
+</html>
+}

@@ -5,6 +5,8 @@
 
 Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circulación de articulos que aún tienen utilidad entre vecinos.
 
+*DESCENTRALIZADO - CONFIANZA - OPORTUNIDAD*
+
 [Documentación del proyecto](./docs/)
 
 ## Dependencias
@@ -20,7 +22,7 @@ Para ejecutar la aplicación:
   chmod u+x run-app.sh
   ./run-app.sh
 ```
-Para acceder a la página: http://localhost:8080
+Para acceder a la página: http://localhost:8080/marketplace
 
 ## Asegurarse de
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`.

@@ -18,23 +18,18 @@ func main() {
 
 	queries := sqlc.New(db) //Instanciamos queries para ejecutarse en nuestro pool
 	artHandler := handlers.NewArticuloHandler(queries)
-	vendHandler := handlers.NewVendedorHandler(queries)
-	userHandler := handlers.NewUsuarioHandler(queries)
+	// vendHandler := handlers.NewVendedorHandler(queries)
+	// userHandler := handlers.NewUsuarioHandler(queries)
 
-	staticDir := "./static"
-	fileServer := http.FileServer(http.Dir(staticDir)) //Maneja Content-Type automaticamente
+	fs := http.FileServer(http.Dir("static"))
 
 	// Configurar rutas
-	http.HandleFunc("/articulos", artHandler.ArtsHandler)
-	http.HandleFunc("/articulos/", artHandler.ArtHandler)
-	http.HandleFunc("/vendedores", vendHandler.VendsHandler)
-	http.HandleFunc("/vendedores/", vendHandler.VendHandler)
-	http.HandleFunc("/usuarios", userHandler.UsersHandler)
-	http.HandleFunc("/usuarios/", userHandler.UserHandler)
 	http.HandleFunc("/health", healthHandler)
+	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	http.Handle("GET /{$}", fileServer)
-	http.HandleFunc("/", notFoundHandler)
+	// http.Handle("GET /{$}", http.StripPrefix("/static/", fileServer))
+	http.Handle("/", artHandler)
+	// http.HandleFunc("/", notFoundHandler)
 	port := ":8080"
 
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)
