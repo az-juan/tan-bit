@@ -1,0 +1,89 @@
+package views
+
+templ RevisarPublicar(data VenderData) {
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TAN-BIT · Revisar y publicar</title>
+    <link rel="stylesheet" href="/static/css/shared.css" />
+    <link rel="stylesheet" href="/static/css/vender.css" />
+    <link rel="stylesheet" href="/static/css/revisar_publicar.css" />
+  </head>
+  <body>
+    <div class="page sell-page">
+    @Header()
+      <main class="container sell-main">
+        <section class="sell-intro">
+          <div class="route"><span>INICIO / VENDER / REVISAR Y PUBLICAR</span></div>
+          <h1 class="display page-title">REVISÁ Y PUBLICÁ.</h1>
+        </section>
+        <nav class="sell-steps">
+          <span>01 / TU PIEZA</span><span>02 / PRECIO Y ENTREGA</span>
+          <span class="active">03 / REVISAR Y PUBLICAR</span>
+        </nav>
+        <div class="sell-layout">
+          <section class="pixel-frame sell-form">
+            <form method="post" action="/articulos">
+            <div class="form-title">
+              <h2 class="display">03. REVISAR Y PUBLICAR</h2>
+              <span>* OBLIGATORIO</span>
+            </div>
+            <input type="hidden" name="titulo" value={ data.Titulo } />
+            <input type="hidden" name="descripcion" value={ data.Descripcion } />
+            <input type="hidden" name="condicion" value={ string(data.Condicion) } />
+            <input type="hidden" name="categoria" value={ string(data.Categoria) } />
+            <input type="hidden" name="id_vendedor" value="1" />
+            <input type="hidden" name="stock" value="1" />
+            <div class="review-block">
+              <h3 class="display">PIEZA</h3>
+              <p>{ data.Titulo }</p>
+              <small>{ string(data.Categoria) } · { string(data.Condicion) } · { data.Ubicacion }</small>
+            </div>
+            <div class="review-block">
+              <h3 class="display">DESCRIPCIÓN</h3>
+              <p>{ data.Descripcion }</p>
+            </div>
+            <div class="review-block">
+              <h3 class="display">PRECIO Y ENTREGA</h3>
+              <p>{ data.Precio } · { data.Ubicacion }</p>
+            </div>
+            // <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" /></label>
+            <div class="review-block">
+              <h3 class="display">FOTOS</h3>
+              <div class="review-photos">
+                <img src="/static/assets/teclado.png" alt="Foto 1" /><img src="/static/assets/gabinete.png" alt="Foto 2" /><img src="/static/assets/cooler.png" alt="Foto 3" />
+              </div>
+            </div>
+            <label class="check"><input type="checkbox" /><span>Confirmo que la pieza es propia o que puedo venderla, y acepto los términos del servicio.</span></label>
+            <div class="form-submit">
+              <span>Tu publicación será visible en el marketplace.</span><button class="btn">Publicar ↗</button>
+            </div>
+            </form>
+          </section>
+          <aside class="sell-aside">
+            <div class="pixel-frame preview"><small>VISTA PREVIA / FINAL</small><img src="/static/assets/teclado.png" alt="Vista previa" />
+              <h2 class="display">TU PUBLICACIÓN</h2>
+              <p>Así se verá en el marketplace una vez publicada.</p>
+              <span class="green">■ LISTA PARA PUBLICAR</span>
+            </div>
+            <div class="tips">
+              <h2 class="display">ÚLTIMO CHEQUEO.</h2>
+              <p>01 &nbsp; Revisá fotos y precios.</p>
+              <p>02 &nbsp; Confirmá la entrega.</p>
+              <p>03 &nbsp; Leé los términos.</p>
+              <p>04 &nbsp; Publicá con confianza.</p>
+            </div>
+          </aside>
+        </div>
+        <section class="honesty">
+          <h2 class="display">HECHO CON HONESTIDAD.</h2>
+          <p>Publicá solo piezas propias o que puedas vender. Sin copias engañosas, sin especificaciones inventadas. Leé los términos antes de publicar.</p>
+        </section>
+      </main>
+      @Footer()
+    </div>
+  </body>
+</html>
+}

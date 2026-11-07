@@ -1,6 +1,6 @@
 package views
 
-templ Favoritos() {
+templ Favoritos(filtros []FiltroCategoria) {
 
 <!doctype html>
 <html lang="es">
@@ -23,8 +23,14 @@ templ Favoritos() {
         </section>
         <div class="favorite-controls">
           <div class="filters">
-            <button class="active">TODOS [4]</button><button>ELECTRÓNICA [2]</button><button>ESCRITORIO [2]</button>
-          </div>
+          for i, f := range filtros {
+            if i == 0 {
+              <button class="active">{ f.Label } [{ f.Count }]</button>
+            } else {
+              <button>{ f.Label } [{ f.Count }]</button>
+            }
+          }
+        </div>
           <span>ORDENAR: GUARDADOS RECIENTEMENTE ↓</span>
         </div>
         <section class="pixel-frame favorites-articulos">

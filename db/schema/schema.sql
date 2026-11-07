@@ -1,5 +1,5 @@
 CREATE TYPE condicion AS ENUM ('nuevo', 'muy bueno', 'usado', 'reacondicionado', 'a reparar');
-CREATE TYPE categoria AS ENUM ('notebook','pantalla','electronica','periferico','accesorio','audio','video','gaming');
+CREATE TYPE categoria AS ENUM ('notebook','pantalla','electronica','periferico','accesorio','audio','video','gaming','comunicacion','analogico','decoracion');
 
 CREATE TABLE usuario (
     id_usuario  SERIAL      CONSTRAINT pk_usuario PRIMARY KEY,
@@ -23,6 +23,7 @@ CREATE TABLE articulo (
     precio          NUMERIC(10, 2) NOT NULL CHECK (precio >= 0),
     stock           INTEGER      NOT NULL CHECK (stock >= 0),
     fecha_publicacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    ubicacion       text         NOT NULL,
     id_vendedor     INTEGER      NOT NULL CONSTRAINT fk_producto_vendedor REFERENCES vendedor(id_vendedor)
 );
 
@@ -30,13 +31,13 @@ CREATE TABLE compra (
     id_compra       SERIAL          CONSTRAINT pk_compra PRIMARY KEY,
     id_comprador    INTEGER         NOT NULL CONSTRAINT fk_compra_usuario REFERENCES usuario(id_usuario),
     fecha           TIMESTAMP       NOT NULL,
-    total           NUMERIC(10, 2)  NOT NULL
+    total           NUMERIC(10, 2)  NOT NULL CHECK (total >= 1)
 );
 
 CREATE TABLE detalle_compra (
     id_compra       INTEGER     NOT NULL CONSTRAINT fk_detalle_compra REFERENCES compra(id_compra),
     id_articulo     INTEGER     NOT NULL CONSTRAINT fk_detalle_producto REFERENCES articulo(id_articulo),
-    cantidad        INTEGER     NOT NULL,
+    cantidad        INTEGER     NOT NULL CHECK (cantidad >= 1),
     precio_historico_unitario NUMERIC(10, 2) NOT NULL,
     CONSTRAINT pk_detalle_compra PRIMARY KEY (id_compra, id_articulo)
 );
@@ -44,7 +45,7 @@ CREATE TABLE detalle_compra (
 CREATE TABLE carrito (
   id_usuario   int NOT NULL CONSTRAINT fk_usuario REFERENCES usuario(id_usuario),
   id_articulo  int NOT NULL CONSTRAINT fk_articulo REFERENCES articulo(id_articulo),
-  cantidad     int NOT NULL DEFAULT 1,
+  cantidad     int NOT NULL CHECK (cantidad >= 1),
   fecha_agregado TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id_usuario, id_articulo)
 );

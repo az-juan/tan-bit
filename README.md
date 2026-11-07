@@ -22,7 +22,7 @@ Para ejecutar la aplicación:
   chmod u+x run-app.sh
   ./run-app.sh
 ```
-Para acceder a la página: http://localhost:8080/marketplace
+Para acceder a la página: http://localhost:8080
 
 ## Asegurarse de
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`.

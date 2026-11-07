@@ -4,7 +4,7 @@ import (
     "tan-bit.com/tan-bit/db/sqlc"
 )
 
-templ Marketplace(articulos []db.GetArticulosRow) {
+templ Marketplace(articulos []db.GetArticulosRow, filtros []FiltroCategoria) {
 
 <!doctype html>
 <html lang="es">
@@ -30,24 +30,23 @@ templ Marketplace(articulos []db.GetArticulosRow) {
           </div>
           <div class="hero-art">
             <img
-              src="/static/assets/bmo.png"
-              width="300"
-              alt="BMO cubierto de vegetación"
-            />
-            <img
-              src="static/assets/hero.png"
-              width="300"
-              alt="Mesa con objetos tecnologicos en un patio"
+             src="/static/assets/finn-y-jake.gif"
+             width="300"
+             alt="finn, jake y bmo"
             />
           </div>
         </section>
         
         <section id="productos" class="catalog">
           <div class="filters">
-            <button class="active">TODOS [4]</button>
-            <button>ELECTRÓNICA [2]</button>
-            <button>AUDIO [2]</button>
-          </div>
+          for i, f := range filtros {
+            if i == 0 {
+              <button class="active">{ f.Label } [{ f.Count }]</button>
+            } else {
+              <button>{ f.Label } [{ f.Count }]</button>
+            }
+          }
+        </div>
           <div class="product-grid market-products">
             @Articulos(articulos)
           </div>

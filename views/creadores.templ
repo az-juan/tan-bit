@@ -1,21 +1,81 @@
 package views
 
 templ Creadores() {
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>TAN-BIT · Creadores</title>
-        <link rel="stylesheet" href="/static/css/shared.css" />
-        <link rel="stylesheet" href="/static/css/creadores.css" />
-    </head>
-    <body>
-        <div class="page creadores-page">
-            <main>
-                <h1>Creadores</h1>
-            </main>
-        </div>
-    </body>
-    </html>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TAN-BIT · Creadores</title>
+    <link rel="stylesheet" href="/static/css/shared.css" />
+    <link rel="stylesheet" href="/static/css/creadores.css" />
+  </head>
+  <body>
+    <div class="page creators-page">
+    @Header()
+      <main class="container creators-main">
+        <section class="creators-intro">
+          <div class="route"><span>INICIO / MEET TAN-BIT / MAKERS</span><span class="green">■ DIRECTORIO DE TALLERES</span></div>
+          <h1 class="display page-title">CONOCÉ LOS CREADORES.</h1>
+        </section>
+        <section class="pixel-frame copper creators-hero">
+          <div class="creators-hero-art">
+            <img src="/static/assets/gabinete.png" alt="Gabinete de nogal" />
+          </div>
+          <div class="creators-hero-copy">
+            <span class="green">■ EN FOCO / NODO NOGAL</span>
+            <h2 class="display">EL GABINETE SALE DEL TALLER.</h2>
+            <p>Una veta nunca se repite. Un buen diseño tampoco tiene por qué parecerse a todos los demás.</p>
+            <small>Conocé el proceso detrás del Nogal T-01: de la selección de la madera al último ajuste del panel.</small>
+            <a class="btn" href="#">Conocer el proceso ↗</a>
+          </div>
+        </section>
+        <section class="creators-directory">
+          <div class="directory-head">
+            <h2 class="display">EXPLORÁ LOS TALLERES [3]</h2>
+            <nav class="directory-filters"><a class="active">TODOS</a><a>ELECTRÓNICA</a><a>CARPINTERÍA</a><a>OBJETOS</a></nav>
+          </div>
+          <div class="makers-grid">
+            <article class="pixel-frame maker-card">
+              <img src="/static/assets/teclado.png" alt="Teclado mecánico" />
+              <div class="maker-info">
+                <div class="maker-head"><span class="maker-logo">TC</span><div><strong>Taller Cobre</strong><small>TANDIL, ARGENTINA</small></div></div>
+                <span class="maker-cat">TECLADOS Y ELECTRÓNICA</span>
+                <p>Switches elegidos a mano, madera trabajada con paciencia y una obsesión por el sonido justo.</p>
+                <div class="maker-foot"><span>06 PIEZAS</span><a class="btn" href="#">Ver taller ↗</a></div>
+              </div>
+            </article>
+            <article class="pixel-frame maker-card">
+              <img src="/static/assets/gabinete.png" alt="Gabinete de nogal" />
+              <div class="maker-info">
+                <div class="maker-head"><span class="maker-logo">NN</span><div><strong>Nodo Nogal</strong><small>TANDIL, ARGENTINA</small></div></div>
+                <span class="maker-cat">GABINETES DE AUTOR</span>
+                <p>Diseño térmico y carpintería en la misma mesa. Gabinetes que no se esconden debajo del escritorio.</p>
+                <div class="maker-foot"><span>04 PIEZAS</span><a class="btn" href="#">Ver taller ↗</a></div>
+              </div>
+            </article>
+            <article class="pixel-frame maker-card">
+              <img src="/static/assets/pad.png" alt="Objeto de cuero" />
+              <div class="maker-info">
+                <div class="maker-head"><span class="maker-logo">SC</span><div><strong>Sur Cuero</strong><small>TANDIL, ARGENTINA</small></div></div>
+                <span class="maker-cat">OBJETOS DE ESCRITORIO</span>
+                <p>Cuero curtido vegetal, costuras honestas y objetos que ganan carácter con cada día de uso.</p>
+                <div class="maker-foot"><span>08 PIEZAS</span><a class="btn" href="#">Ver taller ↗</a></div>
+              </div>
+            </article>
+          </div>
+        </section>
+        <section class="makers-cta">
+          <small>PERFILES DE MUESTRA / CONTENIDO EDITABLE PARA CADA TALLER</small>
+          <div class="pixel-frame makers-cta-box">
+            <h2 class="display">¿TU TALLER TODAVÍA NO ESTÁ ACÁ?</h2>
+            <p>Mostrá lo que hacés, contá tu proceso y encontrá a quienes valoran una pieza bien hecha.</p>
+            <a class="btn" href="./vender">Sumarme como maker ↗</a>
+          </div>
+        </section>
+      </main>
+      @Footer()
+    </div>
+  </body>
+</html>
 }

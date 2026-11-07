@@ -24,6 +24,7 @@ type CreateArticuloRequest struct {
 	Precio      string `json:"precio"`
 	Stock       int32  `json:"stock"`
 	IDVendedor  int32  `json:"id_vendedor"`
+	Ubicacion   string `json:"ubicacion"`
 }
 
 type UpdateArticuloRequest struct {
@@ -157,14 +158,51 @@ func (h *ArticuloHandler) ArtHandler(w http.ResponseWriter, r *http.Request) {
 
 // POST /articulos - Crear nuevo articulo
 func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request) {
-	var req CreateArticuloRequest
+	if r.Header.Get("Content-Type") != "" && (r.Header.Get("Content-Type") == "application/x-www-form-urlencoded" || (len(r.Header.Get("Content-Type")) >= 33 && r.Header.Get("Content-Type")[:33] == "multipart/form-data")) {
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Formulario inválido: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+		titulo := r.FormValue("titulo")
+		descripcion := r.FormValue("descripcion")
+		condicion := r.FormValue("condicion")
+		categoria := r.FormValue("categoria")
+		precio := r.FormValue("precio")
+		stockStr := r.FormValue("stock")
+		vendedorStr := r.FormValue("id_vendedor")
+		stock := int32(1)
+		if v, err := strconv.Atoi(stockStr); err == nil {
+			stock = int32(v)
+		}
+		idVendedor := int32(1)
+		if v, err := strconv.Atoi(vendedorStr); err == nil {
+			idVendedor = int32(v)
+		}
+		params := db.CreateArticuloParams{
+			Titulo:      titulo,
+			Descripcion: descripcion,
+			Condicion:   db.Condicion(condicion),
+			Categoria:   db.Categoria(categoria),
+			Precio:      precio,
+			Stock:       stock,
+			IDVendedor:  idVendedor,
+			Ubicacion:   r.FormValue("ubicacion"),
+		}
+		_, err := h.queries.CreateArticulo(r.Context(), params)
+		if err != nil {
+			http.Error(w, "Error al crear el artículo: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
+	var req CreateArticuloRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	params := db.CreateArticuloParams{
 		Titulo:      req.Titulo,
 		Descripcion: req.Descripcion,
@@ -173,8 +211,8 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 		Precio:      req.Precio,
 		Stock:       req.Stock,
 		IDVendedor:  req.IDVendedor,
+		Ubicacion:   req.Ubicacion,
 	}
-
 	nuevoArticulo, err := h.queries.CreateArticulo(r.Context(), params)
 	if esViolacionFK(err) {
 		http.Error(w, "No existe tal vendedor", http.StatusBadRequest)
@@ -184,7 +222,6 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "Error al crear el artículo: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(toArticuloFromCreate(nuevoArticulo))

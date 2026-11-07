@@ -1,6 +1,10 @@
 package views
 
-templ Vender() {
+import (
+	"tan-bit.com/tan-bit/db/sqlc"
+)
+
+templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condicion) {
 
 <!doctype html>
 <html lang="es">
@@ -24,30 +28,35 @@ templ Vender() {
           <span>03 / REVISAR Y PUBLICAR</span>
         </nav>
         <div class="sell-layout">
-          <form class="pixel-frame sell-form">
+          <form class="pixel-frame sell-form" method="post" action="/precio-entrega">
             <div class="form-title">
               <h2 class="display">01. CONTANOS SOBRE TU PIEZA</h2>
               <span>* OBLIGATORIO</span>
             </div>
             <label>
               <span>TÍTULO DE LA PUBLICACIÓN *</span>
-              <input class="field" placeholder="Ej. Teclado mecánico de nogal · 75%"/>
+              <input class="field" name="titulo" value={ data.Titulo } placeholder="Ej. Teclado mecánico de nogal · 75%"/>
             </label>
             <div class="form-columns">
               <label>
                 <span>CATEGORÍA *</span>
-                  <select class="field">
-                  <option>Electrónica</option>
-                </select></label>
-                <label><span>ESTADO *</span><select class="field">
-                  <option>Hecho a mano · nuevo</option>
+                  <select class="field" name="categoria">
+                  for _, c := range categorias {
+                    <option value={ string(c) } selected?={ data.Categoria == c }>{ CategoriaLabel(c) }</option>
+                  }
+                  </select></label>
+                <label><span>ESTADO *</span><select class="field" name="condicion">
+                  for _, c := range condiciones {
+                    <option value={ string(c) } selected?={ data.Condicion == c }>{ string(c) }</option>
+                  }
                 </select></label>
             </div>
             <label><span>DESCRIPCIÓN *</span><textarea
                 class="field"
+                name="descripcion"
                 rows="4"
                 placeholder="Contá qué la hace especial: materiales, proceso, compatibilidad y todo lo que incluye."
-              ></textarea>
+              >{ data.Descripcion }</textarea>
             </label>
             <small
               >Hecho por vos, contado por vos. Sé preciso con el estado y las especificaciones. Una
@@ -56,20 +65,22 @@ templ Vender() {
             <div class="upload">
               <strong>+</strong>
               <div>
-                <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 3 a 8 imágenes</small><a>SELECCIONAR FOTOS ↗</a>
+                <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 3 a 8 imágenes</small><a href="#" onclick="document.getElementById('fotos').click();return false;">SELECCIONAR FOTOS ↗</a>
+                <input type="file" id="fotos" name="fotos" accept="image/*" multiple style="display:none" />
+                <img id="preview" alt="Vista previa" style="max-width:100%;max-height:200px;margin-top:8px;display:none" />
               </div>
             </div>
             <div class="form-columns">
-              <label><span>MATERIALES</span><input class="field" placeholder="Nogal, aluminio, cobre…" /></label><label
-                ><span>UBICACIÓN *</span><input class="field" value="Tandil, Buenos Aires"
-              /></label>
+            <label>
+              <span>UBICACIÓN *</span><input class="field" name="ubicacion" value={ data.Ubicacion } placeholder="Tandil, Buenos Aires"/>
+            </label>
             </div>
             <div class="form-submit">
               <span>Tu publicación todavía no es visible.</span><button class="btn">Continuar ↗</button>
             </div>
           </form>
           <aside class="sell-aside">
-            <div class="pixel-frame preview"><small>VISTA PREVIA / BORRADOR</small><img src="/static/assets/e0654.png" alt="Vista previa de teclado" />
+            <div class="pixel-frame preview"><small>VISTA PREVIA / BORRADOR</small><img src="" alt="Vista previa del articulo" />
               <h2 class="display">TU PRÓXIMA PUBLICACIÓN</h2>
               <p>
                 Las fotos y los detalles de tu pieza aparecerán acá mientras completás la ficha.
@@ -95,6 +106,15 @@ templ Vender() {
       </main>
       @Footer()
     </div>
+    <script>
+      document.getElementById('fotos').addEventListener('change', function(e){
+        var f = e.target.files && e.target.files[0];
+        if(!f) return;
+        var r = new FileReader();
+        r.onload = function(ev){ var img=document.getElementById('preview'); img.src=ev.target.result; img.style.display='block'; };
+        r.readAsDataURL(f);
+      });
+    </script>
   </body>
 </html>
 }

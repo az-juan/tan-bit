@@ -1,21 +1,126 @@
 package views
 
 templ Terminos() {
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>TAN-BIT · Terminos</title>
-        <link rel="stylesheet" href="/static/css/shared.css" />
-        <link rel="stylesheet" href="/static/css/terminos.css" />
-    </head>
-    <body>
-        <div class="page terminos-page">
-            <main>
-                <h1>Terminos</h1>
-            </main>
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TAN-BIT · Términos</title>
+    <link rel="stylesheet" href="/static/css/shared.css" />
+    <link rel="stylesheet" href="/static/css/terminos.css" />
+  </head>
+  <body>
+    <div class="page privacy-page" id="inicio">
+    @Header()
+     <main class="container privacy-main">
+        <section class="privacy-intro">
+          <div class="route">
+            <span>INICIO / TÉRMINOS</span><span class="green">■ PLANTILLA EDITABLE / V.01</span>
+          </div>
+          <h1 class="display page-title">TÉRMINOS DEL SERVICIO, SIN RUIDO.</h1>
+          <p>
+            Una plantilla clara para definir las reglas de uso del marketplace, las responsabilidades de
+            cada parte y el marco de las transacciones entre makers y compradores.
+          </p>
+        </section>
+        <aside class="draft">
+          <strong>[ ! ] BORRADOR</strong><span
+            >Modelo de contenido para completar y revisar con asesoramiento legal antes de publicar.
+            Los campos entre corchetes no representan datos de una empresa real.</span>
+        </aside>
+        <div class="privacy-layout">
+          <aside class="privacy-index">
+            <nav class="pixel-frame">
+              <h2 class="display">EN ESTE DOCUMENTO</h2>
+              <a href="#c1">01 &nbsp; Alcance y aceptación</a><a href="#c2">02 &nbsp; Cuentas y perfiles</a><a href="#c3">03 &nbsp; Publicaciones y piezas</a><a href="#c4">04 &nbsp; Transacciones y pagos</a><a href="#c5">05 &nbsp; Envíos y devoluciones</a><a href="#c6">06 &nbsp; Conducta de la comunidad</a><a href="#c7">07 &nbsp; Propiedad intelectual</a><a href="#c8">08 &nbsp; Limitación de responsabilidad</a>
+              <hr />
+              <small>ACTUALIZACIÓN</small><span>[día / mes / año]</span>
+            </nav>
+            <p>¿Necesitás una aclaración? Usá el canal de contacto indicado en este documento.</p>
+          </aside>
+          <article class="legal-document">
+            <small>TAN-BIT / DOCUMENTACIÓN DE LA COMUNIDAD</small>
+            <section id="c1">
+              <h2 class="display">01. Alcance y aceptación</h2>
+              <p>
+                Estos términos regulan el uso de [nombre del sitio] y los servicios ofrecidos a quienes
+                publican, compran o consultan piezas de hardware. Al crear una cuenta o utilizar el sitio,
+                aceptás estos términos. Completar jurisdicción y fecha de vigencia antes de publicar.
+              </p>
+            </section>
+            <section id="c2">
+              <h2 class="display">02. Cuentas y perfiles</h2>
+              <p>
+                Cada persona es responsable de la información de su perfil y de mantener la seguridad de
+                sus credenciales. No se permite suplantar identidades ni crear cuentas múltiples con fines
+                engañosos. El sitio puede suspender cuentas que incumplan estas reglas.
+              </p>
+            </section>
+            <section id="c3">
+              <h2 class="display">03. Publicaciones y piezas</h2>
+              <p>
+                Quien publica una pieza declara que es su titular o cuenta con autorización para venderla,
+                y que la descripción, las fotos y el estado reflejan la realidad. No se permite publicar
+                material ilegal, peligroso o que infrinja derechos de terceros.
+              </p>
+            </section>
+            <section id="c4">
+              <h2 class="display">04. Transacciones y pagos</h2>
+              <p>
+                Las transacciones se realizan directamente entre comprador y vendedor, salvo que se indique
+                otra modalidad. Definir los métodos de pago aceptados, los plazos y la responsabilidad de
+                cada parte frente a fraudes o incumplimientos. Las comisiones aplicables deberán estar
+                publicadas de forma clara.
+              </p>
+            </section>
+            <section id="c5">
+              <h2 class="display">05. Envíos y devoluciones</h2>
+              <p>
+                Establecer quién gestiona el envío, los costos y los plazos estimados. Describir la
+                política de devoluciones, cambios y garantías, incluyendo los casos en que una pieza no
+                coincide con la publicación. Aclarar cómo se resuelven los reclamos.
+              </p>
+            </section>
+            <section id="c6">
+              <h2 class="display">06. Conducta de la comunidad</h2>
+              <p>
+                Se espera un trato respetuoso y honesto entre los participantes. No se toleran estafas,
+                acoso, spam ni intentos de eludir las reglas del sitio. Las infracciones pueden derivar en
+                la suspensión o eliminación de la cuenta.
+              </p>
+            </section>
+            <section id="c7">
+              <h2 class="display">07. Propiedad intelectual</h2>
+              <p>
+                Los contenidos del sitio, incluyendo marca, diseño y textos, pertenecen a [nombre del
+                titular] o a sus licenciantes. Las imágenes y descripciones de las piezas son
+                responsabilidad de quien las publica, quien otorga al sitio una licencia para mostrarlas.
+              </p>
+            </section>
+            <section id="c8">
+              <h2 class="display">08. Limitación de responsabilidad</h2>
+              <p>
+                El sitio se ofrece "tal cual" y no garantiza la disponibilidad continua ni la exactitud de
+                las publicaciones. La responsabilidad por la calidad y la entrega de cada pieza recae en
+                el vendedor. Completar las exclusiones y límites aplicables según la normativa vigente.
+              </p>
+            </section>
+            <div class="document-end">
+              <span>FIN DEL DOCUMENTO / PLANTILLA</span><a href="#inicio">VOLVER ARRIBA ↑</a>
+            </div>
+          </article>
         </div>
-    </body>
-    </html>
+        <section class="rules-cta">
+          <div>
+            <h2 class="display">LAS REGLAS TAMBIÉN HACEN COMUNIDAD.</h2>
+            <p>Información clara para compartir, crear y dar una nueva vida al hardware.</p>
+          </div>
+          <a class="btn" href="./marketplace">Volver al marketplace ↗</a>
+        </section>
+      </main>
+    @Footer()
+    </div>
+  </body>
+</html>
 }

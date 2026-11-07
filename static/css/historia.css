@@ -1,2 +1,158 @@
-.historia-page { width: 100%; max-width: 1080px; margin: 0 auto; }
-.historia-page main { padding: 24px; }
+.historia-page {
+  --page-height: 2000px;
+}
+.historia-main {
+  gap: 48px;
+}
+.historia-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.historia-intro .route span:first-child {
+  /* breadcrumb */
+}
+.historia-sub {
+  font-family: "VT323:Regular", monospace;
+  font-size: 28px;
+  color: var(--sand);
+}
+.historia-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+.historia-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.historia-copy h2 {
+  font-size: 40px;
+}
+.historia-copy > p {
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 520px;
+}
+.historia-copy .btn {
+  align-self: flex-start;
+}
+.historia-copy .btn img {
+  width: 16px;
+  height: 16px;
+}
+.historia-figure {
+  margin: 0;
+}
+.historia-figure img {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+  border: 4px solid var(--line);
+}
+.historia-figure figcaption {
+  margin-top: 12px;
+  font-size: 10px;
+  color: var(--sand);
+}
+.historia-exists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 32px 0;
+  border-top: 4px solid var(--line);
+  border-bottom: 4px solid var(--line);
+}
+.exists-left {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.exists-left .eyebrow {
+  font-size: 11px;
+}
+.exists-left h2 {
+  font-size: 40px;
+}
+.exists-right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.exists-right p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.historia-source {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.source-title {
+  font-size: 40px;
+}
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.source-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border: 3px solid var(--line);
+  background: var(--panel);
+}
+.source-num {
+  color: var(--orange);
+  font-family: "VT323:Regular", monospace;
+  font-size: 22px;
+}
+.source-item h3 {
+  font-size: 26px;
+  color: var(--paper);
+}
+.source-item p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--sand);
+}
+.historia-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px;
+  border: 3px solid var(--line);
+  background: var(--panel);
+}
+.historia-cta h2 {
+  font-size: 32px;
+}
+.historia-cta p {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.historia-sell-btn {
+  flex: none;
+}
+@media (max-width: 900px) {
+  .historia-hero,
+  .historia-exists {
+    grid-template-columns: 1fr;
+  }
+  .source-grid {
+    grid-template-columns: 1fr;
+  }
+  .historia-cta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .historia-figure img {
+    height: auto;
+  }
+}

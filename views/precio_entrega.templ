@@ -1,0 +1,77 @@
+package views
+
+templ PrecioEntrega(data VenderData) {
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TAN-BIT · Precio y entrega</title>
+    <link rel="stylesheet" href="/static/css/shared.css" />
+    <link rel="stylesheet" href="/static/css/vender.css" />
+    <link rel="stylesheet" href="/static/css/precio_entrega.css" />
+  </head>
+  <body>
+    <div class="page sell-page">
+    @Header()
+      <main class="container sell-main">
+        <section class="sell-intro">
+          <div class="route"><span>INICIO / VENDER / PRECIO Y ENTREGA</span></div>
+          <h1 class="display page-title">PRECIO JUSTO, ENTREGA CLARA.</h1>
+        </section>
+        <nav class="sell-steps">
+          <span>01 / TU PIEZA</span><span class="active">02 / PRECIO Y ENTREGA</span>
+          <span>03 / REVISAR Y PUBLICAR</span>
+        </nav>
+        <div class="sell-layout">
+          <form class="pixel-frame sell-form" method="post" action="/revisar-publicar">
+            <div class="form-title">
+              <h2 class="display">02. PRECIO Y ENTREGA</h2>
+              <span>* OBLIGATORIO</span>
+            </div>
+            <input type="hidden" name="titulo" value={ data.Titulo } />
+            <input type="hidden" name="descripcion" value={ data.Descripcion } />
+            <input type="hidden" name="condicion" value={ string(data.Condicion) } />
+            <input type="hidden" name="categoria" value={ string(data.Categoria) } />
+            <input type="hidden" name="ubicacion" value={ data.Ubicacion } />
+            <div class="form-columns">
+              <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" /></label>
+              <label><span>MONEDA *</span><select class="field"><option>ARS · Pesos</option><option>USD · Dólares</option></select></label>
+            </div>
+            <div class="form-columns">
+              <label><span>TIPO DE ENTREGA *</span><select class="field"><option>Envío a domicilio</option><option>Retiro en persona</option><option>Ambos</option></select></label>
+              <label><span>COSTO DE ENVÍO</span><input class="field" placeholder="0.00" type="number" /></label>
+            </div>
+            <label><span>ZONA DE ENTREGA *</span><input class="field" placeholder="Tandil y alrededores" /></label>
+            <label><span>MÉTODO DE PAGO *</span><select class="field"><option>Mercado Pago</option><option>Transferencia</option><option>Efectivo</option></select></label>
+            <label><span>PLAZO DE ENTREGA</span><input class="field" placeholder="Ej. 3 a 5 días hábiles" /></label>
+            <small>Definí un precio que refleje el trabajo y los materiales. La entrega clara evita malentendidos.</small>
+            <div class="form-submit">
+              <span>Los datos se guardan como borrador.</span><button class="btn">Continuar ↗</button>
+            </div>
+          </form>
+          <aside class="sell-aside">
+            <div class="pixel-frame preview"><small>VISTA PREVIA / BORRADOR</small><img src="/static/assets/gabinete.png" alt="Vista previa" />
+              <h2 class="display">TU PRÓXIMA PUBLICACIÓN</h2>
+              <p>El precio y la entrega se reflejarán en tu ficha.</p>
+              <span class="green">■ GUARDADO COMO BORRADOR</span>
+            </div>
+            <div class="tips">
+              <h2 class="display">PRECIO CON CRITERIO.</h2>
+              <p>01 &nbsp; Considerá materiales y horas.</p>
+              <p>02 &nbsp; Sumá embalaje y envío.</p>
+              <p>03 &nbsp; Compará con el mercado.</p>
+              <p>04 &nbsp; Dejá margen para ofertas.</p>
+            </div>
+          </aside>
+        </div>
+        <section class="honesty">
+          <h2 class="display">HECHO CON HONESTIDAD.</h2>
+          <p>Publicá solo piezas propias o que puedas vender. Sin copias engañosas, sin especificaciones inventadas. Leé los términos antes de publicar.</p>
+        </section>
+      </main>
+      @Footer()
+    </div>
+  </body>
+</html>
+}

@@ -1,21 +1,87 @@
 package views
 
 templ Historia() {
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>TAN-BIT · Historia</title>
-        <link rel="stylesheet" href="/static/css/shared.css" />
-        <link rel="stylesheet" href="/static/css/historia.css" />
-    </head>
-    <body>
-        <div class="page historia-page">
-            <main>
-                <h1>Historia</h1>
-            </main>
-        </div>
-    </body>
-    </html>
+	<!doctype html>
+	<html lang="es">
+	  <head>
+	    <meta charset="UTF-8" />
+	    <meta name="viewport" content="width=device-width, initial-scale=1" />
+	    <title>TAN-BIT · Historia</title>
+	    <link rel="stylesheet" href="/static/css/shared.css" />
+	    <link rel="stylesheet" href="/static/css/historia.css" />
+	  </head>
+	  <body>
+	    @Header()
+	    <div class="page historia-page">
+	      <main class="container historia-main">
+	        <section class="historia-intro">
+	          <div class="route">
+	            <span>INICIO / MEET TAN-BIT / HISTORIA</span><span class="green">■ ORIGEN: TANDIL</span>
+	          </div>
+	          <h1 class="display page-title">EL HARDWARE TAMBIÉN TIENE HISTORIA.</h1>
+	          <p class="historia-sub">DESDE TANDIL, PIEZA A PIEZA.</p>
+	        </section>
+	        <section class="historia-hero">
+	          <div class="historia-copy">
+	            <h2 class="display">MENOS DESCARTAR. MÁS CONECTAR.</h2>
+	            <p>
+	              TAN-BIT es un punto de encuentro para quienes ven posibilidades donde otros ven componentes
+	              sueltos. Madera que se convierte en gabinete. Cobre que disipa calor. Una placa que vuelve a
+	              encender. Nos interesa ese cruce entre tecnología, oficio y segunda vida.
+	            </p>
+	            <a class="btn" href="./creadores">Conocé a los makers <img src="/static/assets/arrow.svg" alt="" /></a>
+	          </div>
+	          <figure class="historia-figure">
+	            <img src="/static/assets/gabinete.png" alt="Gabinete de madera en el taller" />
+	            <figcaption>DONDE LA TECNOLOGÍA SE ENCUENTRA CON EL OFICIO.</figcaption>
+	          </figure>
+	        </section>
+	        <section class="historia-exists">
+	          <div class="exists-left">
+	            <span class="eyebrow">01 / POR QUÉ EXISTIMOS</span>
+	            <h2 class="display">QUE LAS BUENAS PIEZAS SIGAN CIRCULANDO.</h2>
+	          </div>
+	          <div class="exists-right">
+	            <p>
+	              El hardware no tiene por qué ser anónimo, idéntico ni descartable. Detrás de cada elección de
+	              material y de cada reparación hay conocimiento que vale la pena compartir.
+	            </p>
+	            <p>
+	              Por eso acercamos a quienes crean, recuperan y transforman con quienes buscan una pieza con
+	              identidad. Sin perder el contacto directo ni la escala humana del taller.
+	            </p>
+	          </div>
+	        </section>
+	        <section class="historia-source">
+	          <h2 class="display source-title">NUESTRO CÓDIGO FUENTE.</h2>
+	          <div class="source-grid">
+	            <article class="source-item">
+	              <span class="source-num">[01]</span>
+	              <h3 class="display">OFICIO VISIBLE</h3>
+	              <p>Mostramos materiales, procesos y decisiones. El detalle no es un extra: es parte de la pieza.</p>
+	            </article>
+	            <article class="source-item">
+	              <span class="source-num">[02]</span>
+	              <h3 class="display">OTRA VIDA ÚTIL</h3>
+	              <p>Reparar, recuperar y hacer circular. A veces el próximo gran proyecto empieza con lo que ya existe.</p>
+	            </article>
+	            <article class="source-item">
+	              <span class="source-num">[03]</span>
+	              <h3 class="display">COMUNIDAD LOCAL</h3>
+	              <p>Personas que se conocen, comparten saberes y construyen confianza. De Tandil al próximo escritorio.</p>
+	            </article>
+	          </div>
+	        </section>
+	        <section class="historia-cta">
+	          <div>
+	            <h2 class="display">ESTA HISTORIA SE ARMA ENTRE TODOS.</h2>
+	            <p>Si hacés, reparás o transformás hardware, hay lugar para tu próxima pieza en TAN-BIT.</p>
+	          </div>
+	          <a class="btn historia-sell-btn" href="./vender">Quiero vender ↗</a>
+	        </section>
+	      </main>
+	      @Footer()
+	    </div>
+	  </body>
+	</html>
 }
