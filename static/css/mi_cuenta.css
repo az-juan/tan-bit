@@ -1,0 +1,26 @@
+.account-page { --page-height: 1700px; }
+.account-main { display: flex; flex-direction: column; gap: 32px; }
+.account-grid { display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: start; }
+.account-sidebar { display: flex; flex-direction: column; gap: 24px; }
+.account-profile { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px; text-align: center; }
+.account-profile img { width: 64px; height: 64px; }
+.account-profile strong { font-family: "VT323:Regular"; font-size: 22px; color: var(--paper); }
+.account-profile small { font-size: 10px; color: var(--sand); }
+.account-nav { display: flex; flex-direction: column; gap: 8px; }
+.account-nav a { padding: 12px 16px; border: 2px solid var(--line); background: var(--panel); font-size: 11px; color: var(--sand); }
+.account-nav a.active { background: var(--copper); color: var(--night); }
+.account-content { display: flex; flex-direction: column; gap: 24px; }
+.account-card { display: flex; flex-direction: column; gap: 20px; padding: 32px; }
+.account-card h2 { font-size: 32px; }
+.account-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.account-form .form-group { display: flex; flex-direction: column; gap: 10px; }
+.account-form button { grid-column: 1 / -1; align-self: flex-start; }
+.account-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.stat { display: flex; flex-direction: column; gap: 8px; padding: 24px; }
+.stat span { font-size: 10px; color: var(--sand); }
+.stat strong { font-size: 40px; color: var(--orange); }
+
+@media (max-width: 900px) {
+  .account-grid { grid-template-columns: 1fr; }
+  .account-form, .account-stats { grid-template-columns: 1fr; }
+}

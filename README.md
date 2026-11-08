@@ -14,7 +14,7 @@ Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circul
 + docker compose
 + go
 + sqlc: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
-+ templ: `go install github.com/`
++ templ: `go install github.com/a-h/templ/cmd/templ@latest`
 + hurl: https://hurl.dev
 
 Para ejecutar la aplicación:

@@ -37,6 +37,8 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.ArtsHandler(w, r)
 	case "/registrarse":
 		h.RegistrarseHandler(w, r)
+	case "/mi_cuenta":
+		h.MiCuentaHandler(w, r)
 	case "/creadores":
 		h.CreadoresHandler(w, r)
 	default:
@@ -79,6 +81,10 @@ func (h *ArticuloHandler) PrivacidadHandler(w http.ResponseWriter, r *http.Reque
 	views.Privacidad().Render(r.Context(), w)
 }
 func (h *ArticuloHandler) VenderHandler(w http.ResponseWriter, r *http.Request) {
+	if _, err := r.Cookie("user_id"); err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	views.Vender(views.VenderData{}, views.CategoriasDB(), views.CondicionesDB()).Render(r.Context(), w)
 }
@@ -131,6 +137,10 @@ func (h *ArticuloHandler) RevisarPublicarHandler(w http.ResponseWriter, r *http.
 func (h *ArticuloHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	views.Registrarse().Render(r.Context(), w)
+}
+func (h *ArticuloHandler) MiCuentaHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	views.MiCuenta().Render(r.Context(), w)
 }
 func (h *ArticuloHandler) CreadoresHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

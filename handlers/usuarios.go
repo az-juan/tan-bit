@@ -18,6 +18,7 @@ type UsuarioRequest struct {
 	Apellido string `json:"apellido"`
 	Nombre   string `json:"nombre"`
 	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type UsuarioResponse struct {
@@ -42,6 +43,14 @@ func toUsuariosFromGet(usuarios []db.Usuario) []UsuarioResponse {
 		res = append(res, toUsuarioResponse(u))
 	}
 	return res
+}
+
+func (h *UsuarioHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/usuarios" || r.URL.Path == "/usuarios/" {
+		h.UsersHandler(w, r)
+		return
+	}
+	h.UserHandler(w, r)
 }
 
 func NewUsuarioHandler(queries *db.Queries) *UsuarioHandler {
@@ -102,20 +111,39 @@ func (h *UsuarioHandler) getUsuarios(w http.ResponseWriter, r *http.Request) {
 
 // POST /usuarios - Crear nuevo usuario
 func (h *UsuarioHandler) createUsuario(w http.ResponseWriter, r *http.Request) {
-	var req UsuarioRequest
+	ct := r.Header.Get("Content-Type")
+	if ct == "application/x-www-form-urlencoded" || (len(ct) >= 33 && ct[:33] == "multipart/form-data") {
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, "Formulario inválido", http.StatusBadRequest)
+			return
+		}
+		params := db.CreateUsuarioParams{
+			Apellido: r.FormValue("apellido"),
+			Nombre:   r.FormValue("nombre"),
+			Email:    r.FormValue("email"),
+			Password: r.FormValue("password"),
+		}
+		_, err := h.queries.CreateUsuario(r.Context(), params)
+		if err != nil {
+			http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
+	var req UsuarioRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	params := db.CreateUsuarioParams{
 		Apellido: req.Apellido,
 		Nombre:   req.Nombre,
 		Email:    req.Email,
+		Password: req.Password,
 	}
-
 	nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
 	if esViolacionUnique(err) {
 		http.Error(w, "Email ya existente.", http.StatusConflict)
@@ -125,7 +153,6 @@ func (h *UsuarioHandler) createUsuario(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(toUsuarioResponse(nuevoUsuario))

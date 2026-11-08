@@ -81,6 +81,7 @@ erDiagram
     varchar apellido
     varchar nombre
     varchar email UK
+    varchar password
   }
   VENDEDOR {
     int id_vendedor PK,FK

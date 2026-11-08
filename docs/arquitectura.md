@@ -26,4 +26,10 @@ Decidimos incluir únicamente 'air' y 'atlas' dentro del contenedor y tener 'sql
 
 Separamos el flujo de docker en desarrollo y producción para tener una mejor organización y facilitar el testing y debugging. Se publica únicamente el proyecto de producción. 
 
-Empleamos un archivo example.env como ejemplo para testear la aplicación sin exponer datos sensibles.
+## Cambios recientes
+- Páginas diseñadas: historia, terminos, creadores, registrarse, mi_cuenta, precio-entrega, revisar-publicar.
+- Vender funcional con PRG; categorías/estados desde DB; vista previa de imagen.
+- Atributo `ubicacion` y `password` agregados al schema/queries.
+- Diagramas en docs/diagramas.md.
+- GIF steampunk en static/assets.
+- Acceso a vender protegido por cookie user_id.

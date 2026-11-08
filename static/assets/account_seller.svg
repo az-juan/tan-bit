@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" shape-rendering="crispEdges">
+  <rect x="8" y="2" width="8" height="8" fill="#c47e3e"/>
+  <rect x="9" y="3" width="6" height="6" fill="#f5a95b"/>
+  <rect x="10" y="5" width="2" height="2" fill="#1b2026"/>
+  <rect x="14" y="5" width="2" height="2" fill="#1b2026"/>
+  <rect x="6" y="10" width="12" height="10" fill="#2f1e1a"/>
+  <rect x="7" y="11" width="10" height="8" fill="#343230"/>
+  <rect x="4" y="10" width="2" height="6" fill="#2f1e1a"/>
+  <rect x="18" y="10" width="2" height="6" fill="#2f1e1a"/>
+  <!-- seller tool -->
+  <rect x="17" y="4" width="2" height="10" fill="#aa9c8a"/>
+  <rect x="15" y="2" width="6" height="3" fill="#c8a84b"/>
+</svg>
