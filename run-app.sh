@@ -27,7 +27,7 @@ echo "tan-bit"
 
 while true; do
   echo
-  echo -e "¿Iniciar servidor y ejecutar tests? [Y/n]\n"n" para bajar Docker\n"
+  echo -e "¿Iniciar servidor? [Y/n]\n"n" para bajar Docker\n"
   read -r INPUT
   echo
   INPUT="${INPUT:-Y}"

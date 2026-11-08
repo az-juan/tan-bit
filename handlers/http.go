@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
+
+	db "tan-bit.com/tan-bit/db/sqlc"
 	"tan-bit.com/tan-bit/views"
 )
 
@@ -85,8 +88,36 @@ func (h *ArticuloHandler) HistoriaHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (h *ArticuloHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Registrarse().Render(r.Context(), w)
+	if r.Method == http.MethodGet {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		views.Registrarse().Render(r.Context(), w)
+		return
+	}
+	if r.Method != http.MethodPost {
+		http.Error(w, "Metodo no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Formulario inválido", http.StatusBadRequest)
+		return
+	}
+	params := db.CreateUsuarioParams{
+		Apellido: r.FormValue("apellido"),
+		Nombre:   r.FormValue("nombre"),
+		Email:    r.FormValue("email"),
+		Password: r.FormValue("password"),
+	}
+	nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
+	if err != nil {
+		http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if tel := r.FormValue("telefono"); tel != "" {
+		t, _ := strconv.ParseInt(tel, 10, 64)
+		_, _ = h.queries.CreateVendedor(r.Context(), db.CreateVendedorParams{IDVendedor: nuevoUsuario.IDUsuario, Telefono: t})
+	}
+	http.SetCookie(w, &http.Cookie{Name: "user_id", Value: strconv.Itoa(int(nuevoUsuario.IDUsuario)), Path: "/"})
+	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 }
 func (h *ArticuloHandler) MiCuentaHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
