@@ -19,15 +19,19 @@ func main() {
 	queries := sqlc.New(db) //Instanciamos queries para ejecutarse en nuestro pool
 	artHandler := handlers.NewArticuloHandler(queries)
 	userHandler := handlers.NewUsuarioHandler(queries)
-	// vendHandler := handlers.NewVendedorHandler(queries)
+	vendHandler := handlers.NewVendedorHandler(queries)
 
 	fs := http.FileServer(http.Dir("static"))
 
 	// Configurar rutas
 	http.HandleFunc("/health", healthHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.Handle("/vender", vendHandler)
+	http.Handle("/vendedores", vendHandler)
+	http.Handle("/vendedores/", vendHandler)
 	http.Handle("/usuarios", userHandler)
 	http.Handle("/usuarios/", userHandler)
+	http.Handle("/login", userHandler)
 
 	// http.Handle("GET /{$}", http.StripPrefix("/static/", fileServer))
 	http.Handle("/", artHandler)

@@ -108,8 +108,8 @@ func NewArticuloHandler(queries *db.Queries) *ArticuloHandler {
 // Manejador para /articulos
 func (h *ArticuloHandler) ArtsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
-	// case http.MethodGet:
-	// h.GetArticulos(w, r)
+	case http.MethodGet:
+		h.GetArticulos(w, r)
 	case http.MethodPost:
 		h.createArticulo(w, r)
 	default:
@@ -143,18 +143,18 @@ func (h *ArticuloHandler) ArtHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Metodo no permitido",
 			http.StatusMethodNotAllowed)
 	}
-	// templ.Handler(views.UserPage(models.Users)).ServeHTTP(w, r)
 }
 
 // GET /articulos - Obtener todos los articulos
-// func (h *ArticuloHandler) GetArticulos(w http.ResponseWriter, r *http.Request) {
-// 	arts, err := h.queries.GetArticulos(r.Context())
-// 	if err != nil {
-// 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
-// 		return
-// 	}
-// 	views.Marketplace(arts).Render(r.Context(), w)
-// }
+func (h *ArticuloHandler) GetArticulos(w http.ResponseWriter, r *http.Request) {
+	arts, err := h.queries.GetArticulos(r.Context())
+	if err != nil {
+		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(toArticulosFromGet(arts))
+}
 
 // POST /articulos - Crear nuevo articulo
 func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request) {
@@ -169,14 +169,15 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 		categoria := r.FormValue("categoria")
 		precio := r.FormValue("precio")
 		stockStr := r.FormValue("stock")
-		vendedorStr := r.FormValue("id_vendedor")
 		stock := int32(1)
 		if v, err := strconv.Atoi(stockStr); err == nil {
 			stock = int32(v)
 		}
 		idVendedor := int32(1)
-		if v, err := strconv.Atoi(vendedorStr); err == nil {
-			idVendedor = int32(v)
+		if cookie, err := r.Cookie("user_id"); err == nil {
+			if v, err := strconv.Atoi(cookie.Value); err == nil {
+				idVendedor = int32(v)
+			}
 		}
 		params := db.CreateArticuloParams{
 			Titulo:      titulo,

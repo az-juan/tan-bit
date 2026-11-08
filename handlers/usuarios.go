@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
 	db "tan-bit.com/tan-bit/db/sqlc"
+	"tan-bit.com/tan-bit/views"
 )
 
 type UsuarioHandler struct {
@@ -46,6 +48,10 @@ func toUsuariosFromGet(usuarios []db.Usuario) []UsuarioResponse {
 }
 
 func (h *UsuarioHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/login" {
+		h.LoginHandler(w, r)
+		return
+	}
 	if r.URL.Path == "/usuarios" || r.URL.Path == "/usuarios/" {
 		h.UsersHandler(w, r)
 		return
@@ -57,6 +63,36 @@ func NewUsuarioHandler(queries *db.Queries) *UsuarioHandler {
 	return &UsuarioHandler{
 		queries: queries,
 	}
+}
+
+// Manejador para /usuarios
+func (h *UsuarioHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		views.Login().Render(r.Context(), w)
+		return
+	}
+	if r.Method != http.MethodPost {
+		http.Error(w, "Metodo no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Formulario inválido", http.StatusBadRequest)
+		return
+	}
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+	u, err := h.queries.GetUsuarioByEmail(r.Context(), email)
+	if err != nil {
+		http.Error(w, "Credenciales inválidas", http.StatusUnauthorized)
+		return
+	}
+	if u.Password != password {
+		http.Error(w, "Credenciales inválidas", http.StatusUnauthorized)
+		return
+	}
+	http.SetCookie(w, &http.Cookie{Name: "user_id", Value: strconv.Itoa(int(u.IDUsuario)), Path: "/"})
+	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 }
 
 // Manejador para /usuarios
@@ -123,12 +159,16 @@ func (h *UsuarioHandler) createUsuario(w http.ResponseWriter, r *http.Request) {
 			Email:    r.FormValue("email"),
 			Password: r.FormValue("password"),
 		}
-		_, err := h.queries.CreateUsuario(r.Context(), params)
+		nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
 		if err != nil {
 			http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		if tel := r.FormValue("telefono"); tel != "" {
+			t, _ := strconv.ParseInt(tel, 10, 64)
+			_, _ = h.queries.CreateVendedor(r.Context(), db.CreateVendedorParams{IDVendedor: nuevoUsuario.IDUsuario, Telefono: t})
+		}
+		http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 		return
 	}
 

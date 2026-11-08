@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	db "tan-bit.com/tan-bit/db/sqlc"
+	"tan-bit.com/tan-bit/views"
 )
 
 type VendedorHandler struct {
@@ -192,4 +193,35 @@ func (h *VendedorHandler) deleteVendedor(w http.ResponseWriter, r *http.Request,
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// Manejador de página de venta
+func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("user_id")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	id, _ := strconv.Atoi(cookie.Value)
+	v, err := h.queries.GetVendedorByID(r.Context(), int32(id))
+	if err != nil || v.Telefono == 0 {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Write([]byte("<script>alert('Debe cargar un telefono para vender'); window.location='/mi_cuenta';</script>"))
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	views.Vender(views.VenderData{}, views.CategoriasDB(), views.CondicionesDB()).Render(r.Context(), w)
+}
+
+// ServeHTTP para vendedor handler
+func (h *VendedorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/vender" {
+		h.VenderHandler(w, r)
+		return
+	}
+	if r.URL.Path == "/vendedores" || r.URL.Path == "/vendedores/" {
+		h.VendsHandler(w, r)
+		return
+	}
+	h.VendHandler(w, r)
 }

@@ -9,16 +9,12 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/":
 		h.MarketplaceHandler(w, r)
-	case "/vender":
-		h.VenderHandler(w, r)
 	case "/carrito":
 		h.CarritoHandler(w, r)
 	case "/favoritos":
 		h.FavoritosHandler(w, r)
 	case "/evento":
 		h.EventoHandler(w, r)
-	case "/login":
-		h.LoginHandler(w, r)
 	case "/privacidad":
 		h.PrivacidadHandler(w, r)
 	case "/marketplace":
@@ -34,6 +30,8 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case "/revisar-publicar":
 		h.RevisarPublicarHandler(w, r)
 	case "/articulos":
+		h.ArtsHandler(w, r)
+	case "/articulos/":
 		h.ArtsHandler(w, r)
 	case "/registrarse":
 		h.RegistrarseHandler(w, r)
@@ -72,21 +70,9 @@ func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Reques
 	}
 	views.Favoritos(views.BuildFiltros(arts)).Render(r.Context(), w)
 }
-func (h *ArticuloHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Login().Render(r.Context(), w)
-}
 func (h *ArticuloHandler) PrivacidadHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	views.Privacidad().Render(r.Context(), w)
-}
-func (h *ArticuloHandler) VenderHandler(w http.ResponseWriter, r *http.Request) {
-	if _, err := r.Cookie("user_id"); err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Vender(views.VenderData{}, views.CategoriasDB(), views.CondicionesDB()).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) ContactoHandler(w http.ResponseWriter, r *http.Request) {

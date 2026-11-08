@@ -12,6 +12,11 @@ SELECT id_usuario, apellido, nombre, email, password
 FROM usuario
 ORDER BY apellido;
 
+-- name: GetUsuarioByEmail :one
+SELECT id_usuario, apellido, nombre, email, password
+FROM usuario
+WHERE email = $1;
+
 -- name: GetUsuarioByID :one
 SELECT id_usuario, apellido, nombre, email, password
 FROM usuario
