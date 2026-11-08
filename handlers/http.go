@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
+
+	db "tan-bit.com/tan-bit/db/sqlc"
 	"tan-bit.com/tan-bit/views"
 )
 
@@ -9,31 +12,23 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/":
 		h.MarketplaceHandler(w, r)
-	case "/vender":
-		h.VenderHandler(w, r)
 	case "/carrito":
 		h.CarritoHandler(w, r)
 	case "/favoritos":
 		h.FavoritosHandler(w, r)
 	case "/evento":
 		h.EventoHandler(w, r)
-	case "/login":
-		h.LoginHandler(w, r)
 	case "/privacidad":
 		h.PrivacidadHandler(w, r)
-	case "/marketplace":
-		h.MarketplaceHandler(w, r)
 	case "/contacto":
 		h.ContactoHandler(w, r)
 	case "/terminos":
 		h.TerminosHandler(w, r)
 	case "/historia":
 		h.HistoriaHandler(w, r)
-	case "/precio-entrega":
-		h.PrecioEntregaHandler(w, r)
-	case "/revisar-publicar":
-		h.RevisarPublicarHandler(w, r)
 	case "/articulos":
+		h.ArtsHandler(w, r)
+	case "/articulos/":
 		h.ArtsHandler(w, r)
 	case "/registrarse":
 		h.RegistrarseHandler(w, r)
@@ -72,21 +67,9 @@ func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Reques
 	}
 	views.Favoritos(views.BuildFiltros(arts)).Render(r.Context(), w)
 }
-func (h *ArticuloHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Login().Render(r.Context(), w)
-}
 func (h *ArticuloHandler) PrivacidadHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	views.Privacidad().Render(r.Context(), w)
-}
-func (h *ArticuloHandler) VenderHandler(w http.ResponseWriter, r *http.Request) {
-	if _, err := r.Cookie("user_id"); err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Vender(views.VenderData{}, views.CategoriasDB(), views.CondicionesDB()).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) ContactoHandler(w http.ResponseWriter, r *http.Request) {
@@ -104,39 +87,37 @@ func (h *ArticuloHandler) HistoriaHandler(w http.ResponseWriter, r *http.Request
 	views.Historia().Render(r.Context(), w)
 }
 
-func (h *ArticuloHandler) PrecioEntregaHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if r.Method == http.MethodPost {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Formulario inválido", http.StatusBadRequest)
-			return
-		}
-		data := views.ParseVenderData(r)
-		http.Redirect(w, r, "/precio-entrega?"+data.Query(), http.StatusSeeOther)
-		return
-	}
-	data := views.ParseVenderData(r)
-	views.PrecioEntrega(data).Render(r.Context(), w)
-}
-
-func (h *ArticuloHandler) RevisarPublicarHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if r.Method == http.MethodPost {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Formulario inválido", http.StatusBadRequest)
-			return
-		}
-		data := views.ParseVenderData(r)
-		http.Redirect(w, r, "/revisar-publicar?"+data.Query(), http.StatusSeeOther)
-		return
-	}
-	data := views.ParseVenderData(r)
-	views.RevisarPublicar(data).Render(r.Context(), w)
-}
-
 func (h *ArticuloHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Registrarse().Render(r.Context(), w)
+	if r.Method == http.MethodGet {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		views.Registrarse().Render(r.Context(), w)
+		return
+	}
+	if r.Method != http.MethodPost {
+		http.Error(w, "Metodo no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Formulario inválido", http.StatusBadRequest)
+		return
+	}
+	params := db.CreateUsuarioParams{
+		Apellido: r.FormValue("apellido"),
+		Nombre:   r.FormValue("nombre"),
+		Email:    r.FormValue("email"),
+		Password: r.FormValue("password"),
+	}
+	nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
+	if err != nil {
+		http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if tel := r.FormValue("telefono"); tel != "" {
+		t, _ := strconv.ParseInt(tel, 10, 64)
+		_, _ = h.queries.CreateVendedor(r.Context(), db.CreateVendedorParams{IDVendedor: nuevoUsuario.IDUsuario, Telefono: t})
+	}
+	http.SetCookie(w, &http.Cookie{Name: "user_id", Value: strconv.Itoa(int(nuevoUsuario.IDUsuario)), Path: "/"})
+	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 }
 func (h *ArticuloHandler) MiCuentaHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")

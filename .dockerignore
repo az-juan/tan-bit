@@ -6,7 +6,7 @@ tmp/
 docs/
 images/
 .dockerignore
-test-api.sh
+run-app.sh
 Makefile
 Dockerfile*
 compose*

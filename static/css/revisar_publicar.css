@@ -1,7 +1,0 @@
-.review-block { display: flex; flex-direction: column; gap: 8px; padding: 18px; border: 2px solid var(--line); background: var(--panel); }
-.review-block h3 { font-size: 22px; color: var(--orange); }
-.review-block p { font-size: 13px; line-height: 1.7; color: var(--paper); }
-.review-block small { font-size: 10px; color: var(--sand); }
-.review-photos { display: flex; gap: 12px; flex-wrap: wrap; }
-.review-photos img { width: 120px; height: 90px; object-fit: cover; border: 2px solid var(--line); }
-.sell-page { --page-height: 1780px; }

@@ -25,7 +25,7 @@ templ Registrarse() {
             <img src="/static/assets/hero.png" alt="Ilustracion de aparatos tecnologicos" />
           </section>
           <section class="register-form-wrap">
-            <form class="pixel-frame register-form" method="post" action="/usuarios">
+            <form class="pixel-frame register-form" method="post" action="/registrarse">
               <p class="eyebrow">[ NUEVA CUENTA ]</p>
               <h2 class="display">BIENVENIDO.</h2>
               <p>Completá tus datos para empezar.</p>
@@ -35,6 +35,8 @@ templ Registrarse() {
                 ><span class="field-label">APELLIDO</span><input class="field" name="apellido" placeholder="Tu apellido" /></label>
               <label class="form-group"
                 ><span class="field-label">EMAIL</span><input class="field" type="email" name="email" placeholder="tu.señal@correo.com" /></label>
+              <label class="form-group"
+                ><span class="field-label">TELÉFONO (OPCIONAL)</span><input class="field" name="telefono" placeholder="+54 ..." /></label>
               <label class="form-group"
                 ><span class="field-label">CONTRASEÑA</span><input class="field" type="password" name="password" placeholder="••••••••" /></label>
               <label class="form-group"

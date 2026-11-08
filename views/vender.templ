@@ -23,12 +23,12 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
           <div class="route"><span>INICIO / VENDER</span></div>
           <h1 class="display page-title">DALE CIRCULACIÓN A TU HARDWARE.</h1>
         </section>
-        <nav class="sell-steps">
-          <span class="active">01 / TU PIEZA</span><span>02 / PRECIO Y ENTREGA</span>
-          <span>03 / REVISAR Y PUBLICAR</span>
-        </nav>
+        // <nav class="sell-steps">
+          // <span class="active">01 / TU PIEZA</span>
+          // <span>02 / REVISAR Y PUBLICAR</span>
+        // </nav>
         <div class="sell-layout">
-          <form class="pixel-frame sell-form" method="post" action="/precio-entrega">
+          <form class="pixel-frame sell-form" method="post" action="/vender" enctype="multipart/form-data">
             <div class="form-title">
               <h2 class="display">01. CONTANOS SOBRE TU PIEZA</h2>
               <span>* OBLIGATORIO</span>
@@ -75,8 +75,19 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
               <span>UBICACIÓN *</span><input class="field" name="ubicacion" value={ data.Ubicacion } placeholder="Tandil, Buenos Aires"/>
             </label>
             </div>
+            <div class="form-title">
+              <h2 class="display">02. PRECIO Y ENTREGA</h2>
+            </div>
+            <div class="form-columns">
+              <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" /></label>
+            </div>
+            <div class="form-columns">
+              <label><span>TIPO DE ENTREGA *</span><select class="field" name="tipo_entrega"><option>Envío a domicilio</option><option>Retiro en persona</option><option>Ambos</option></select></label>
+              <label><span>COSTO DE ENVÍO</span><input class="field" name="costo_envio" value={ data.CostoEnvio } placeholder="0.00" type="number" step="0.01" /></label>
+            </div>
+            <label><span>ZONA DE ENTREGA *</span><input class="field" name="zona_entrega" value={ data.ZonaEntrega } placeholder="Tandil y alrededores" /></label>
             <div class="form-submit">
-              <span>Tu publicación todavía no es visible.</span><button class="btn">Continuar ↗</button>
+              <span>Tu publicación todavía no es visible. Revisá que los datos esten bien antes de publicar.</span><button class="btn">Publicar ↗</button>
             </div>
           </form>
           <aside class="sell-aside">
