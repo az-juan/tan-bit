@@ -29,6 +29,10 @@ type VenderData struct {
 	Categoria   db.Categoria
 	Ubicacion   string
 	Precio      string
+	TipoEntrega string
+	CostoEnvio  string
+	ZonaEntrega string
+	RutaImagen  string
 }
 
 func ParseVenderData(r *http.Request) VenderData {
@@ -39,6 +43,10 @@ func ParseVenderData(r *http.Request) VenderData {
 		Categoria:   db.Categoria(r.FormValue("categoria")),
 		Ubicacion:   r.FormValue("ubicacion"),
 		Precio:      r.FormValue("precio"),
+		TipoEntrega: r.FormValue("tipo_entrega"),
+		CostoEnvio:  r.FormValue("costo_envio"),
+		ZonaEntrega: r.FormValue("zona_entrega"),
+		RutaImagen:  r.FormValue("ruta_imagen"),
 	}
 }
 
@@ -50,6 +58,10 @@ func (d VenderData) Query() string {
 	v.Set("categoria", string(d.Categoria))
 	v.Set("ubicacion", d.Ubicacion)
 	v.Set("precio", d.Precio)
+	v.Set("tipo_entrega", d.TipoEntrega)
+	v.Set("costo_envio", d.CostoEnvio)
+	v.Set("zona_entrega", d.ZonaEntrega)
+	v.Set("ruta_imagen", d.RutaImagen)
 	return v.Encode()
 }
 func CategoriasDB() []db.Categoria { // revisar

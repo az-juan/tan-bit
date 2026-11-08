@@ -22,18 +22,18 @@ func main() {
 	vendHandler := handlers.NewVendedorHandler(queries)
 
 	fs := http.FileServer(http.Dir("static"))
+	is := http.FileServer(http.Dir("db/images"))
 
 	// Configurar rutas
 	http.HandleFunc("/health", healthHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.Handle("/images/", http.StripPrefix("/images/", is))
 	http.Handle("/vender", vendHandler)
-	http.Handle("/vendedores", vendHandler)
-	http.Handle("/vendedores/", vendHandler)
-	http.Handle("/usuarios", userHandler)
-	http.Handle("/usuarios/", userHandler)
+	// http.Handle("/vendedores", vendHandler)
+	// http.Handle("/vendedores/", vendHandler)
+	// http.Handle("/usuarios", userHandler)
+	// http.Handle("/usuarios/", userHandler)
 	http.Handle("/login", userHandler)
-
-	// http.Handle("GET /{$}", http.StripPrefix("/static/", fileServer))
 	http.Handle("/", artHandler)
 	// http.HandleFunc("/", notFoundHandler)
 	port := ":8080"

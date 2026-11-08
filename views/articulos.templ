@@ -30,7 +30,7 @@ templ SortableHeader(columnName, displayName,
 }
 
 templ Articulos(articulos []db.GetArticulosRow) {
-    <div class="articulo-grid">
+    // <div class="articulo-grid">
       for _,articulo := range articulos {
         <article class="product-card">
           <div class="product-image">
@@ -50,5 +50,5 @@ templ Articulos(articulos []db.GetArticulosRow) {
           </div>
         </article>
       }
-  </div>
+  // </div>
 }

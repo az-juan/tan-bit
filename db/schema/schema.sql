@@ -25,6 +25,9 @@ CREATE TABLE articulo (
     stock           INTEGER      NOT NULL CHECK (stock >= 0),
     fecha_publicacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     ubicacion       text         NOT NULL,
+    tipo_entrega    text         NULL,
+    costo_envio     NUMERIC(10,2) NULL,
+    zona_entrega    text         NULL,
     id_vendedor     INTEGER      NOT NULL CONSTRAINT fk_producto_vendedor REFERENCES vendedor(id_vendedor)
 );
 

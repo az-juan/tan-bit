@@ -17,18 +17,12 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.EventoHandler(w, r)
 	case "/privacidad":
 		h.PrivacidadHandler(w, r)
-	case "/marketplace":
-		h.MarketplaceHandler(w, r)
 	case "/contacto":
 		h.ContactoHandler(w, r)
 	case "/terminos":
 		h.TerminosHandler(w, r)
 	case "/historia":
 		h.HistoriaHandler(w, r)
-	case "/precio-entrega":
-		h.PrecioEntregaHandler(w, r)
-	case "/revisar-publicar":
-		h.RevisarPublicarHandler(w, r)
 	case "/articulos":
 		h.ArtsHandler(w, r)
 	case "/articulos/":
@@ -88,36 +82,6 @@ func (h *ArticuloHandler) TerminosHandler(w http.ResponseWriter, r *http.Request
 func (h *ArticuloHandler) HistoriaHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	views.Historia().Render(r.Context(), w)
-}
-
-func (h *ArticuloHandler) PrecioEntregaHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if r.Method == http.MethodPost {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Formulario inválido", http.StatusBadRequest)
-			return
-		}
-		data := views.ParseVenderData(r)
-		http.Redirect(w, r, "/precio-entrega?"+data.Query(), http.StatusSeeOther)
-		return
-	}
-	data := views.ParseVenderData(r)
-	views.PrecioEntrega(data).Render(r.Context(), w)
-}
-
-func (h *ArticuloHandler) RevisarPublicarHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if r.Method == http.MethodPost {
-		if err := r.ParseForm(); err != nil {
-			http.Error(w, "Formulario inválido", http.StatusBadRequest)
-			return
-		}
-		data := views.ParseVenderData(r)
-		http.Redirect(w, r, "/revisar-publicar?"+data.Query(), http.StatusSeeOther)
-		return
-	}
-	data := views.ParseVenderData(r)
-	views.RevisarPublicar(data).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Request) {

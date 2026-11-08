@@ -25,6 +25,9 @@ type CreateArticuloRequest struct {
 	Stock       int32  `json:"stock"`
 	IDVendedor  int32  `json:"id_vendedor"`
 	Ubicacion   string `json:"ubicacion"`
+	TipoEntrega string `json:"tipo_entrega"`
+	CostoEnvio  string `json:"costo_envio"`
+	ZonaEntrega string `json:"zona_entrega"`
 }
 
 type UpdateArticuloRequest struct {
@@ -188,6 +191,9 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 			Stock:       stock,
 			IDVendedor:  idVendedor,
 			Ubicacion:   r.FormValue("ubicacion"),
+			TipoEntrega: sql.NullString{String: r.FormValue("tipo_entrega"), Valid: r.FormValue("tipo_entrega") != ""},
+			CostoEnvio:  sql.NullString{String: r.FormValue("costo_envio"), Valid: r.FormValue("costo_envio") != ""},
+			ZonaEntrega: sql.NullString{String: r.FormValue("zona_entrega"), Valid: r.FormValue("zona_entrega") != ""},
 		}
 		_, err := h.queries.CreateArticulo(r.Context(), params)
 		if err != nil {
@@ -213,6 +219,9 @@ func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request)
 		Stock:       req.Stock,
 		IDVendedor:  req.IDVendedor,
 		Ubicacion:   req.Ubicacion,
+		TipoEntrega: sql.NullString{String: req.TipoEntrega, Valid: req.TipoEntrega != ""},
+		CostoEnvio:  sql.NullString{String: req.CostoEnvio, Valid: req.CostoEnvio != ""},
+		ZonaEntrega: sql.NullString{String: req.ZonaEntrega, Valid: req.ZonaEntrega != ""},
 	}
 	nuevoArticulo, err := h.queries.CreateArticulo(r.Context(), params)
 	if esViolacionFK(err) {

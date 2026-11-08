@@ -4,12 +4,29 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	db "tan-bit.com/tan-bit/db/sqlc"
 	"tan-bit.com/tan-bit/views"
 )
+
+func sanitize(s string) string {
+	s = strings.ToLower(s)
+	var b strings.Builder
+	for _, r := range s {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') {
+			b.WriteRune(r)
+		} else if r == ' ' || r == '-' || r == '_' {
+			b.WriteRune('_')
+		}
+	}
+	return b.String()
+}
 
 type VendedorHandler struct {
 	queries *db.Queries
@@ -207,6 +224,52 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 	if err != nil || v.Telefono == 0 {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Write([]byte("<script>alert('Debe cargar un telefono para vender'); window.location='/mi_cuenta';</script>"))
+		return
+	}
+	if r.Method == http.MethodPost {
+		if err := r.ParseMultipartForm(32 << 20); err != nil {
+			r.ParseForm()
+		}
+		data := views.ParseVenderData(r)
+		idVendedor := int32(1)
+		if cookie, err := r.Cookie("user_id"); err == nil {
+			if v, err := strconv.Atoi(cookie.Value); err == nil {
+				idVendedor = int32(v)
+			}
+		}
+		if f, fh, err := r.FormFile("fotos"); err == nil {
+			defer f.Close()
+			ext := filepath.Ext(fh.Filename)
+			if ext == "" {
+				ext = ".jpg"
+			}
+			os.MkdirAll("db/images", 0755)
+			nombre := fmt.Sprintf("%d_%s_1%s", idVendedor, sanitize(data.Titulo), ext)
+			dst := filepath.Join("db/images", nombre)
+			out, err := os.Create(dst)
+			if err == nil {
+				io.Copy(out, f)
+				out.Close()
+				data.RutaImagen = "/images/" + nombre
+			}
+		}
+		// guardar imagen
+		params := db.CreateArticuloParams{
+			Titulo:      data.Titulo,
+			Descripcion: data.Descripcion,
+			Condicion:   db.Condicion(data.Condicion),
+			Categoria:   db.Categoria(data.Categoria),
+			Precio:      data.Precio,
+			Stock:       1,
+			IDVendedor:  idVendedor,
+			Ubicacion:   data.Ubicacion,
+			TipoEntrega: sql.NullString{String: data.TipoEntrega, Valid: data.TipoEntrega != ""},
+			CostoEnvio:  sql.NullString{String: data.CostoEnvio, Valid: data.CostoEnvio != ""},
+			ZonaEntrega: sql.NullString{String: data.ZonaEntrega, Valid: data.ZonaEntrega != ""},
+			RutaImagen:  sql.NullString{String: data.RutaImagen, Valid: data.RutaImagen != ""},
+		}
+		_, _ = h.queries.CreateArticulo(r.Context(), params)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
