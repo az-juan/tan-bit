@@ -19,7 +19,7 @@ templ MiCuenta(nombre, apellido, email, telefono string) {
         <div class="account-grid">
           <aside class="account-sidebar">
             <div class="pixel-frame account-profile">
-              <img src="/static/assets/account_user.svg" alt="Avatar" />
+              <img src={"/static/assets/"+map[bool]string{true: "account_seller.svg", false: "account_user.svg"}[telefono != ""]} alt="Avatar" />
               <strong>{ nombre } { apellido }</strong>
               <small>{ email }</small>
               <span class="green">{ "■ " + map[bool]string{true: "VENDEDOR", false: "USUARIO"}[telefono != ""] }</span>

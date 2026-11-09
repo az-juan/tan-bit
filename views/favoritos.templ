@@ -1,6 +1,8 @@
 package views
 
-templ Favoritos(filtros []FiltroCategoria) {
+import "tan-bit.com/tan-bit/db/sqlc"
+
+templ Favoritos(arts []db.GetFavoritosByUsuarioRow, filtros []FiltroCategoria) {
 
 <!doctype html>
 <html lang="es">
@@ -39,7 +41,7 @@ templ Favoritos(filtros []FiltroCategoria) {
           </div>
         </section>
         <div class="saved-note">
-          <span>♥ &nbsp;4 piezas guardadas. Los favoritos no reservan stock.</span><a href="/">Seguir explorando ↗</a>
+          <span>♥ &nbsp;{} piezas guardadas. Los favoritos no reservan stock.</span><a href="/">Seguir explorando ↗</a>
         </div>
         <section class="maker-cta">
           <div>
@@ -48,7 +50,7 @@ templ Favoritos(filtros []FiltroCategoria) {
               Conocé los talleres y las personas que hacen distinto el hardware de todos los días.
             </p>
           </div>
-          <button class="btn">Conocer makers ↗</button>
+          <button class="btn">Conocer creadores ↗</button>
         </section>
       </main>
       @Footer()

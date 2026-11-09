@@ -137,9 +137,9 @@ h3 {
   gap: 12px;
 }
 .brand img {
+  image-rendering: pixelated;
   width: 180px;
   height: 32px;
-  object-fit: cover;
 }
 .brand span {
   color: var(--orange);
@@ -293,19 +293,19 @@ h3 {
   place-items: center;
   background: var(--ink);
 }
-.heart-badge img {
-  width: 20px;
-  height: 20px;
+
+.heart-img {
+    width: 16px;
+    height: 14px;
+    background-image: url('../assets/heart-empty.svg');
+    background-size: cover;
+    position: center;
+    transition: background-image 0.3s ease;
 }
-.heart-badge .heart-filled {
-  display: none;
-}
-.product-card:hover .heart-badge .heart-empty {
-  display: none;
-}
-.product-card:hover .heart-badge .heart-filled {
-  display: block;
-}
+.heart-img:hover {
+    background-image: url('../assets/heart.svg');
+}   
+
 .product-info {
   display: flex;
   flex: 1;
@@ -493,3 +493,51 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
+/* Cool infinite background scrolling animation.
+ * Twitter: @kootoopas
+ */
+/* Exo thin font from Google. */
+@import url(https://fonts.googleapis.com/css?family=Exo:100);
+/* Background data (Original source: https://subtlepatterns.com/grid-me/) */
+/* Animations */
+@-webkit-keyframes bg-scrolling-reverse {
+  100% {
+    background-position: 50px 50px;
+  }
+}
+@-moz-keyframes bg-scrolling-reverse {
+  100% {
+    background-position: 50px 50px;
+  }
+}
+@-o-keyframes bg-scrolling-reverse {
+  100% {
+    background-position: 50px 50px;
+  }
+}
+@keyframes bg-scrolling-reverse {
+  100% {
+    background-position: 50px 50px;
+  }
+}
+@-webkit-keyframes bg-scrolling {
+  0% {
+    background-position: 50px 50px;
+  }
+}
+@-moz-keyframes bg-scrolling {
+  0% {
+    background-position: 50px 50px;
+  }
+}
+@-o-keyframes bg-scrolling {
+  0% {
+    background-position: 50px 50px;
+  }
+}
+@keyframes bg-scrolling {
+  0% {
+    background-position: 50px 50px;
+  }
+}
+

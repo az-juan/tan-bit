@@ -1,6 +1,8 @@
 package views
 
-templ Carrito() {
+import "tan-bit.com/tan-bit/db/sqlc"
+
+templ Carrito(arts []db.GetCarritoByUsuarioRow) {
  <!doctype html>
 <html lang="es">
   <head>

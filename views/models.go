@@ -29,6 +29,7 @@ type VenderData struct {
 	Categoria   db.Categoria
 	Ubicacion   string
 	Precio      string
+	Stock       string
 	TipoEntrega string
 	CostoEnvio  string
 	ZonaEntrega string
@@ -43,6 +44,7 @@ func ParseVenderData(r *http.Request) VenderData {
 		Categoria:   db.Categoria(r.FormValue("categoria")),
 		Ubicacion:   r.FormValue("ubicacion"),
 		Precio:      r.FormValue("precio"),
+		Stock:       r.FormValue("stock"),
 		TipoEntrega: r.FormValue("tipo_entrega"),
 		CostoEnvio:  r.FormValue("costo_envio"),
 		ZonaEntrega: r.FormValue("zona_entrega"),
@@ -75,6 +77,25 @@ func CondicionesDB() []db.Condicion { //revisar
 }
 
 func BuildFiltros(arts []db.GetArticulosRow) []FiltroCategoria { // revisar
+	counts := map[db.Categoria]int{}
+	for _, a := range arts {
+		counts[a.Categoria]++
+	}
+	// order by db enum order (matches schema)
+	order := []db.Categoria{"notebook", "pantalla", "electronica", "periferico", "accesorio", "audio", "video", "gaming", "analogico", "comunicacion"}
+	var out []FiltroCategoria
+	total := len(arts)
+	out = append(out, FiltroCategoria{Key: "", Label: "TODOS", Count: total})
+	for _, c := range order {
+		if n, ok := counts[c]; ok && n > 0 {
+			out = append(out, FiltroCategoria{Key: c, Label: CategoriaLabel(c), Count: n})
+		}
+	}
+	return out
+
+}
+
+func BuildFiltrosFav(arts []db.GetFavoritosByUsuarioRow) []FiltroCategoria { // revisar
 	counts := map[db.Categoria]int{}
 	for _, a := range arts {
 		counts[a.Categoria]++

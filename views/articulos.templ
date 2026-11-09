@@ -34,9 +34,9 @@ templ Articulos(articulos []db.GetArticulosRow) {
       for _,articulo := range articulos {
         <article class="product-card">
           <div class="product-image">
-            <img src={ articulo.RutaImagen.String } alt={ articulo.Titulo } /><span class="heart-badge"
-              ><img class="heart-empty" src="/static/assets/heart-empty.svg" alt="Guardar"
-              /><img class="heart-filled" src="/static/assets/heart.svg" alt="Guardar" />
+            <img src={ articulo.RutaImagen.String } alt={ articulo.Titulo } />
+            <span class="heart-badge">
+              <div class="heart-img"></div>
             </span>
           </div>
           <div class="product-info">

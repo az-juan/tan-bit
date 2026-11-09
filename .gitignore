@@ -3,6 +3,7 @@ tmp/
 db/sqlc/
 db/uploads/
 views/*_templ.go
+
 # Solo desarrollo
 Dockerfile
 compose.yaml

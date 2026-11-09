@@ -26,6 +26,12 @@ func main() {
 
 	// Configurar rutas
 	http.HandleFunc("/health", handlers.HealthHandler)
+	http.HandleFunc("/evento", handlers.EventoHandler)
+	http.HandleFunc("/privacidad", handlers.PrivacidadHandler)
+	http.HandleFunc("/terminos", handlers.TerminosHandler)
+	http.HandleFunc("/historia", handlers.HistoriaHandler)
+	http.HandleFunc("/creadores", handlers.CreadoresHandler)
+	http.HandleFunc("/contacto", handlers.ContactoHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", us))
 	http.Handle("/vender", vendHandler)

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 	db "tan-bit.com/tan-bit/db/sqlc"
 	"tan-bit.com/tan-bit/views"
 )
@@ -24,18 +25,6 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.CarritoHandler(w, r)
 	case "/favoritos":
 		h.FavoritosHandler(w, r)
-	case "/evento":
-		h.EventoHandler(w, r)
-	case "/privacidad":
-		h.PrivacidadHandler(w, r)
-	case "/contacto":
-		h.ContactoHandler(w, r)
-	case "/terminos":
-		h.TerminosHandler(w, r)
-	case "/historia":
-		h.HistoriaHandler(w, r)
-	case "/creadores":
-		h.CreadoresHandler(w, r)
 	default:
 		NotFoundHandler(w, r)
 	}
@@ -51,45 +40,33 @@ func (h *ArticuloHandler) MarketplaceHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func (h *ArticuloHandler) CarritoHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Carrito().Render(r.Context(), w)
-}
-func (h *ArticuloHandler) EventoHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Evento().Render(r.Context(), w)
-}
-func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	arts, err := h.queries.GetArticulos(r.Context())
+	cookie, err := r.Cookie("user_id")
 	if err != nil {
-		views.Favoritos(nil).Render(r.Context(), w)
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
-	views.Favoritos(views.BuildFiltros(arts)).Render(r.Context(), w)
-}
-func (h *ArticuloHandler) PrivacidadHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Privacidad().Render(r.Context(), w)
-}
-
-func (h *ArticuloHandler) ContactoHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Contacto().Render(r.Context(), w)
+	id, _ := strconv.Atoi(cookie.Value)
+	arts, err := h.queries.GetCarritoByUsuario(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
+		return
+	}
+	views.Carrito(arts).Render(r.Context(), w)
 }
 
-func (h *ArticuloHandler) TerminosHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Terminos().Render(r.Context(), w)
-}
-
-func (h *ArticuloHandler) HistoriaHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Historia().Render(r.Context(), w)
-}
-
-func (h *ArticuloHandler) CreadoresHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Creadores().Render(r.Context(), w)
+func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("user_id")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	id, _ := strconv.Atoi(cookie.Value)
+	arts, err := h.queries.GetFavoritosByUsuario(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
+		return
+	}
+	views.Favoritos(arts, views.BuildFiltrosFav(arts)).Render(r.Context(), w)
 }
 
 // type CreateArticuloRequest struct {

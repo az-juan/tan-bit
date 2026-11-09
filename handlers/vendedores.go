@@ -89,13 +89,17 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 				data.RutaImagen = "/uploads/" + nombre
 			}
 		}
+		stock := int32(1)
+		if v, err := strconv.Atoi(data.Stock); err == nil {
+			stock = int32(v)
+		}
 		params := db.CreateArticuloParams{
 			Titulo:      data.Titulo,
 			Descripcion: data.Descripcion,
 			Condicion:   db.Condicion(data.Condicion),
 			Categoria:   db.Categoria(data.Categoria),
 			Precio:      data.Precio,
-			Stock:       1,
+			Stock:       stock,
 			IDVendedor:  idVendedor,
 			Ubicacion:   data.Ubicacion,
 			TipoEntrega: sql.NullString{String: data.TipoEntrega, Valid: data.TipoEntrega != ""},
