@@ -1,7 +1,7 @@
 .env
 tmp/
 db/sqlc/
-db/images/
+db/uploads/
 views/*_templ.go
 # Solo desarrollo
 Dockerfile

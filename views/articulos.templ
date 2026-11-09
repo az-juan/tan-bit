@@ -35,8 +35,9 @@ templ Articulos(articulos []db.GetArticulosRow) {
         <article class="product-card">
           <div class="product-image">
             <img src={ articulo.RutaImagen.String } alt={ articulo.Titulo } /><span class="heart-badge"
-              ><img src="/static/assets/heart.svg" alt="Guardar"
-            /></span>
+              ><img class="heart-empty" src="/static/assets/heart-empty.svg" alt="Guardar"
+              /><img class="heart-filled" src="/static/assets/heart.svg" alt="Guardar" />
+            </span>
           </div>
           <div class="product-info">
             <div class="product-meta"><span>{ articulo.IDArticulo }</span><span>▪ EN STOCK</span></div>

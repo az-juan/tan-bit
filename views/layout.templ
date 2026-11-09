@@ -1,5 +1,30 @@
 package views
 
+templ Header() {
+    <header class="site-header">
+      <a class="brand" href="./">
+        <img src="/static/assets/tanbit_logo.svg" alt="TAN-BIT logo" />
+        // <span>TAN-BIT</span>
+      </a>
+      <div class="site-search">
+        <img src="/static/assets/search.svg" alt="" />
+        <span>Buscar tu próxima joya del hardware</span>
+      </div>
+      <nav class="header-actions">
+        <a href="./vender">VENDER</a>
+        <a href="./favoritos">
+          <img src="/static/assets/heart.svg" alt="Favoritos" />
+        </a>
+        <a class="cart-link" href="./carrito">
+          <img src="/static/assets/cart.svg" alt="" />CARRITO [0]
+        </a>
+        <a href="./login">
+          <img class="account" src="/static/assets/account.svg" alt="Cuenta" />
+        </a>
+      </nav>
+    </header>
+ }
+
 templ Footer() {
       <footer class="site-footer">
         <div class="values">
@@ -25,14 +50,14 @@ templ Footer() {
         <div class="footer-main">
           <div class="footer-column">
             <div class="footer-brand">
-              <img src="/static/assets/tanbit_logo.png" alt="TAN-BIT logo" />
+              <img src="/static/assets/tanbit_logo.svg" alt="TAN-BIT logo" />
               // <h3>TAN-BIT</h3>
             </div>
             <p>Con el fin de facilitar la circulación del hardware.</p>
           </div>
           <div class="footer-column">
             <h3>AYUDA</h3>
-            <a>Contactanos</a><a href="./vender">Quiero vender</a>
+            <a href="./contacto">Contactanos</a><a href="./vender">Quiero vender</a>
           </div>
           <div class="footer-column">
             <h3>CONOCE TAN-BIT</h3>
@@ -49,28 +74,3 @@ templ Footer() {
         </div>
       </footer>
 }
-
-templ Header() {
-    <header class="site-header">
-      <a class="brand" href="./">
-        <img src="/static/assets/tanbit_logo.png" alt="TAN-BIT logo" />
-        // <span>TAN-BIT</span>
-      </a>
-      <div class="site-search">
-        <img src="/static/assets/search.svg" alt="" />
-        <span>Buscar tu próxima joya del hardware</span>
-      </div>
-      <nav class="header-actions">
-        <a href="./vender">VENDER</a>
-        <a href="./favoritos">
-          <img src="/static/assets/heart.svg" alt="Favoritos" />
-        </a>
-        <a class="cart-link" href="./carrito">
-          <img src="/static/assets/cart.svg" alt="" />CARRITO [0]
-        </a>
-        <a href="./login">
-          <img class="account" src="/static/assets/account.svg" alt="Cuenta" />
-        </a>
-      </nav>
-    </header>
- }

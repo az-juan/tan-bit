@@ -1,6 +1,6 @@
 package views
 
-templ MiCuenta() {
+templ MiCuenta(nombre, apellido, email, telefono string) {
 <!doctype html>
 <html lang="es">
   <head>
@@ -20,9 +20,9 @@ templ MiCuenta() {
           <aside class="account-sidebar">
             <div class="pixel-frame account-profile">
               <img src="/static/assets/account_user.svg" alt="Avatar" />
-              <strong>Maker Tandil</strong>
-              <small>maker@tanbit.com</small>
-              <span class="green">■ USUARIO</span>
+              <strong>{ nombre } { apellido }</strong>
+              <small>{ email }</small>
+              <span class="green">{ "■ " + map[bool]string{true: "VENDEDOR", false: "USUARIO"}[telefono != ""] }</span>
             </div>
             <nav class="account-nav">
               <a class="active">Datos personales</a>
@@ -36,10 +36,10 @@ templ MiCuenta() {
             <div class="pixel-frame account-card">
               <h2 class="display">DATOS PERSONALES</h2>
               <div class="account-form">
-                <label class="form-group"><span class="field-label">NOMBRE</span><input class="field" value="Maker" /></label>
-                <label class="form-group"><span class="field-label">APELLIDO</span><input class="field" value="Tandil" /></label>
-                <label class="form-group"><span class="field-label">EMAIL</span><input class="field" type="email" value="maker@tanbit.com" /></label>
-                <label class="form-group"><span class="field-label">TELÉFONO</span><input class="field" placeholder="+54 ..." /></label>
+                <label class="form-group"><span class="field-label">NOMBRE</span><input class="field" value={ nombre } /></label>
+                <label class="form-group"><span class="field-label">APELLIDO</span><input class="field" value={ apellido } /></label>
+                <label class="form-group"><span class="field-label">EMAIL</span><input class="field" type="email" value={ email } /></label>
+                <label class="form-group"><span class="field-label">TELÉFONO</span><input class="field" value={ telefono } placeholder="+54 ..." /></label>
                 <button class="btn">Guardar cambios ↗</button>
               </div>
             </div>
