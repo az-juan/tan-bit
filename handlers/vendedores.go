@@ -102,7 +102,7 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 			Stock:       stock,
 			IDVendedor:  idVendedor,
 			Ubicacion:   data.Ubicacion,
-			TipoEntrega: sql.NullString{String: data.TipoEntrega, Valid: data.TipoEntrega != ""},
+			TipoEntrega: db.Entrega(data.TipoEntrega),
 			CostoEnvio:  sql.NullString{String: data.CostoEnvio, Valid: data.CostoEnvio != ""},
 			ZonaEntrega: sql.NullString{String: data.ZonaEntrega, Valid: data.ZonaEntrega != ""},
 			RutaImagen:  sql.NullString{String: data.RutaImagen, Valid: data.RutaImagen != ""},

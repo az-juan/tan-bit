@@ -1,10 +1,11 @@
 .env
 tmp/
 db/sqlc/
-db/uploads/
+uploads/
 views/*_templ.go
 
 # Solo desarrollo
 Dockerfile
 compose.yaml
 .air.toml
+docs/design-context.md

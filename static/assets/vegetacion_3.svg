@@ -1,0 +1,19 @@
+<svg width="60" height="36" viewBox="0 0 60 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- moss cluster bottom -->
+<rect x="0" y="24" width="60" height="12" fill="#81A38E" opacity="0.35"/>
+<rect x="3" y="21" width="9" height="6" fill="#81A38E" opacity="0.6"/>
+<rect x="15" y="18" width="12" height="9" fill="#81A38E" opacity="0.85"/>
+<rect x="30" y="21" width="9" height="6" fill="#81A38E" opacity="0.6"/>
+<rect x="42" y="18" width="15" height="9" fill="#81A38E" opacity="0.85"/>
+<!-- vines -->
+<rect x="18" y="0" width="3" height="18" fill="#64635F"/>
+<rect x="45" y="0" width="3" height="18" fill="#64635F"/>
+<!-- leaves on vines -->
+<rect x="12" y="3" width="6" height="3" fill="#81A38E" opacity="0.85"/>
+<rect x="12" y="9" width="6" height="3" fill="#81A38E" opacity="0.7"/>
+<rect x="48" y="6" width="6" height="3" fill="#81A38E" opacity="0.85"/>
+<rect x="48" y="12" width="6" height="3" fill="#81A38E" opacity="0.7"/>
+<!-- small flowers -->
+<rect x="15" y="15" width="3" height="3" fill="#C8A84B"/>
+<rect x="48" y="15" width="3" height="3" fill="#C8A84B"/>
+</svg>

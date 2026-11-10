@@ -18,7 +18,7 @@ templ MiCuenta(nombre, apellido, email, telefono string) {
         <h1 class="display page-title">MI CUENTA.</h1>
         <div class="account-grid">
           <aside class="account-sidebar">
-            <div class="pixel-frame account-profile">
+            <div class="pixel-frame veg-tlverdigris veg-2 account-profile">
               <img src={"/static/assets/"+map[bool]string{true: "account_seller.svg", false: "account_user.svg"}[telefono != ""]} alt="Avatar" />
               <strong>{ nombre } { apellido }</strong>
               <small>{ email }</small>
@@ -33,7 +33,7 @@ templ MiCuenta(nombre, apellido, email, telefono string) {
             </nav>
           </aside>
           <section class="account-content">
-            <div class="pixel-frame account-card">
+            <div class="pixel-frame veg-h codo-2verdigris veg-3 account-card">
               <h2 class="display">DATOS PERSONALES</h2>
               <div class="account-form">
                 <label class="form-group"><span class="field-label">NOMBRE</span><input class="field" value={ nombre } /></label>
@@ -44,11 +44,11 @@ templ MiCuenta(nombre, apellido, email, telefono string) {
               </div>
             </div>
             <div class="account-stats">
-              <div class="pixel-frame stat"><span>PIEZAS PUBLICADAS</span><strong class="display">04</strong></div>
-              <div class="pixel-frame stat"><span>FAVORITOS</span><strong class="display">12</strong></div>
-              <div class="pixel-frame stat"><span>PEDIDOS</span><strong class="display">03</strong></div>
+              <div class="pixel-frame veg-vs codo-2 codo-3brass stat"><span>PIEZAS PUBLICADAS</span><strong class="display">00</strong></div>
+              <div class="pixel-frame veg-tl codo-2 codo-3brass veg-2 stat"><span>FAVORITOS</span><strong class="display">00</strong></div>
+              <div class="pixel-frame veg-blbrass veg-3 stat"><span>PEDIDOS</span><strong class="display">00</strong></div>
             </div>
-            <div class="pixel-frame account-card">
+            <div class="pixel-frame veg-vs codo-2 codo-3steel-dark account-card">
               <h2 class="display">SEGURIDAD</h2>
               <div class="account-form">
                 <label class="form-group"><span class="field-label">CONTRASEÑA ACTUAL</span><input class="field" type="password" /></label>

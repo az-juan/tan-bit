@@ -1,6 +1,6 @@
 CREATE TYPE condicion AS ENUM ('nuevo', 'muy bueno', 'usado', 'reacondicionado', 'a reparar');
 CREATE TYPE categoria AS ENUM ('notebook','pantalla','electronica','periferico','accesorio','audio','video','gaming','comunicacion','analogico','decoracion');
-
+CREATE TYPE entrega   AS ENUM ('envio a domicilio','retiro en persona','ambos');
 CREATE TABLE usuario (
     id_usuario  SERIAL      CONSTRAINT pk_usuario PRIMARY KEY,
     apellido    VARCHAR(50) NOT NULL,
@@ -25,9 +25,9 @@ CREATE TABLE articulo (
     stock           INTEGER      NOT NULL CHECK (stock >= 0),
     fecha_publicacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     ubicacion       text         NOT NULL,
-    tipo_entrega    text         NULL,
-    costo_envio     NUMERIC(10,2) NULL,
-    zona_entrega    text         NULL,
+    tipo_entrega    entrega      NOT NULL,
+    costo_envio     NUMERIC(10,2)    NULL CHECK (costo_envio >= 0),
+    zona_entrega    text             NULL,
     id_vendedor     INTEGER      NOT NULL CONSTRAINT fk_producto_vendedor REFERENCES vendedor(id_vendedor)
 );
 

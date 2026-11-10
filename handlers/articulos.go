@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	db "tan-bit.com/tan-bit/db/sqlc"
@@ -23,6 +24,8 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.MarketplaceHandler(w, r)
 	case "/carrito":
 		h.CarritoHandler(w, r)
+	case "/compra":
+		h.CompraHandler(w, r)
 	case "/favoritos":
 		h.FavoritosHandler(w, r)
 	default:
@@ -54,6 +57,54 @@ func (h *ArticuloHandler) CarritoHandler(w http.ResponseWriter, r *http.Request)
 	views.Carrito(arts).Render(r.Context(), w)
 }
 
+func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("user_id")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	id, _ := strconv.Atoi(cookie.Value)
+	if r.Method == http.MethodGet {
+		arts, err := h.queries.GetCarritoByUsuario(r.Context(), int32(id))
+		if err != nil {
+			http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
+			return
+		}
+		views.Compra(arts).Render(r.Context(), w)
+		return
+	}
+	// POST
+	arts, err := h.queries.GetCarritoByUsuario(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
+		return
+	}
+	var total float64
+	for _, a := range arts {
+		// precio string to float
+		p, _ := strconv.ParseFloat(a.Precio, 64)
+		total += p * float64(a.Cantidad)
+	}
+	compra, err := h.queries.CreateCompra(r.Context(), db.CreateCompraParams{
+		IDComprador: int32(id),
+		Total:       fmt.Sprintf("%.2f", total),
+	})
+	if err != nil {
+		http.Error(w, "Error al crear compra", http.StatusInternalServerError)
+		return
+	}
+	for _, a := range arts {
+		p, _ := strconv.ParseFloat(a.Precio, 64)
+		h.queries.CreateDetalleCompra(r.Context(), db.CreateDetalleCompraParams{
+			IDCompra:                 compra.IDCompra,
+			IDArticulo:               a.IDArticulo,
+			Cantidad:                 a.Cantidad,
+			PrecioHistoricoUnitario:  fmt.Sprintf("%.2f", p),
+		})
+	}
+	h.queries.ClearCarrito(r.Context(), int32(id))
+	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
+}
 func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("user_id")
 	if err != nil {

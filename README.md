@@ -3,7 +3,8 @@
 
 ![Alt text](./images/tanbit_logo.png)
 
-Mercado de hardware/tecnología de segunda mano, destinado a facilitar la circulación de articulos que aún tienen utilidad entre vecinos.
+Mercado de hardware/tecnología destinado a darle oportunidad a articulos que aún tienen utilidad entre vecinos.
+Hardware de segunda mano y hardware custom/personalizado hecho de forma 'artesanal'.
 
 *DESCENTRALIZADO - CONFIANZA - OPORTUNIDAD*
 

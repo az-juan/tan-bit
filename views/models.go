@@ -30,7 +30,7 @@ type VenderData struct {
 	Ubicacion   string
 	Precio      string
 	Stock       string
-	TipoEntrega string
+	TipoEntrega db.Entrega
 	CostoEnvio  string
 	ZonaEntrega string
 	RutaImagen  string
@@ -45,7 +45,7 @@ func ParseVenderData(r *http.Request) VenderData {
 		Ubicacion:   r.FormValue("ubicacion"),
 		Precio:      r.FormValue("precio"),
 		Stock:       r.FormValue("stock"),
-		TipoEntrega: r.FormValue("tipo_entrega"),
+		TipoEntrega: db.Entrega(r.FormValue("tipo_entrega")),
 		CostoEnvio:  r.FormValue("costo_envio"),
 		ZonaEntrega: r.FormValue("zona_entrega"),
 		RutaImagen:  r.FormValue("ruta_imagen"),
@@ -60,7 +60,7 @@ func (d VenderData) Query() string {
 	v.Set("categoria", string(d.Categoria))
 	v.Set("ubicacion", d.Ubicacion)
 	v.Set("precio", d.Precio)
-	v.Set("tipo_entrega", d.TipoEntrega)
+	v.Set("tipo_entrega", string(d.TipoEntrega))
 	v.Set("costo_envio", d.CostoEnvio)
 	v.Set("zona_entrega", d.ZonaEntrega)
 	v.Set("ruta_imagen", d.RutaImagen)
