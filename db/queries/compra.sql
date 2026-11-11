@@ -9,3 +9,9 @@ VALUES ($1, $2, $3, $4);
 
 -- name: ClearCarrito :exec
 DELETE FROM carrito WHERE id_usuario = $1;
+
+-- name: GetComprasByUsuario :many
+SELECT id_compra, id_comprador, fecha, total
+FROM compra
+WHERE id_comprador = $1
+ORDER BY fecha DESC;

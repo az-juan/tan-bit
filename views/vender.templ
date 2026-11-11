@@ -4,7 +4,7 @@ import (
 	"tan-bit.com/tan-bit/db/sqlc"
 )
 
-templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condicion) {
+templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condicion, errorMsg string) {
 
 <!doctype html>
 <html lang="es">
@@ -29,13 +29,16 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
         // </nav>
         <div class="sell-layout">
           <form class="pixel-frame veg-tr codo-3copper veg-2 sell-form" method="post" action="/vender" enctype="multipart/form-data">
+          if errorMsg != "" {
+            <div class="form-error">{ errorMsg }</div>
+          }
             <div class="form-title">
               <h2 class="display">01. CONTANOS SOBRE TU PIEZA</h2>
               <span>* OBLIGATORIO</span>
             </div>
             <label>
               <span>TÍTULO DE LA PUBLICACIÓN *</span>
-              <input class="field" name="titulo" value={ data.Titulo } placeholder="Ej. Teclado mecánico de nogal · 75%"/>
+              <input class="field" name="titulo" value={ data.Titulo } placeholder="Ej. Teclado mecánico de nogal · 75%" required/>
             </label>
             <div class="form-columns">
               <label>
@@ -56,6 +59,7 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
                 name="descripcion"
                 rows="4"
                 placeholder="Contá qué la hace especial: materiales, proceso, compatibilidad y todo lo que incluye."
+                required
               >{ data.Descripcion }</textarea>
             </label>
             <small
@@ -63,30 +67,31 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
               buena ficha evita sorpresas.</small>
             <h3 class="display">FOTOS DE TU HARDWARE</h3>
             <div class="upload">
-              <strong>+</strong>
-              <div>
-                <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 3 a 8 imágenes</small><a href="#" onclick="document.getElementById('fotos').click();return false;">SELECCIONAR FOTOS ↗</a>
-                <input type="file" id="fotos" name="fotos" accept="image/*" multiple style="display:none" />
-                <img id="preview" alt="Vista previa" style="max-width:100%;max-height:200px;margin-top:8px;display:none" />
-              </div>
+              <label class="upload-action">
+                <strong>+</strong>
+                <div>
+                  <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 3 a 8 imágenes</small>
+                </div>
+                <input type="file" name="fotos" accept="image/*" multiple />
+              </label>
             </div>
             <div class="form-columns">
             <label>
-              <span>UBICACIÓN *</span><input class="field" name="ubicacion" value={ data.Ubicacion } placeholder="Tandil, Buenos Aires"/>
+              <span>UBICACIÓN *</span><input class="field" name="ubicacion" value={ data.Ubicacion } placeholder="Tandil, Buenos Aires" required/>
             </label>
             </div>
             <div class="form-title">
               <h2 class="display">02. PRECIO Y ENTREGA</h2>
             </div>
             <div class="form-columns">
-              <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" /></label>
+              <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" required/></label>
               <label><span>STOCK *</span><input class="field" name="stock" value={ data.Stock } placeholder="1" type="number" min="1" /></label>
             </div>
             <div class="form-columns">
-              <label><span>TIPO DE ENTREGA *</span><select class="field" name="tipo_entrega"><option>Envío a domicilio</option><option>Retiro en persona</option><option>Ambos</option></select></label>
+              <label><span>TIPO DE ENTREGA *</span><select class="field" name="tipo_entrega"><option value="envio a domicilio">Envío a domicilio</option><option value="retiro en persona">Retiro en persona</option><option value="ambos">Ambos</option></select></label>
               <label><span>COSTO DE ENVÍO</span><input class="field" name="costo_envio" value={ data.CostoEnvio } placeholder="0.00" type="number" step="0.01" /></label>
             </div>
-            <label><span>ZONA DE ENTREGA *</span><input class="field" name="zona_entrega" value={ data.ZonaEntrega } placeholder="Tandil y alrededores" /></label>
+            <label><span>ZONA DE ENTREGA *</span><input class="field" name="zona_entrega" value={ data.ZonaEntrega } placeholder="Tandil y alrededores" required /></label>
             <div class="form-submit">
               <span>Tu publicación todavía no es visible. Revisá que los datos esten bien antes de publicar.</span><button class="btn">Publicar ↗</button>
             </div>
@@ -118,15 +123,6 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
       </main>
       @Footer()
     </div>
-    <script>
-      document.getElementById('fotos').addEventListener('change', function(e){
-        var f = e.target.files && e.target.files[0];
-        if(!f) return;
-        var r = new FileReader();
-        r.onload = function(ev){ var img=document.getElementById('preview'); img.src=ev.target.result; img.style.display='block'; };
-        r.readAsDataURL(f);
-      });
-    </script>
   </body>
 </html>
 }

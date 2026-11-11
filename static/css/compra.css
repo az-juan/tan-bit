@@ -55,9 +55,15 @@
 }
 
 .payment-fields {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 8px;
+}
+
+#compra-form:has(input[name="metodo"][value="tarjeta"]:checked) .metodo-tarjeta,
+#compra-form:has(input[name="metodo"][value="transferencia"]:checked) .metodo-transferencia,
+#compra-form:has(input[name="metodo"][value="monero"]:checked) .metodo-monero {
+  display: block;
 }
 
 .field-row {

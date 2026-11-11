@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	// "database/sql"
 	// "encoding/json"
 	// "errors"
+	"database/sql"
 	"net/http"
 	"strconv"
-	// "strings"
 
 	db "tan-bit.com/tan-bit/db/sqlc"
 	"tan-bit.com/tan-bit/views"
@@ -21,37 +20,6 @@ func NewUsuarioHandler(queries *db.Queries) *UsuarioHandler {
 		queries: queries,
 	}
 }
-
-// type UsuarioRequest struct {
-// 	Apellido string `json:"apellido"`
-// 	Nombre   string `json:"nombre"`
-// 	Email    string `json:"email"`
-// 	Password string `json:"password"`
-// }
-
-// type UsuarioResponse struct {
-// 	IDUsuario int32  `json:"id_usuario"`
-// 	Apellido  string `json:"apellido"`
-// 	Nombre    string `json:"nombre"`
-// 	Email     string `json:"email"`
-// }
-
-// func toUsuarioResponse(u db.Usuario) UsuarioResponse {
-// 	return UsuarioResponse{
-// 		IDUsuario: u.IDUsuario,
-// 		Apellido:  u.Apellido,
-// 		Nombre:    u.Nombre,
-// 		Email:     u.Email,
-// 	}
-// }
-
-// func toUsuariosFromGet(usuarios []db.Usuario) []UsuarioResponse {
-// 	res := make([]UsuarioResponse, 0, len(usuarios))
-// 	for _, u := range usuarios {
-// 		res = append(res, toUsuarioResponse(u))
-// 	}
-// 	return res
-// }
 
 func (h *UsuarioHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
@@ -72,7 +40,7 @@ func (h *UsuarioHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		views.Registrarse().Render(r.Context(), w)
+		views.Registrarse("", "usuario").Render(r.Context(), w)
 		return
 	}
 	if r.Method != http.MethodPost {
@@ -83,6 +51,25 @@ func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Reque
 		http.Error(w, "Formulario inválido", http.StatusBadRequest)
 		return
 	}
+
+	role := r.FormValue("role")
+	if role != "usuario" && role != "vendedor" {
+		role = "usuario"
+	}
+
+	terminos := r.FormValue("terminos")
+	if terminos != "on" {
+		views.Registrarse("Debes aceptar los términos del servicio y la política de privacidad.", role).Render(r.Context(), w)
+		return
+	}
+
+	if role == "vendedor" {
+		if r.FormValue("telefono") == "" || r.FormValue("cbu") == "" || r.FormValue("alias") == "" {
+			views.Registrarse("Para registrarte como vendedor necesitás completar TELÉFONO, CBU y ALIAS.", role).Render(r.Context(), w)
+			return
+		}
+	}
+
 	params := db.CreateUsuarioParams{
 		Apellido: r.FormValue("apellido"),
 		Nombre:   r.FormValue("nombre"),
@@ -91,13 +78,38 @@ func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Reque
 	}
 	nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
 	if err != nil {
+		if esViolacionUnique(err) {
+			views.Registrarse("El email ya está registrado. ¿Tenés cuenta? Iniciá sesión.", role).Render(r.Context(), w)
+			return
+		}
 		http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if tel := r.FormValue("telefono"); tel != "" {
-		t, _ := strconv.ParseInt(tel, 10, 64)
-		_, _ = h.queries.CreateVendedor(r.Context(), db.CreateVendedorParams{IDVendedor: nuevoUsuario.IDUsuario, Telefono: t})
+
+	if role == "vendedor" {
+		telefono, err := strconv.ParseInt(r.FormValue("telefono"), 10, 64)
+		if err != nil {
+			views.Registrarse("TELÉFONO debe ser un número válido.", role).Render(r.Context(), w)
+			return
+		}
+		cbu := r.FormValue("cbu")
+		direccionXmr := sql.NullString{}
+		if v := r.FormValue("direccion_xmr"); v != "" {
+			direccionXmr = sql.NullString{String: v, Valid: true}
+		}
+		_, err = h.queries.CreateVendedor(r.Context(), db.CreateVendedorParams{
+			IDVendedor:   nuevoUsuario.IDUsuario,
+			Telefono:     telefono,
+			DireccionXmr: direccionXmr,
+			Cbu:          cbu,
+			Alias:        r.FormValue("alias"),
+		})
+		if err != nil {
+			http.Error(w, "Error al crear el vendedor: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
+
 	http.SetCookie(w, &http.Cookie{Name: "user_id", Value: strconv.Itoa(int(nuevoUsuario.IDUsuario)), Path: "/"})
 	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 }
@@ -136,7 +148,15 @@ func (h *UsuarioHandler) MiCuentaHandler(w http.ResponseWriter, r *http.Request)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	nombre, apellido, email := "", "", ""
 	telefono := ""
-	if cookie, err := r.Cookie("user_id"); err == nil {
+	alias := ""
+	cbu := ""
+	direccionXmr := ""
+	articulos := []db.GetArticulosByVendedorRow{}
+	favoritos := []db.GetFavoritosByUsuarioRow{}
+	compras := []db.Compra{}
+
+	cookie, err := r.Cookie("user_id")
+	if err == nil {
 		if id, err := strconv.Atoi(cookie.Value); err == nil {
 			if u, err := h.queries.GetUsuarioByID(r.Context(), int32(id)); err == nil {
 				nombre = u.Nombre
@@ -145,12 +165,60 @@ func (h *UsuarioHandler) MiCuentaHandler(w http.ResponseWriter, r *http.Request)
 			}
 			if v, err := h.queries.GetVendedorByID(r.Context(), int32(id)); err == nil {
 				telefono = strconv.FormatInt(v.Telefono, 10)
+				alias = v.Alias
+				cbu = v.Cbu
+				if v.DireccionXmr.Valid {
+					direccionXmr = v.DireccionXmr.String
+				}
+			}
+			if v, err := h.queries.GetArticulosByVendedor(r.Context(), int32(id)); err == nil {
+				articulos = v
+			}
+			if v, err := h.queries.GetFavoritosByUsuario(r.Context(), int32(id)); err == nil {
+				favoritos = v
+			}
+			if v, err := h.queries.GetComprasByUsuario(r.Context(), int32(id)); err == nil {
+				compras = v
 			}
 		}
+	} else {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
 	}
-	views.MiCuenta(nombre, apellido, email, telefono).Render(r.Context(), w)
+	views.MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr, articulos, favoritos, compras).Render(r.Context(), w)
 }
 
+// type UsuarioRequest struct {
+// 	Apellido string `json:"apellido"`
+// 	Nombre   string `json:"nombre"`
+// 	Email    string `json:"email"`
+// 	Password string `json:"password"`
+// }
+
+// type UsuarioResponse struct {
+// 	IDUsuario int32  `json:"id_usuario"`
+// 	Apellido  string `json:"apellido"`
+// 	Nombre    string `json:"nombre"`
+// 	Email     string `json:"email"`
+// }
+
+// func toUsuarioResponse(u db.Usuario) UsuarioResponse {
+// 	return UsuarioResponse{
+// 		IDUsuario: u.IDUsuario,
+// 		Apellido:  u.Apellido,
+// 		Nombre:    u.Nombre,
+// 		Email:     u.Email,
+// 	}
+// }
+
+// func toUsuariosFromGet(usuarios []db.Usuario) []UsuarioResponse {
+// 	res := make([]UsuarioResponse, 0, len(usuarios))
+// 	for _, u := range usuarios {
+// 		res = append(res, toUsuarioResponse(u))
+// 	}
+// 	return res
+// }
+//
 // Manejador para /usuarios
 // func (h *UsuarioHandler) UsersHandler(w http.ResponseWriter, r *http.Request) {
 // 	switch r.Method {

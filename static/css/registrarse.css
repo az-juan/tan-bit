@@ -81,3 +81,92 @@
     padding: 28px;
   }
 }
+
+.role-toggle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.role-toggle-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+
+.role-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.role-option input {
+  display: none;
+}
+
+.role-option span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sand);
+}
+
+.role-option:hover {
+  border-color: var(--copper);
+}
+
+.role-option input:checked + span {
+  color: var(--paper);
+  font-weight: 700;
+}
+
+.form-error {
+  color: var(--error);
+  font-size: 13px;
+  margin: 0 0 12px 0;
+}
+
+.form-error:empty {
+  display: none;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: var(--sand);
+  line-height: 1.6;
+}
+
+.form-hint strong {
+  color: var(--copper);
+}
+
+.form-section {
+  background: var(--panel);
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.subsection-title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin: 0 0 12px 0;
+}
+
+.vendedor-fields {
+  display: none;
+}
+
+#registrarse-form:has(input[name="role"][value="vendedor"]:checked) .vendedor-fields {
+  display: block;
+}

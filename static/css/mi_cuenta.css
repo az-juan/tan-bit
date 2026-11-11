@@ -4,7 +4,7 @@
 .account-sidebar { display: flex; flex-direction: column; gap: 24px; }
 .account-profile { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px; text-align: center; }
 .account-profile img { width: 64px; height: 64px; }
-.account-profile strong { font-family: "VT323:Regular"; font-size: 22px; color: var(--paper); }
+.account-profile strong { font-family: "VT323:Regular"; font-size: 22px; font-weight: 300; color: var(--paper); }
 .account-profile small { font-size: 10px; color: var(--sand); }
 .account-nav { display: flex; flex-direction: column; gap: 8px; }
 .account-nav a { padding: 12px 16px; border: 2px solid var(--line); background: var(--panel); font-size: 11px; color: var(--sand); }
@@ -23,4 +23,26 @@
 @media (max-width: 900px) {
   .account-grid { grid-template-columns: 1fr; }
   .account-form, .account-stats { grid-template-columns: 1fr; }
+}
+
+.vendedor-data {
+  border-left: 4px solid var(--copper);
+  padding-left: 16px;
+}
+
+.mini-card {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.mini-card-img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 6px;
 }

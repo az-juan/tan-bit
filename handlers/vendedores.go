@@ -58,7 +58,7 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 	v, err := h.queries.GetVendedorByID(r.Context(), int32(id))
 	if err != nil || v.Telefono == 0 {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write([]byte("<script>alert('Debe cargar un telefono para vender'); window.location='/mi_cuenta';</script>"))
+		// w.Write([]byte("<script>alert('Debe cargar un telefono para vender'); window.location='/mi_cuenta';</script>"))
 		return
 	}
 	if r.Method == http.MethodPost {
@@ -66,12 +66,45 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 			r.ParseForm()
 		}
 		data := views.ParseVenderData(r)
-		idVendedor := int32(1)
+
+		// Campos obligatorios
+		var missing []string
+		if data.Titulo == "" {
+			missing = append(missing, "título")
+		}
+		if data.Descripcion == "" {
+			missing = append(missing, "descripción")
+		}
+		if data.Precio == "" {
+			missing = append(missing, "precio")
+		}
+		if data.Ubicacion == "" {
+			missing = append(missing, "ubicación")
+		}
+		if data.ZonaEntrega == "" {
+			missing = append(missing, "zona de entrega")
+		}
+		if data.TipoEntrega == "" {
+			missing = append(missing, "tipo de entrega")
+		}
+		if len(missing) > 0 {
+			errMsg := "Faltan datos obligatorios: " + strings.Join(missing, ", ")
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			views.Vender(data, views.CategoriasDB(), views.CondicionesDB(), errMsg).Render(r.Context(), w)
+			return
+		}
+
+		idVendedor := int32(0)
 		if cookie, err := r.Cookie("user_id"); err == nil {
 			if v, err := strconv.Atoi(cookie.Value); err == nil {
 				idVendedor = int32(v)
 			}
 		}
+		if idVendedor == 0 {
+			http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
+			return
+		}
+
 		// guardar imagen
 		if f, fh, err := r.FormFile("fotos"); err == nil {
 			defer f.Close()
@@ -79,9 +112,9 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 			if ext == "" {
 				ext = ".jpg"
 			}
-			os.MkdirAll("db/uploads", 0755)
+			os.MkdirAll("uploads", 0755)
 			nombre := fmt.Sprintf("%d_%s_1%s", idVendedor, sanitize(data.Titulo), ext)
-			dst := filepath.Join("db/uploads", nombre)
+			dst := filepath.Join("uploads", nombre)
 			out, err := os.Create(dst)
 			if err == nil {
 				io.Copy(out, f)
@@ -89,6 +122,7 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 				data.RutaImagen = "/uploads/" + nombre
 			}
 		}
+
 		stock := int32(1)
 		if v, err := strconv.Atoi(data.Stock); err == nil {
 			stock = int32(v)
@@ -96,23 +130,28 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 		params := db.CreateArticuloParams{
 			Titulo:      data.Titulo,
 			Descripcion: data.Descripcion,
-			Condicion:   db.Condicion(data.Condicion),
-			Categoria:   db.Categoria(data.Categoria),
+			Condicion:   data.Condicion,
+			Categoria:   data.Categoria,
 			Precio:      data.Precio,
 			Stock:       stock,
 			IDVendedor:  idVendedor,
 			Ubicacion:   data.Ubicacion,
-			TipoEntrega: db.Entrega(data.TipoEntrega),
+			TipoEntrega: data.TipoEntrega,
 			CostoEnvio:  sql.NullString{String: data.CostoEnvio, Valid: data.CostoEnvio != ""},
 			ZonaEntrega: sql.NullString{String: data.ZonaEntrega, Valid: data.ZonaEntrega != ""},
 			RutaImagen:  sql.NullString{String: data.RutaImagen, Valid: data.RutaImagen != ""},
 		}
-		_, _ = h.queries.CreateArticulo(r.Context(), params)
+		if _, err := h.queries.CreateArticulo(r.Context(), params); err != nil {
+			errMsg := "No se pudo publicar el artículo: " + err.Error()
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			views.Vender(data, views.CategoriasDB(), views.CondicionesDB(), errMsg).Render(r.Context(), w)
+			return
+		}
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Vender(views.VenderData{}, views.CategoriasDB(), views.CondicionesDB()).Render(r.Context(), w)
+	views.Vender(views.VenderData{}, views.CategoriasDB(), views.CondicionesDB(), "").Render(r.Context(), w)
 }
 
 // type CreateVendedorRequest struct {

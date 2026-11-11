@@ -34,8 +34,11 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 
 	vendedorCreado, err := queries.CreateVendedor(ctx,
 		sqlc.CreateVendedorParams{
-			IDVendedor: usuarioCreado.IDUsuario,
-			Telefono:   2494777777,
+			IDVendedor:   usuarioCreado.IDUsuario,
+			Telefono:     2494777777,
+			DireccionXmr: sql.NullString{},
+			Cbu:          "24947777770",
+			Alias:        "leo_dev_vendedor",
 		})
 	if err != nil {
 		log.Fatalf("Error al crear vendedor: %v", err)

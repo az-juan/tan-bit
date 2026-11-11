@@ -22,7 +22,7 @@ func main() {
 	vendHandler := handlers.NewVendedorHandler(queries)
 
 	fs := http.FileServer(http.Dir("static"))
-	us := http.FileServer(http.Dir("db/uploads"))
+	us := http.FileServer(http.Dir("uploads"))
 
 	// Configurar rutas
 	http.HandleFunc("/health", handlers.HealthHandler)
@@ -35,8 +35,8 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", us))
 	http.Handle("/vender", vendHandler)
-	http.Handle("/login", userHandler)
 	http.Handle("/registrarse", userHandler)
+	http.Handle("/login", userHandler)
 	http.Handle("/mi_cuenta", userHandler)
 	http.Handle("/", artHandler)
 	port := ":8080"

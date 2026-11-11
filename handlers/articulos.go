@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"strconv"
 	db "tan-bit.com/tan-bit/db/sqlc"
 	"tan-bit.com/tan-bit/views"
@@ -24,10 +25,14 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.MarketplaceHandler(w, r)
 	case "/carrito":
 		h.CarritoHandler(w, r)
+	case "/carrito/add":
+		h.AddCarritoHandler(w, r)
 	case "/compra":
 		h.CompraHandler(w, r)
 	case "/favoritos":
 		h.FavoritosHandler(w, r)
+	case "/favoritos/add":
+		h.AddFavoritoHandler(w, r)
 	default:
 		NotFoundHandler(w, r)
 	}
@@ -40,6 +45,45 @@ func (h *ArticuloHandler) MarketplaceHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	views.Marketplace(arts, views.BuildFiltros(arts)).Render(r.Context(), w)
+}
+
+func (h *ArticuloHandler) AddCarritoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	cookie, err := r.Cookie("user_id")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	id, _ := strconv.Atoi(cookie.Value)
+	artID, _ := strconv.Atoi(r.FormValue("id_articulo"))
+	h.queries.AddToCarrito(r.Context(), db.AddToCarritoParams{
+		IDUsuario:  int32(id),
+		IDArticulo: int32(artID),
+		Cantidad:   1,
+	})
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func (h *ArticuloHandler) AddFavoritoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	cookie, err := r.Cookie("user_id")
+	if err != nil {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+	id, _ := strconv.Atoi(cookie.Value)
+	artID, _ := strconv.Atoi(r.FormValue("id_articulo"))
+	h.queries.AddFavorito(r.Context(), db.AddFavoritoParams{
+		IDUsuario:  int32(id),
+		IDArticulo: int32(artID),
+	})
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
 func (h *ArticuloHandler) CarritoHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,26 +109,40 @@ func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) 
 	}
 	id, _ := strconv.Atoi(cookie.Value)
 	if r.Method == http.MethodGet {
-		arts, err := h.queries.GetCarritoByUsuario(r.Context(), int32(id))
+		arts, err := h.queries.GetCarritoCompra(r.Context(), int32(id))
 		if err != nil {
 			http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 			return
 		}
-		views.Compra(arts).Render(r.Context(), w)
+		entregas := make(map[string]bool)
+		for _, a := range arts {
+			entregas[string(a.TipoEntrega)] = true
+		}
+		entregaSlice := make([]string, 0, len(entregas))
+		for k := range entregas {
+			entregaSlice = append(entregaSlice, k)
+		}
+		sort.Strings(entregaSlice)
+		var total float64
+		for _, a := range arts {
+			p, _ := strconv.ParseFloat(a.Precio, 64)
+			total += p * float64(a.Cantidad)
+		}
+		views.Compra(arts, entregaSlice, fmt.Sprintf("%.2f", total)).Render(r.Context(), w)
 		return
 	}
 	// POST
-	arts, err := h.queries.GetCarritoByUsuario(r.Context(), int32(id))
+	arts, err := h.queries.GetCarritoCompra(r.Context(), int32(id))
 	if err != nil {
 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 		return
 	}
 	var total float64
 	for _, a := range arts {
-		// precio string to float
 		p, _ := strconv.ParseFloat(a.Precio, 64)
 		total += p * float64(a.Cantidad)
 	}
+	_ = r.FormValue("entrega")
 	compra, err := h.queries.CreateCompra(r.Context(), db.CreateCompraParams{
 		IDComprador: int32(id),
 		Total:       fmt.Sprintf("%.2f", total),
@@ -96,10 +154,10 @@ func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) 
 	for _, a := range arts {
 		p, _ := strconv.ParseFloat(a.Precio, 64)
 		h.queries.CreateDetalleCompra(r.Context(), db.CreateDetalleCompraParams{
-			IDCompra:                 compra.IDCompra,
-			IDArticulo:               a.IDArticulo,
-			Cantidad:                 a.Cantidad,
-			PrecioHistoricoUnitario:  fmt.Sprintf("%.2f", p),
+			IDCompra:                compra.IDCompra,
+			IDArticulo:              a.IDArticulo,
+			Cantidad:                a.Cantidad,
+			PrecioHistoricoUnitario: fmt.Sprintf("%.2f", p),
 		})
 	}
 	h.queries.ClearCarrito(r.Context(), int32(id))

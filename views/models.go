@@ -22,6 +22,19 @@ func CategoriaLabel(c db.Categoria) string {
 	return strings.ToUpper(s[:1]) + s[1:]
 }
 
+func EntregaLabel(et string) string {
+	switch et {
+	case "envio a domicilio":
+		return "Envío a domicilio"
+	case "retiro en persona":
+		return "Pasar a retirar"
+	case "ambos":
+		return "Ambos"
+	default:
+		return et
+	}
+}
+
 type VenderData struct {
 	Titulo      string
 	Descripcion string

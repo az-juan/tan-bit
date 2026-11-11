@@ -4,6 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     container_name: api
+    volumes:
+      - uploads:/app/uploads
     ports:
       - "8080:8080"            #[puerto_anfitrion:puerto_contenedor]
     ##env_file carga sus variables al contenedor en tiempo de ejecucion
@@ -46,4 +48,5 @@ services:
     restart: unless-stopped
 
 volumes:
+  uploads:
   pgdata:

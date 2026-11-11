@@ -1,6 +1,7 @@
 CREATE TYPE condicion AS ENUM ('nuevo', 'muy bueno', 'usado', 'reacondicionado', 'a reparar');
 CREATE TYPE categoria AS ENUM ('notebook','pantalla','electronica','periferico','accesorio','audio','video','gaming','comunicacion','analogico','decoracion');
 CREATE TYPE entrega   AS ENUM ('envio a domicilio','retiro en persona','ambos');
+
 CREATE TABLE usuario (
     id_usuario  SERIAL      CONSTRAINT pk_usuario PRIMARY KEY,
     apellido    VARCHAR(50) NOT NULL,
@@ -10,8 +11,11 @@ CREATE TABLE usuario (
 );
 
 CREATE TABLE vendedor (
-    id_vendedor     INTEGER     CONSTRAINT pk_vendedor PRIMARY KEY CONSTRAINT fk_vendedor_usuario REFERENCES usuario(id_usuario),
-    telefono        BIGINT      NOT NULL
+    id_vendedor     INTEGER  CONSTRAINT pk_vendedor PRIMARY KEY CONSTRAINT fk_vendedor_usuario REFERENCES usuario(id_usuario),
+    telefono        BIGINT   UNIQUE NOT NULL,
+    direccion_xmr   TEXT     UNIQUE     NULL,
+    cbu             TEXT     UNIQUE NOT NULL,
+    alias           text     UNIQUE NOT NULL
 );
 
 CREATE TABLE articulo (
@@ -37,7 +41,6 @@ CREATE TABLE compra (
     fecha           TIMESTAMP       NOT NULL,
     total           NUMERIC(10, 2)  NOT NULL CHECK (total >= 1)
 );
-
 CREATE TABLE detalle_compra (
     id_compra       INTEGER     NOT NULL CONSTRAINT fk_detalle_compra REFERENCES compra(id_compra),
     id_articulo     INTEGER     NOT NULL CONSTRAINT fk_detalle_producto REFERENCES articulo(id_articulo),

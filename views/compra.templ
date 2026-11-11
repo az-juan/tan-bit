@@ -2,117 +2,123 @@ package views
 
 import "tan-bit.com/tan-bit/db/sqlc"
 
-templ Compra(arts []db.GetCarritoByUsuarioRow) {
-  <!doctype html>
-  <html lang="es">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-      <title>TAN-BIT · Compra</title>
-      <link rel="stylesheet" href="/static/css/shared.css" />
-      <link rel="stylesheet" href="/static/css/compra.css" />
-    </head>
-    <body>
-      <div class="page compra-page">
-        @Header()
-        <main class="container compra-main">
-          <div class="route">
-            <span>INICIO / CARRITO / COMPRA</span><span class="green">■ CHECKOUT</span>
-          </div>
-          <h1 class="display page-title">COMPRA</h1>
-          <form method="POST" action="/compra" id="compra-form" class="compra-layout">
-            <section class="payment-block pixel-frame veg-tr codo-2steel veg-2 copper">
-              <h2 class="display">MÉTODO DE PAGO</h2>
-              <div class="payment-options">
-                <label class="payment-option">
-                  <input type="radio" name="metodo" value="tarjeta" checked />
-                  <span class="payment-name">TARJETA</span>
-                  <span class="payment-hint">Crédito / débito</span>
-                </label>
-                <label class="payment-option">
-                  <input type="radio" name="metodo" value="transferencia" />
-                  <span class="payment-name">TRANSFERENCIA</span>
-                  <span class="payment-hint">CBU / alias</span>
-                </label>
-                <label class="payment-option">
-                  <input type="radio" name="metodo" value="monero" />
-                  <span class="payment-name">MONERO</span>
-                  <span class="payment-hint">Crypto · XMR</span>
-                </label>
-              </div>
-              <div id="tarjeta-fields" class="payment-fields">
-                <label class="field-label">NÚMERO DE TARJETA</label>
-                <input class="field" name="num_tarjeta" placeholder="0000 0000 0000 0000" />
-                <div class="field-row">
-                  <div>
-                    <label class="field-label">VENCIMIENTO</label>
-                    <input class="field" name="vencimiento" placeholder="MM/AA" />
-                  </div>
-                  <div>
-                    <label class="field-label">CVV</label>
-                    <input class="field" name="cvv" placeholder="123" />
-                  </div>
+templ Compra(arts []db.GetCarritoCompraRow, entregas []string, total string) {
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>TAN-BIT · Compra</title>
+    <link rel="stylesheet" href="/static/css/shared.css" />
+    <link rel="stylesheet" href="/static/css/compra.css" />
+  </head>
+  <body>
+    <div class="page compra-page">
+      @Header()
+      <main class="container compra-main">
+        <div class="route">
+          <span>INICIO / CARRITO / COMPRA</span><span class="green">■ CHECKOUT</span>
+        </div>
+        <h1 class="display page-title">COMPRA</h1>
+        <form method="POST" action="/compra" id="compra-form" class="compra-layout">
+          <section class="payment-block pixel-frame veg-tr codo-2steel veg-2 copper">
+            <h2 class="display">MÉTODO DE PAGO</h2>
+            <div class="payment-options">
+              <label class="payment-option">
+                <input type="radio" name="metodo" value="tarjeta" checked />
+                <span class="payment-name">TARJETA</span>
+                <span class="payment-hint">Crédito / débito</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="metodo" value="transferencia" />
+                <span class="payment-name">TRANSFERENCIA</span>
+                <span class="payment-hint">CBU / alias</span>
+              </label>
+              <label class="payment-option">
+                <input type="radio" name="metodo" value="monero" />
+                <span class="payment-name">MONERO</span>
+                <span class="payment-hint">Crypto · XMR</span>
+              </label>
+            </div>
+            <div id="tarjeta-fields" class="payment-fields metodo-tarjeta">
+              <label class="field-label">NÚMERO DE TARJETA</label>
+              <input class="field" name="num_tarjeta" placeholder="0000 0000 0000 0000" />
+              <div class="field-row">
+                <div>
+                  <label class="field-label">VENCIMIENTO</label>
+                  <input class="field" name="vencimiento" placeholder="MM/AA" />
+                </div>
+                <div>
+                  <label class="field-label">CVV</label>
+                  <input class="field" name="cvv" placeholder="123" />
                 </div>
               </div>
-              <div id="transferencia-fields" class="payment-fields" style="display:none">
-                <label class="field-label">CBU</label>
-                <p class="payment-info">0000000000000000000000</p>
-                <label class="field-label">ALIAS</label>
-                <p class="payment-info">tanbit.pagos</p>
-              </div>
-              <div id="monero-fields" class="payment-fields" style="display:none">
-                <label class="field-label">DIRECCIÓN MONERO</label>
-                <p class="payment-info">4...</p>
-              </div>
-            </section>
-            <aside class="order-block">
-              <div class="pixel-frame veg-vlsteel veg-3 copper order-summary">
-                <h2 class="display">TU PEDIDO</h2>
-                <hr />
-                <ul class="order-items">
+            </div>
+            <div id="transferencia-fields" class="payment-fields metodo-transferencia">
+              <label class="field-label">CBU</label>
+              <p class="payment-info">0000000000000000000000</p>
+              <label class="field-label">ALIAS</label>
+              <p class="payment-info">tanbit.pagos</p>
+            </div>
+            <div id="monero-fields" class="payment-fields metodo-monero">
+              <label class="field-label">DIRECCIÓN MONERO</label>
+              <p class="payment-info">4...</p>
+            </div>
+          </section>
+          <aside class="order-block">
+            <div class="pixel-frame veg-vlsteel veg-3 copper order-summary">
+              <h2 class="display">TU PEDIDO</h2>
+              <hr />
+              <table class="order-table">
+                <thead>
+                  <tr>
+                    <th>PRODUCTO</th>
+                    <th>CANTIDAD</th>
+                    <th>PRECIO</th>
+                    <th>ALIAS DEL VENDEDOR</th>
+                    <th>CBU</th>
+                    <th>DIRECCIÓN XMR</th>
+                  </tr>
+                </thead>
+                <tbody>
                   for _, a := range arts {
-                    <li class="order-item">
-                      <span class="order-name">{ a.Titulo }</span>
-                      <span class="order-qty">×{ a.Cantidad }</span>
-                      <span class="order-price">${ a.Precio }</span>
-                    </li>
+                    <tr>
+                      <td>{ a.Titulo }</td>
+                      <td>×{ a.Cantidad }</td>
+                      <td>${ a.Precio }</td>
+                      <td>{ a.Alias }</td>
+                      <td>{ a.Cbu }</td>
+                      <td>{ a.DireccionXmr.String }</td>
+                    </tr>
                   }
-                </ul>
-                <hr />
-                <div class="delivery-block">
-                  <h3 class="display">TIPO DE ENTREGA</h3>
-                  <label class="delivery-option">
-                    <input type="radio" name="entrega" value="envio" checked />
-                    <span>ENVÍO A DOMICILIO</span>
-                  </label>
-                  <label class="delivery-option">
-                    <input type="radio" name="entrega" value="retiro" />
-                    <span>PASAR A RETIRAR</span>
-                  </label>
+                </tbody>
+              </table>
+              <hr />
+              <div class="delivery-block">
+                <h3 class="display">TIPO DE ENTREGA</h3>
+                <div class="delivery-options">
+                  for _, et := range entregas {
+                    <label class="delivery-option">
+                      <input type="radio" name="entrega" value={ et } checked={ et == entregas[0] } />
+                      <span>{ EntregaLabel(et) }</span>
+                    </label>
+                  }
                 </div>
-                <hr />
-                <div class="order-total">
-                  <span>TOTAL</span>
-                  <strong>$0</strong>
-                </div>
-                <button type="submit" class="btn">COMPRAR &nbsp; ↗</button>
-                <small>Pesos argentinos · Otros medios según el vendedor.</small>
               </div>
-            </aside>
-          </form>
-        </main>
-        @Footer()
-      </div>
-      <script>
-        const radios = document.querySelectorAll('input[name="metodo"]');
-        function toggle() {
-          const v = document.querySelector('input[name="metodo"]:checked').value;
-          document.getElementById('tarjeta-fields').style.display = v==='tarjeta'?'block':'none';
-          document.getElementById('transferencia-fields').style.display = v==='transferencia'?'block':'none';
-          document.getElementById('monero-fields').style.display = v==='monero'?'block':'none';
-        }
-        radios.forEach(r=>r.addEventListener('change',toggle));
-      </script>
-    </body>
-  </html>
+              <hr />
+              <div class="order-total">
+                <span>TOTAL</span>
+                <strong>${ total }</strong>
+              </div>
+              <button type="submit" class="btn">COMPRAR ↗</button>
+              <small>Pesos argentinos · Otros medios según el vendedor.</small>
+            </div>
+          </aside>
+        </form>
+      </main>
+      @Footer()
+    </div>
+  </body>
+</html>
 }

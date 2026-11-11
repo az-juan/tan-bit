@@ -76,7 +76,7 @@
   padding: 28px;
   border: 2px dashed var(--sand);
 }
-.upload > strong {
+.upload strong {
   color: var(--orange);
   font-size: 34px;
 }
@@ -91,6 +91,14 @@
 .form-submit {
   padding-top: 20px;
   border-top: 2px solid var(--line);
+}
+.form-error {
+  color: var(--error);
+  font-size: 13px;
+  margin: 0 0 12px 0;
+}
+.form-error:empty {
+  display: none;
 }
 .sell-aside {
   display: flex;
