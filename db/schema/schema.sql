@@ -26,7 +26,7 @@ CREATE TABLE articulo (
     categoria       categoria    NOT NULL,
     ruta_imagen     text         NULL,
     precio          NUMERIC(10, 2) NOT NULL CHECK (precio >= 0),
-    stock           INTEGER      NOT NULL CHECK (stock >= 0),
+    stock           INTEGER        NOT NULL CHECK (stock >= 0),
     fecha_publicacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     ubicacion       text         NOT NULL,
     tipo_entrega    entrega      NOT NULL,
