@@ -1,6 +1,8 @@
 package views
 
-templ Carrito() {
+import "tan-bit.com/tan-bit/db/sqlc"
+
+templ Carrito(arts []db.GetCarritoByUsuarioRow) {
  <!doctype html>
 <html lang="es">
   <head>
@@ -15,36 +17,53 @@ templ Carrito() {
       @Header()
       <main class="container cart-main">
         <div class="route">
-          <span>INICIO / CARRITO</span><span class="green">■ 02 PIEZAS SELECCIONADAS</span>
+          <span>INICIO / CARRITO</span><span class="green">■ { len(arts) } PIEZAS SELECCIONADAS</span>
         </div>
         <nav class="checkout-steps">
-          <span class="active">01 / CARRITO</span><span>02 / DATOS Y ENTREGA</span><span>03 / CONFIRMACIÓN</span>
+          <span class="active">01 / CARRITO</span><span>02 / COMPRA</span>
         </nav>
         <div class="cart-layout">
           <section class="cart-items">
-            // articulos guardados
-            <section class="shipping">
-              <div>
-                <h2 class="display">¿A DÓNDE VIAJA TU HARDWARE?</h2>
-                <p>Consultá las opciones de entrega disponibles.</p>
+            for _, a := range arts {
+              <div class="cart-item">
+                <span>{ a.Titulo }</span>
+                <span>x{ a.Cantidad }</span>
+                <span>${ a.Precio }</span>
               </div>
-              <label><span>CÓDIGO POSTAL</span><input class="field" value="7000" /></label><button class="btn ghost">Calcular ↗</button>
-            </section>
+            }
+            // <section class="shipping">
+            //   <div>
+            //     <h2 class="display">¿A DÓNDE VIAJA TU HARDWARE?</h2>
+            //     <p>Consultá las opciones de entrega disponibles.</p>
+            //   </div>
+            //   <label><span>CÓDIGO POSTAL</span><input class="field" value="7000" /></label><button class="btn ghost">Calcular ↗</button>
+            // </section>
           </section>
           <aside class="summary-wrap">
-            <div class="pixel-frame copper cart-summary">
-              <h2 class="display">TU CARRITO [0]</h2>
+            <div class="pixel-frame veg-vl codo-2steel copper cart-summary">
+              <h2 class="display">TU CARRITO [{ len(arts) }]</h2>
               <hr />
-              <div><span>Productos (0)</span><span>$0</span></div>
+              <div>
+                <span>Productos ({ len(arts) })</span>
+                <span>
+                  for _, a := range arts {
+                    sum += { a.Precio }
+                  }
+                </span></div>
               <div><span>Envío</span><span>A coordinar</span></div>
               <hr />
-              <small>TOTAL DE PRODUCTOS</small><strong>$0</strong>
+              <small>TOTAL DE PRODUCTOS</small>
+              <strong>
+                  for _, a := range arts {
+                    sum += { a.Precio }
+                  }
+              </strong>
               <p>
                 El envío no está incluido. Vas a ver el detalle de cada vendedor antes de confirmar.
               </p>
-              <button class="btn">Continuar con la compra &nbsp; ↗</button><small>Pesos argentinos · Otros medios de pago según el vendedor.</small>
+              <a class="btn" href="/compra">Continuar con la compra &nbsp; ↗</a><small>Pesos argentinos · Otros medios de pago según el vendedor.</small>
             </div>
-            <p class="direct">[✓] <span>Contacto directo con quien hizo tu pieza.</span></p>
+            <p class="direct"><span>Contacto directo con quien hizo tu pieza.</span></p>
           </aside>
         </div>
         <section class="return-cta">

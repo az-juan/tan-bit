@@ -22,6 +22,19 @@ func CategoriaLabel(c db.Categoria) string {
 	return strings.ToUpper(s[:1]) + s[1:]
 }
 
+func EntregaLabel(et string) string {
+	switch et {
+	case "envio a domicilio":
+		return "Envío a domicilio"
+	case "retiro en persona":
+		return "Pasar a retirar"
+	case "ambos":
+		return "Ambos"
+	default:
+		return et
+	}
+}
+
 type VenderData struct {
 	Titulo      string
 	Descripcion string
@@ -29,7 +42,8 @@ type VenderData struct {
 	Categoria   db.Categoria
 	Ubicacion   string
 	Precio      string
-	TipoEntrega string
+	Stock       string
+	TipoEntrega db.Entrega
 	CostoEnvio  string
 	ZonaEntrega string
 	RutaImagen  string
@@ -43,7 +57,8 @@ func ParseVenderData(r *http.Request) VenderData {
 		Categoria:   db.Categoria(r.FormValue("categoria")),
 		Ubicacion:   r.FormValue("ubicacion"),
 		Precio:      r.FormValue("precio"),
-		TipoEntrega: r.FormValue("tipo_entrega"),
+		Stock:       r.FormValue("stock"),
+		TipoEntrega: db.Entrega(r.FormValue("tipo_entrega")),
 		CostoEnvio:  r.FormValue("costo_envio"),
 		ZonaEntrega: r.FormValue("zona_entrega"),
 		RutaImagen:  r.FormValue("ruta_imagen"),
@@ -58,7 +73,7 @@ func (d VenderData) Query() string {
 	v.Set("categoria", string(d.Categoria))
 	v.Set("ubicacion", d.Ubicacion)
 	v.Set("precio", d.Precio)
-	v.Set("tipo_entrega", d.TipoEntrega)
+	v.Set("tipo_entrega", string(d.TipoEntrega))
 	v.Set("costo_envio", d.CostoEnvio)
 	v.Set("zona_entrega", d.ZonaEntrega)
 	v.Set("ruta_imagen", d.RutaImagen)
@@ -75,6 +90,25 @@ func CondicionesDB() []db.Condicion { //revisar
 }
 
 func BuildFiltros(arts []db.GetArticulosRow) []FiltroCategoria { // revisar
+	counts := map[db.Categoria]int{}
+	for _, a := range arts {
+		counts[a.Categoria]++
+	}
+	// order by db enum order (matches schema)
+	order := []db.Categoria{"notebook", "pantalla", "electronica", "periferico", "accesorio", "audio", "video", "gaming", "analogico", "comunicacion"}
+	var out []FiltroCategoria
+	total := len(arts)
+	out = append(out, FiltroCategoria{Key: "", Label: "TODOS", Count: total})
+	for _, c := range order {
+		if n, ok := counts[c]; ok && n > 0 {
+			out = append(out, FiltroCategoria{Key: c, Label: CategoriaLabel(c), Count: n})
+		}
+	}
+	return out
+
+}
+
+func BuildFiltrosFav(arts []db.GetFavoritosByUsuarioRow) []FiltroCategoria { // revisar
 	counts := map[db.Categoria]int{}
 	for _, a := range arts {
 		counts[a.Categoria]++

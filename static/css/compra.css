@@ -1,0 +1,148 @@
+.compra-page { --page-height: 1100px; }
+
+.compra-main { gap: 24px; }
+
+.compra-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.payment-block, .order-summary {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.payment-block h2, .order-summary h2 {
+  font-size: 32px;
+}
+
+.payment-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.payment-option {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border: 2px solid var(--line);
+  background: var(--ink);
+  cursor: pointer;
+}
+
+.payment-option:has(input:checked) {
+  border-color: var(--copper);
+  background: var(--brown-light);
+}
+
+.payment-option input { display: none; }
+
+.payment-name {
+  font-family: "VT323:Regular";
+  font-size: 20px;
+  color: var(--orange);
+}
+
+.payment-hint {
+  font-size: 10px;
+  color: var(--sand);
+}
+
+.payment-fields {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#compra-form:has(input[name="metodo"][value="tarjeta"]:checked) .metodo-tarjeta,
+#compra-form:has(input[name="metodo"][value="transferencia"]:checked) .metodo-transferencia,
+#compra-form:has(input[name="metodo"][value="monero"]:checked) .metodo-monero {
+  display: block;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.payment-info {
+  padding: 10px 14px;
+  border: 2px solid var(--line);
+  background: var(--ink);
+  color: var(--sand);
+  font-size: 11px;
+  word-break: break-all;
+}
+
+.order-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--panel);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.order-name { font-family: "VT323:Regular"; font-size: 18px; color: var(--panel); }
+.order-qty { color: var(--muted); }
+.order-price { font-family: "IBM Plex Mono:SemiBold"; }
+
+.delivery-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.delivery-block h3 { font-size: 20px; color: var(--orange); }
+
+.delivery-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 2px solid var(--line);
+  background: var(--ink);
+  color: var(--sand);
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.delivery-option:has(input:checked) {
+  border-color: var(--copper);
+  color: var(--orange);
+}
+
+.delivery-option input { accent-color: var(--copper); }
+
+.order-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: "VT323:Regular";
+  font-size: 32px;
+  color: var(--orange);
+}
+
+.order-summary .btn { width: 100%; }
+
+@media (max-width: 900px) {
+  .compra-layout { grid-template-columns: 1fr; }
+  .payment-options { grid-template-columns: 1fr; }
+}

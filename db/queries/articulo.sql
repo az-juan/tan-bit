@@ -27,3 +27,9 @@ WHERE id_articulo = $1;
 -- name: DeleteArticulo :execrows
 DELETE FROM articulo
 WHERE id_articulo = $1;
+
+-- name: GetArticulosByVendedor :many
+SELECT id_articulo, titulo, descripcion, condicion, categoria, precio, stock, fecha_publicacion, ruta_imagen, ubicacion, tipo_entrega, costo_envio, zona_entrega, id_vendedor
+FROM articulo
+WHERE id_vendedor = $1
+ORDER BY fecha_publicacion DESC;

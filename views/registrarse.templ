@@ -1,6 +1,6 @@
 package views
 
-templ Registrarse() {
+templ Registrarse(errorMsg string, role string) {
 <!doctype html>
 <html lang="es">
   <head>
@@ -21,27 +21,87 @@ templ Registrarse() {
           <section class="register-intro">
             <p class="eyebrow">HARDWARE CON IDENTIDAD.</p>
             <h1 class="display">CREÁ TU<br />CUENTA.</h1>
-            <p>Sumate a la comunidad de makers y empezá a circular hardware con identidad.</p>
-            <img src="/static/assets/hero.png" alt="Ilustracion de aparatos tecnologicos" />
+            <p>Sumate a la comunidad de creadores y empezá a circular hardware con identidad.</p>
+            <img src="/static/assets/bmo.png" alt="Ilustracion de aparatos tecnologicos" />
           </section>
           <section class="register-form-wrap">
-            <form class="pixel-frame register-form" method="post" action="/registrarse">
+            <form class="pixel-frame veg-bl codo-2 codo-3steel-dark veg-3 register-form" id="registrarse-form" method="post" action="/registrarse">
               <p class="eyebrow">[ NUEVA CUENTA ]</p>
               <h2 class="display">BIENVENIDO.</h2>
               <p>Completá tus datos para empezar.</p>
-              <label class="form-group"
-                ><span class="field-label">NOMBRE</span><input class="field" name="nombre" placeholder="Tu nombre" /></label>
-              <label class="form-group"
-                ><span class="field-label">APELLIDO</span><input class="field" name="apellido" placeholder="Tu apellido" /></label>
-              <label class="form-group"
-                ><span class="field-label">EMAIL</span><input class="field" type="email" name="email" placeholder="tu.señal@correo.com" /></label>
-              <label class="form-group"
-                ><span class="field-label">TELÉFONO (OPCIONAL)</span><input class="field" name="telefono" placeholder="+54 ..." /></label>
-              <label class="form-group"
-                ><span class="field-label">CONTRASEÑA</span><input class="field" type="password" name="password" placeholder="••••••••" /></label>
-              <label class="form-group"
-                ><span class="field-label">REPETIR CONTRASEÑA</span><input class="field" type="password" name="password2" placeholder="••••••••" /></label>
-              <label class="check"><input type="checkbox" /> Acepto los términos del servicio y la política de privacidad.</label>
+
+              if errorMsg != "" {
+                <p class="form-error">{ errorMsg }</p>
+              }
+
+              <div class="role-toggle">
+                <span class="role-toggle-label">ELEGÍ TU ROL</span>
+                <label class="role-option">
+                  <input type="radio" name="role" value="usuario" checked={ role != "vendedor" } />
+                  <span>USUARIO</span>
+                </label>
+                <label class="role-option">
+                  <input type="radio" name="role" value="vendedor" checked={ role == "vendedor" } />
+                  <span>VENDEDOR</span>
+                </label>
+              </div>
+
+              <div class="form-section">
+                <h3 class="subsection-title">DATOS PERSONALES</h3>
+                <label class="form-group">
+                  <span class="field-label">NOMBRE</span>
+                  <input class="field" name="nombre" placeholder="Tu nombre" required/>
+                </label>
+                <label class="form-group">
+                  <span class="field-label">APELLIDO</span>
+                  <input class="field" name="apellido" placeholder="Tu apellido" required/>
+                </label>
+                <label class="form-group">
+                  <span class="field-label">EMAIL</span>
+                  <input class="field" type="email" name="email" placeholder="tu.señal@correo.com" required/>
+                </label>
+                <label class="form-group">
+                  <span class="field-label">CONTRASEÑA</span>
+                  <input class="field" type="password" name="password" placeholder="••••••••" required/>
+                </label>
+                <label class="form-group">
+                  <span class="field-label">REPETIR CONTRASEÑA</span>
+                  <input class="field" type="password" name="password2" placeholder="••••••••" required/>
+                </label>
+              </div>
+
+              <div id="vendedor-fields" class="vendedor-fields">
+                <div class="form-section">
+                  <h3 class="subsection-title">DATOS COMPLEMENTARIOS · VENDEDOR</h3>
+                  <label class="form-group">
+                    <span class="field-label">TÉFONO</span>
+                    <input class="field" name="telefono" placeholder="+54 ..."/>
+                  </label>
+                  <label class="form-group">
+                    <span class="field-label">CBU</span>
+                    <input class="field" name="cbu" placeholder="Cuenta bancaria"/>
+                  </label>
+                  <label class="form-group">
+                    <span class="field-label">ALIAS</span>
+                    <input class="field" name="alias" placeholder="Alias para tu perfil"/>
+                  </label>
+                  <label class="form-group">
+                    <span class="field-label">DIRECCIÓN XMR (opcional)</span>
+                    <input class="field" name="direccion_xmr" placeholder="Dirección de Monero" />
+                  </label>
+                </div>
+              </div>
+
+              <p class="form-hint">
+                Si elegís registrarte como <strong>vendedor</strong>, completá los campos de
+                abajo para que puedas publicar piezas.
+              </p>
+
+              <label class="check">
+                <input type="checkbox" name="terminos" required />
+                Acepto los términos del servicio y la política de privacidad.
+              </label>
+
               <button class="btn" type="submit">Crear cuenta &nbsp; ↗</button>
               <hr />
               <p>¿Ya tenés cuenta?</p>
@@ -57,5 +117,5 @@ templ Registrarse() {
       @Footer()
     </div>
   </body>
-</html>
-}
+  </html>
+  }

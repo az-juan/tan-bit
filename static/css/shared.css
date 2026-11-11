@@ -137,9 +137,9 @@ h3 {
   gap: 12px;
 }
 .brand img {
-  width: 150px;
-  height: 30px;
-  object-fit: cover;
+  image-rendering: pixelated;
+  width: 180px;
+  height: 32px;
 }
 .brand span {
   color: var(--orange);
@@ -293,10 +293,19 @@ h3 {
   place-items: center;
   background: var(--ink);
 }
-.heart-badge img {
-  width: 20px;
-  height: 20px;
+
+.heart-img {
+    width: 20px;
+    height: 16px;
+    background-image: url('../assets/heart-empty.svg');
+    background-size: cover;
+    position: center;
+    transition: background-image 0.3s ease;
 }
+.heart-img:hover {
+    background-image: url('../assets/heart.svg');
+}   
+
 .product-info {
   display: flex;
   flex: 1;
@@ -314,6 +323,7 @@ h3 {
   color: var(--panel);
   font-family: "VT323:Regular";
   font-size: 28px;
+  font-weight: 300;
 }
 .product-description,
 .installments {
@@ -408,8 +418,8 @@ h3 {
   gap: 10px;
 }
 .footer-brand img {
-  width: 150px;
-  height: 30px;
+  width: 180px;
+  height: 32px;
 }
 .newsletter {
   display: flex;
@@ -484,3 +494,101 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
+
+/* /* Cool infinite background scrolling animation. */
+ /* * Twitter: @kootoopas */
+ /* */ */
+/* Exo thin font from Google. */
+/* @import url(https://fonts.googleapis.com/css?family=Exo:100); */
+/* Background data (Original source: https://subtlepatterns.com/grid-me/) */
+/* Animations */
+/* @-webkit-keyframes bg-scrolling-reverse { */
+  /* 100% { */
+    /* background-position: 50px 50px; */
+  /* } */
+/* } */
+/* @-moz-keyframes bg-scrolling-reverse { */
+  /* 100% { */
+    /* background-position: 50px 50px; */
+  /* } */
+/* } */
+/* @-o-keyframes bg-scrolling-reverse { */
+  /* 100% { */
+    /* background-position: 50px 50px; */
+  /* } */
+/* } */
+/* @keyframes bg-scrolling-reverse { */
+  /* 100% { */
+    /* background-position: 50px 50px; */
+  /* } */
+/* } */
+/* @-webkit-keyframes bg-scrolling { */
+  /* 0% { */
+    /* background-position: 50px 50px; */
+  /* } */
+/* } */
+/* @-moz-keyframes bg-scrolling { */
+  /* 0% { */
+    /* background-position: 50px 50px; */
+  /* } */
+/* } */
+/* @-o-keyframes bg-scrolling { */
+  /* 0% { */
+    /* background-position: 50px 50px; */
+  /* } */
+/* } */
+/* @keyframes bg-scrolling { */
+  /* 100% { */
+    /* background-position: 50px 50px; */
+  /* } */
+/* } */
+
+/* Frame variants: color tones */
+.pixel-frame.steel { border-color: #8a9aa6; box-shadow: inset 0 0 0 2px #5c4a38; }
+.pixel-frame.oxide { border-color: #a0522d; box-shadow: inset 0 0 0 2px #5c3a2a; }
+.pixel-frame.verdigris { border-color: #5a7a6a; box-shadow: inset 0 0 0 2px #3f5a4a; }
+.pixel-frame.brass { border-color: #b8925a; box-shadow: inset 0 0 0 2px #5c4a38; }
+.pixel-frame.steel-dark { border-color: #6a7a8a; box-shadow: inset 0 0 0 2px #3a4a5a; }
+.pixel-frame.copper-green { border-color: #7fa38e; box-shadow: inset 0 0 0 2px #3f5a4a; }
+.pixel-frame.copper-new { border-color: #e09a5a; box-shadow: inset 0 0 0 2px #5c4a38; }
+
+/* Decorative overlays: manguito + vegetation on frames */
+.pixel-frame { position: relative; }
+.pixel-frame::before {
+  content: "";
+  position: absolute;
+  top: -6px; right: -6px;
+  width: 18px; height: 13px;
+  background: url("../assets/manguito.svg") no-repeat center / contain;
+  pointer-events: none;
+  z-index: 2;
+}
+.pixel-frame::after {
+  content: "";
+  position: absolute;
+  bottom: -10px; left: -8px;
+  width: 57px; height: 66px;
+  background: url("../assets/vegetacion_1.svg") no-repeat center / contain;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.9;
+}
+.pixel-frame.steel::before { background-image: url("../assets/manguito-steel.svg"); }
+.pixel-frame.copper-new::before { background-image: url("../assets/manguito-copper-new.svg"); }
+.pixel-frame.copper-green::before { background-image: url("../assets/manguito-copper-green.svg"); }
+.pixel-frame.veg-2::after { background-image: url("../assets/vegetacion_2.svg"); width: 42px; height: 48px; }
+.pixel-frame.veg-3::after { background-image: url("../assets/vegetacion_3.svg"); width: 60px; height: 36px; bottom: -6px; }
+
+
+/* vegetation position modifiers */
+.pixel-frame.veg-tl::after { top: -10px; left: -8px; bottom: auto; right: auto; }
+.pixel-frame.veg-tr::after { top: -10px; right: -8px; bottom: auto; left: auto; }
+.pixel-frame.veg-bl::after { bottom: -10px; left: -8px; top: auto; right: auto; }
+.pixel-frame.veg-br::after { bottom: -10px; right: -8px; top: auto; left: auto; }
+.pixel-frame.veg-h::after { background-image: url("../assets/vegetacion_horizontal.svg"); width: 72px; height: 12px; bottom: -6px; left: 50%; transform: translateX(-50%); }
+.pixel-frame.veg-vl::after { background-image: url("../assets/vegetacion_vine_long.svg"); width: 12px; height: 90px; left: -6px; top: 50%; transform: translateY(-50%); bottom: auto; }
+.pixel-frame.veg-vs::after { background-image: url("../assets/vegetacion_vine_short.svg"); width: 12px; height: 36px; right: -6px; top: 50%; transform: translateY(-50%); bottom: auto; left: auto; }
+
+/* codo overlays: extra manguitos along frame */
+.pixel-frame.codo-2 { background-image: inherit, url("../assets/manguito.svg"); background-repeat: no-repeat, no-repeat; background-position: center, 30% 10%; background-size: auto, 18px 13px; }
+.pixel-frame.codo-3 { background-image: inherit, url("../assets/manguito-steel.svg"); background-repeat: no-repeat, no-repeat; background-position: center, 70% 90%; background-size: auto, 18px 13px; }

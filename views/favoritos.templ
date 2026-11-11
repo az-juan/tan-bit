@@ -1,6 +1,8 @@
 package views
 
-templ Favoritos(filtros []FiltroCategoria) {
+import "tan-bit.com/tan-bit/db/sqlc"
+
+templ Favoritos(arts []db.GetFavoritosByUsuarioRow, filtros []FiltroCategoria) {
 
 <!doctype html>
 <html lang="es">
@@ -33,22 +35,32 @@ templ Favoritos(filtros []FiltroCategoria) {
         </div>
           <span>ORDENAR: GUARDADOS RECIENTEMENTE ↓</span>
         </div>
-        <section class="pixel-frame favorites-articulos">
+        <section class="pixel-frame veg-bl codo-2oxide veg-2 favorites-articulos">
           <div class="articulo-grid">
-            // articulos guardados
+            for _, a := range arts {
+              <article class="product-card">
+                <div class="product-image">
+                  <img src={ a.RutaImagen.String } alt={ a.Titulo } />
+                </div>
+                <div class="product-info">
+                  <h2 class="product-name">{ a.Titulo }</h2>
+                  <p class="product-price">${ a.Precio }</p>
+                </div>
+              </article>
+            }
           </div>
         </section>
         <div class="saved-note">
-          <span>♥ &nbsp;4 piezas guardadas. Los favoritos no reservan stock.</span><a href="/">Seguir explorando ↗</a>
+          <span>♥ &nbsp;{ len(arts) } piezas guardadas. Los favoritos no reservan stock.</span><a href="/">Seguir explorando ↗</a>
         </div>
         <section class="maker-cta">
           <div>
-            <h2 class="display">DETRÁS DE CADA PIEZA, UN MAKER.</h2>
+            <h2 class="display">DETRÁS DE CADA PIEZA, UN CREADOR.</h2>
             <p>
               Conocé los talleres y las personas que hacen distinto el hardware de todos los días.
             </p>
           </div>
-          <button class="btn">Conocer makers ↗</button>
+          <a class="btn" href="./creadores">Conocer creadores ↗</a>
         </section>
       </main>
       @Footer()

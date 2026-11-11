@@ -31,5 +31,6 @@ Separamos el flujo de docker en desarrollo y producción para tener una mejor or
 - Vender funcional con PRG; categorías/estados desde DB; vista previa de imagen.
 - Atributo `ubicacion` y `password` agregados al schema/queries.
 - Diagramas en docs/diagramas.md.
-- GIF steampunk en static/assets.
 - Acceso a vender protegido por cookie user_id.
+- Rediseño de compra: métodos de pago, entrega, total.
+- Frames: variantes de color/vegetación/manguitos/codos.

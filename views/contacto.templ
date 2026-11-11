@@ -1,21 +1,65 @@
 package views
 
 templ Contacto() {
-    <!DOCTYPE html>
-    <html lang="es">
+  <!DOCTYPE html>
+  <html lang="es">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>TAN-BIT · Contacto</title>
-        <link rel="stylesheet" href="/static/css/shared.css" />
-        <link rel="stylesheet" href="/static/css/contacto.css" />
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>TAN-BIT · Contacto</title>
+      <link rel="stylesheet" href="/static/css/shared.css" />
+      <link rel="stylesheet" href="/static/css/contacto.css" />
     </head>
     <body>
-        <div class="page contacto-page">
-            <main>
-                <h1>Contacto</h1>
-            </main>
-        </div>
+      <div class="page contacto-page">
+        @Header()
+        <main class="container contacto-main">
+          <div class="route">
+            <span>INICIO / CONTACTO</span><span class="green">■ ATENCIÓN AL CLIENTE</span>
+          </div>
+          <h1 class="display page-title">CONTACTO</h1>
+          <p class="muted">Canales oficiales para hablar con el equipo TAN-BIT, reportar problemas o colaborar.</p>
+
+          <section class="contact-grid">
+            <div class="pixel-frame copper contact-card veg-tl veg-2 codo-2">
+              <h2 class="display">ATENCIÓN AL CLIENTE</h2>
+              <p>Email: hola@tan-bit.com</p>
+              <p>WhatsApp: +54 9 249 400 0000</p>
+              <p>Horario: Lun–Vie 9:00–18:00 (ART)</p>
+              <p>Tandil, Buenos Aires, Argentina.</p>
+            </div>
+            <div class="pixel-frame copper contact-card veg-tl veg-2 codo-2 veg-tr veg-vl codo-2">
+              <h2 class="display">REDES</h2>
+              <a href="https://instagram.com/tanbit" target="_blank" rel="noopener">Instagram · @tanbit</a>
+              <a href="https://x.com/tanbit" target="_blank" rel="noopener">X / Twitter · @tanbit</a>
+              <a href="https://discord.gg/tanbit" target="_blank" rel="noopener">Discord · comunidad</a>
+            </div>
+            <div class="pixel-frame copper contact-card veg-tl veg-2 codo-2 veg-bl veg-h codo-3">
+              <h2 class="display">GITHUB</h2>
+              <p>Repositorio del proyecto (código abierto).</p>
+              <a href="https://github.com/az-juan/tan-bit" target="_blank" rel="noopener">github.com/az-juan/tan-bit ↗</a>
+              <p class="muted">Issues y PRs bienvenidos.</p>
+            </div>
+            <div class="pixel-frame copper contact-card veg-tl veg-2 codo-2 veg-br veg-vs">
+              <h2 class="display">DONACIONES</h2>
+              <p>Apoyá el mantenimiento del proyecto.</p>
+              <a href="https://github.com/sponsors/tan-bit" target="_blank" rel="noopener">GitHub Sponsors ↗</a>
+              <p class="muted">Monero: 4...</p>
+            </div>
+          </section>
+
+          <section class="pixel-frame copper contributors veg-br veg-3 codo-3 codo-2">
+            <h2 class="display">CONTRIBUIDORES</h2>
+            <ul class="contributors-list">
+              <li>{"@"}valensesto — leosimon — azjuan — fundadores</li>
+              // <li>{"@"}colaborador1 — diseño</li>
+              // <li>{"@"}colaborador2 — backend</li>
+            </ul>
+            <p class="muted">¿Querés aparecer acá? Abrí un PR.</p>
+          </section>
+        </main>
+        @Footer()
+      </div>
     </body>
-    </html>
+  </html>
 }

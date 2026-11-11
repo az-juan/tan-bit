@@ -4,7 +4,7 @@ import (
     "tan-bit.com/tan-bit/db/sqlc"
     "fmt"
 )
-
+/*
 func getNextSortOrder(columnName, currentSortColumn, currentSortOrder string) string {
     if currentSortColumn == columnName && currentSortOrder == "asc" {
         return "desc"
@@ -28,24 +28,33 @@ templ SortableHeader(columnName, displayName,
         <button type="button">{ displayName }</button>
     </th>
 }
-
+*/
 templ Articulos(articulos []db.GetArticulosRow) {
     // <div class="articulo-grid">
       for _,articulo := range articulos {
         <article class="product-card">
           <div class="product-image">
-            <img src={ articulo.RutaImagen.String } alt={ articulo.Titulo } /><span class="heart-badge"
-              ><img src="/static/assets/heart.svg" alt="Guardar"
-            /></span>
+            <img src={ articulo.RutaImagen.String } alt={ articulo.Titulo } />
+            <span class="heart-badge">
+              <form method="POST" action="/favoritos/add" style="display:inline">
+                <input type="hidden" name="id_articulo" value={ fmt.Sprint(articulo.IDArticulo) } />
+                <button type="submit" style="background:none;border:none;padding:0;cursor:pointer">
+                  <div class="heart-img"></div>
+                </button>
+              </form>
+            </span>
           </div>
           <div class="product-info">
-            <div class="product-meta"><span>{ articulo.IDArticulo }</span><span>▪ EN STOCK</span></div>
+            <div class="product-meta"><span>{ articulo.Stock } u</span><span>▪ EN STOCK</span></div>
             <h2 class="product-name">{ articulo.Titulo }</h2>
             <p class="product-description">{ articulo.Descripcion }</p>
             <p class="product-price">{ articulo.Precio }</p>
-            // <p class="installments">3 × $63.000 sin interés</p>
             <div class="product-actions">
-              <button class="btn">Agregar ↗</button><a class="text-link" href="#">Ver ficha ↗</a>
+              <form method="POST" action="/carrito/add" style="display:inline">
+                <input type="hidden" name="id_articulo" value={ fmt.Sprint(articulo.IDArticulo) } />
+                <button class="btn" type="submit">Agregar ↗</button>
+              </form>
+              <a class="text-link" href="#">Ver ficha ↗</a>
             </div>
           </div>
         </article>

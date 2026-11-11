@@ -1,5 +1,6 @@
 CREATE TYPE condicion AS ENUM ('nuevo', 'muy bueno', 'usado', 'reacondicionado', 'a reparar');
 CREATE TYPE categoria AS ENUM ('notebook','pantalla','electronica','periferico','accesorio','audio','video','gaming','comunicacion','analogico','decoracion');
+CREATE TYPE entrega   AS ENUM ('envio a domicilio','retiro en persona','ambos');
 
 CREATE TABLE usuario (
     id_usuario  SERIAL      CONSTRAINT pk_usuario PRIMARY KEY,
@@ -10,8 +11,11 @@ CREATE TABLE usuario (
 );
 
 CREATE TABLE vendedor (
-    id_vendedor     INTEGER     CONSTRAINT pk_vendedor PRIMARY KEY CONSTRAINT fk_vendedor_usuario REFERENCES usuario(id_usuario),
-    telefono        BIGINT      NOT NULL
+    id_vendedor     INTEGER  CONSTRAINT pk_vendedor PRIMARY KEY CONSTRAINT fk_vendedor_usuario REFERENCES usuario(id_usuario),
+    telefono        BIGINT   UNIQUE NOT NULL,
+    direccion_xmr   TEXT     UNIQUE     NULL,
+    cbu             TEXT     UNIQUE NOT NULL,
+    alias           text     UNIQUE NOT NULL
 );
 
 CREATE TABLE articulo (
@@ -25,9 +29,9 @@ CREATE TABLE articulo (
     stock           INTEGER      NOT NULL CHECK (stock >= 0),
     fecha_publicacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     ubicacion       text         NOT NULL,
-    tipo_entrega    text         NULL,
-    costo_envio     NUMERIC(10,2) NULL,
-    zona_entrega    text         NULL,
+    tipo_entrega    entrega      NOT NULL,
+    costo_envio     NUMERIC(10,2)    NULL CHECK (costo_envio >= 0),
+    zona_entrega    text             NULL,
     id_vendedor     INTEGER      NOT NULL CONSTRAINT fk_producto_vendedor REFERENCES vendedor(id_vendedor)
 );
 
@@ -37,7 +41,6 @@ CREATE TABLE compra (
     fecha           TIMESTAMP       NOT NULL,
     total           NUMERIC(10, 2)  NOT NULL CHECK (total >= 1)
 );
-
 CREATE TABLE detalle_compra (
     id_compra       INTEGER     NOT NULL CONSTRAINT fk_detalle_compra REFERENCES compra(id_compra),
     id_articulo     INTEGER     NOT NULL CONSTRAINT fk_detalle_producto REFERENCES articulo(id_articulo),

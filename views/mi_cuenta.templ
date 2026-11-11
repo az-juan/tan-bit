@@ -1,6 +1,10 @@
 package views
 
-templ MiCuenta() {
+import (
+  "tan-bit.com/tan-bit/db/sqlc"
+  )
+
+templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr string, articulos []db.GetArticulosByVendedorRow, favoritos []db.GetFavoritosByUsuarioRow, compras []db.Compra) {
 <!doctype html>
 <html lang="es">
   <head>
@@ -18,37 +22,96 @@ templ MiCuenta() {
         <h1 class="display page-title">MI CUENTA.</h1>
         <div class="account-grid">
           <aside class="account-sidebar">
-            <div class="pixel-frame account-profile">
-              <img src="/static/assets/account_user.svg" alt="Avatar" />
-              <strong>Maker Tandil</strong>
-              <small>maker@tanbit.com</small>
-              <span class="green">■ USUARIO</span>
+            <div class="pixel-frame veg-tlverdigris veg-2 account-profile">
+              <img src={"/static/assets/"+map[bool]string{true: "account_seller.svg", false: "account_user.svg"}[telefono != ""]} alt="Avatar" />
+              <strong>{ nombre } { apellido }</strong>
+              <small>{ email }</small>
+              <span class="green">{ "■ " + map[bool]string{true: "VENDEDOR", false: "USUARIO"}[telefono != ""] }</span>
             </div>
             <nav class="account-nav">
               <a class="active">Datos personales</a>
-              <a>Mis piezas</a>
+              <a href='#mis_piezas'>Mis piezas</a>
               <a>Favoritos</a>
               <a>Pedidos</a>
               <a>Seguridad</a>
             </nav>
           </aside>
           <section class="account-content">
-            <div class="pixel-frame account-card">
+            <div class="pixel-frame veg-h codo-2verdigris veg-3 account-card">
               <h2 class="display">DATOS PERSONALES</h2>
               <div class="account-form">
-                <label class="form-group"><span class="field-label">NOMBRE</span><input class="field" value="Maker" /></label>
-                <label class="form-group"><span class="field-label">APELLIDO</span><input class="field" value="Tandil" /></label>
-                <label class="form-group"><span class="field-label">EMAIL</span><input class="field" type="email" value="maker@tanbit.com" /></label>
-                <label class="form-group"><span class="field-label">TELÉFONO</span><input class="field" placeholder="+54 ..." /></label>
+                <label class="form-group"><span class="field-label">NOMBRE</span><input class="field" value={ nombre } /></label>
+                <label class="form-group"><span class="field-label">APELLIDO</span><input class="field" value={ apellido } /></label>
+                <label class="form-group"><span class="field-label">EMAIL</span><input class="field" type="email" value={ email } /></label>
+                <label class="form-group"><span class="field-label">TELÉFONO</span><input class="field" value={ telefono } placeholder="+54 ..." /></label>
+                if telefono != "" {
+                  <div class="account-card vendedor-data">
+                    <h2 class="display">DATOS DE VENDEDOR</h2>
+                    <div class="account-form">
+                      <label class="form-group"><span class="field-label">ALIAS</span><input class="field" value={ alias } /></label>
+                      <label class="form-group"><span class="field-label">CBU</span><input class="field" value={ cbu } /></label>
+                      <label class="form-group"><span class="field-label">DIRECCIÓN XMR</span><input class="field" value={ direccionXmr } placeholder="-" /></label>
+                    </div>
+                  </div>
+                }
                 <button class="btn">Guardar cambios ↗</button>
               </div>
             </div>
+
             <div class="account-stats">
-              <div class="pixel-frame stat"><span>PIEZAS PUBLICADAS</span><strong class="display">04</strong></div>
-              <div class="pixel-frame stat"><span>FAVORITOS</span><strong class="display">12</strong></div>
-              <div class="pixel-frame stat"><span>PEDIDOS</span><strong class="display">03</strong></div>
+                            <div class="pixel-frame veg-vs codo-2 codo-3brass stat"><span>PIEZAS PUBLICADAS</span><strong class="display">{ len(articulos) }</strong></div>
+                            <div class="pixel-frame veg-tl codo-2 codo-3brass veg-2 stat"><span>FAVORITOS</span><strong class="display">{ len(favoritos) }</strong></div>
+                            <div class="pixel-frame veg-blbrass veg-3 stat"><span>PEDIDOS</span><strong class="display">{ len(compras) }</strong></div>
+                          </div>
+            <div class="pixel-frame veg-vs codo-2 codo-3steel-dark account-card">
+              <h2 class="display" id="mis_piezas">MIS PIEZAS</h2>
+              <div class="account-form">
+                if articulos != nil && len(articulos) > 0 {
+                  <p class="green">Hay piezas publicadas.</p>
+                  for _, a := range articulos {
+                    <div class="pixel-frame mini-card">
+                      <img src={ a.RutaImagen.String } alt={ a.Titulo }>
+                      <strong>{ a.Titulo }</strong>
+                      <small>{ a.Categoria } · { a.Precio }</small>
+                    </div>
+                  }
+                } else {
+                  <p class="green">Aún no publicas piezas.</p>
+                }
+              </div>
             </div>
-            <div class="pixel-frame account-card">
+            <div class="pixel-frame veg-b codo-2 codo-3steel-dark account-card">
+              <h2 class="display">FAVORITOS</h2>
+              <div class="account-form">
+                if favoritos != nil && len(favoritos) > 0 {
+                  for _,f := range favoritos {
+                    <div class="pixel-frame veg-tl codo-2 codo-3brass veg-2 mini-card">
+                      <img src={ f.RutaImagen.String } alt={f.Titulo} class="mini-card-img" />
+                      <strong>{f.Titulo}</strong>
+                      <small>{f.Categoria} · {f.Precio}</small>
+                    </div>
+                  }
+                } else {
+                  <p class="green">No tienes favoritos.</p>
+                }
+              </div>
+            </div>
+            <div class="pixel-frame veg-b codo-2 codo-3steel-dark account-card">
+              <h2 class="display">PEDIDOS</h2>
+              <div class="account-form">
+                if compras != nil && len(compras) > 0 {
+                  for _,c := range compras {
+                    <div class="pixel-frame veg-tl codo-2 codo-3brass veg-2 mini-card">
+                      <strong>Compra #{c.IDCompra}</strong>
+                      <small>{c.Fecha.String()} · Total: {c.Total}</small>
+                    </div>
+                  }
+                } else {
+                  <p class="green">No realizaste pedidos.</p>
+                }
+              </div>
+            </div>
+            <div class="pixel-frame veg-vs codo-2 codo-3steel-dark account-card">
               <h2 class="display">SEGURIDAD</h2>
               <div class="account-form">
                 <label class="form-group"><span class="field-label">CONTRASEÑA ACTUAL</span><input class="field" type="password" /></label>

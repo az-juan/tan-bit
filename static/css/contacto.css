@@ -1,2 +1,22 @@
-.contacto-page { width: 100%; max-width: 1080px; margin: 0 auto; }
-.contacto-page main { padding: 24px; }
+.contacto-page { --page-height: 1100px; }
+.contacto-main { gap: 32px; }
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+.contact-card {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.contact-card h2 { font-size: 28px; }
+.contact-card a { color: var(--orange); font-size: 12px; }
+.contact-card p { font-size: 11px; color: var(--sand); }
+.contributors { padding: 28px; display: flex; flex-direction: column; gap: 12px; }
+.contributors h2 { font-size: 28px; }
+.contributors-list { list-style: none; padding: 0; margin: 12px 0; display: flex; flex-direction: column; gap: 6px; color: var(--sand); font-size: 11px; }
+@media (max-width: 900px) {
+  .contact-grid { grid-template-columns: 1fr; }
+}

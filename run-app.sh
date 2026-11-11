@@ -8,7 +8,7 @@ COMPOSE=(docker compose --env-file "$ENV_FILE" -f compose.prod.yaml)
 HOST=http://localhost:8080
 
 # Checkear que estan las dependencias instaladas
-for dep in docker sqlc go hurl; do
+for dep in docker sqlc go hurl templ; do
   if ! command -v "$dep" &>/dev/null; then
     echo "$dep no instalado!, por favor, instalar $dep y volver a intentar"
     exit 1
@@ -38,6 +38,7 @@ while true; do
     "${COMPOSE[@]}" down -v
     # --build: la imagen incluye el codigo/sqlc recien generado
     # --wait: no sigue hasta que ambos contenedores esten healthy
+    # directorio para fotos de articulos a publicar
     "${COMPOSE[@]}" up -d --build --wait
     # Sobreescibe variables para que el anfitrion pueda usar ./db/connection/connection.go
     DB_HOST=localhost DB_PORT=5433 #go test -count=1 -v ./tests
