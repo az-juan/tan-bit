@@ -8,10 +8,13 @@ RUN CGO_ENABLED=0 go build -o /app/tan-bit
 
 # Etapa 2: imagen final (solo el binario)
 FROM alpine:3.20 AS final
-RUN adduser -D -u 1000 app
+RUN adduser -D -u 1000 app \
+&& mkdir -p /app/uploads /app/static \
+&& chown -R app:app /app/uploads /app/static
 RUN apk add --no-cache curl
 WORKDIR /app
 USER app
 COPY --from=builder /app/tan-bit /usr/local/bin/tan-bit
 COPY static static
+COPY uploads /app/uploads
 CMD ["tan-bit"]

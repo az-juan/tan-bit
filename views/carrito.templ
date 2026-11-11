@@ -47,7 +47,7 @@ templ Carrito(arts []db.GetCarritoByUsuarioRow) {
                 <span>Productos ({ len(arts) })</span>
                 <span>
                   for _, a := range arts {
-                    sum += { a.Precio }
+                    sum := { a.Precio }
                   }
                 </span></div>
               <div><span>Envío</span><span>A coordinar</span></div>

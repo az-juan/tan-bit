@@ -64,7 +64,7 @@ func (h *ArticuloHandler) AddCarritoHandler(w http.ResponseWriter, r *http.Reque
 		IDArticulo: int32(artID),
 		Cantidad:   1,
 	})
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/carrito", http.StatusSeeOther)
 }
 
 func (h *ArticuloHandler) AddFavoritoHandler(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +83,7 @@ func (h *ArticuloHandler) AddFavoritoHandler(w http.ResponseWriter, r *http.Requ
 		IDUsuario:  int32(id),
 		IDArticulo: int32(artID),
 	})
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/favoritos", http.StatusSeeOther)
 }
 
 func (h *ArticuloHandler) CarritoHandler(w http.ResponseWriter, r *http.Request) {

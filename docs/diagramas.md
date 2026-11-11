@@ -1,27 +1,24 @@
 # Diagramas de arquitectura — TAN-BIT
 
-## 1. Estructura de módulos (module view)
-
 ```mermaid
 flowchart TB
   subgraph app["tan-bit.com/tan-bit (Go module)"]
     main["main.go\n(entrypoint, routing, static fs)"]
-    handlers["handlers/\nArticuloHandler (ServeHTTP)\nMarketplace/Carrito/Evento/..."]
-    views["views/\n*.templ + *_templ.go\nHeader(), Footer()"]
+    handlers["handlers/\nArticuloHandler, VendedorHandler,\nUsuarioHandler"]
+    views["views/*_templ.go\n(Marketplace, Carrito, Compra,\nVender, Registrarse, MiCuenta..."]
     dbpkg["db/"]
     static["static/\ncss/*.css, assets/*"]
   end
   subgraph dbpkg2["db/"]
-    conn["connection/\nOpen()"]
-    sqlc["sqlc/\nmodels, queries (generated)"]
-    queries["queries/\n*.sql (sqlc input)"]
-    schema["schema/\nschema.sql"]
-    migrations["migrations/\nAtlas migrations"]
+    conn["connection/Open()"]
+    sqlc["queries (codegen)\nGetArticulos, CreateCompra, GetCarritoCompra,\nAddFavorito, GetComprasByUsuario, ..."]
+    queries["queries/ *.sql"]
+    schema["schema.sql"]
+    migrations["migrations/ (Atlas)"]
   end
   main --> handlers
   main --> views
   main --> conn
-  main --> static
   handlers --> views
   handlers --> sqlc
   conn --> sqlc
@@ -29,17 +26,18 @@ flowchart TB
   schema -.Atlas.-> migrations
 ```
 
-## 2. Componentes y conectores (C&C view, runtime)
+## Componentes y conectores (C&C view, runtime)
 
 ```mermaid
 flowchart LR
   browser["Browser\n(HTML/CSS)"]
-  http["Go HTTP Server\n:8080\nhttp.ServeMux"]
-  handler["ArticuloHandler\nhandlers"]
+  http["Go HTTP Server\n:8080 (http.ServeMux)"]
+  handler["ArticuloHandler\nVendedorHandler\nUsuarioHandler"]
   renderer["Templ renderer\nviews/*_templ.go"]
   sqlc["sqlc queries\npgx pool"]
   pg["PostgreSQL\n:5432"]
   fs["Static file server\n/static/*"]
+  uploads["Served dir\n/app/uploads\n(nginx)"]
 
   browser -- "HTTP GET/POST" --> http
   http --> handler
@@ -49,30 +47,59 @@ flowchart LR
   sqlc -- "SQL (pgx)" --> pg
   renderer -- "HTML" --> browser
   fs -- "CSS/assets" --> browser
+  uploads -- /uploads/* --> browser
 ```
 
-## 3. Despliegue (allocation view)
+## Diagrama de flujo de los handlers (flujo de petición)
 
 ```mermaid
 flowchart TB
-  subgraph compose["Docker Compose"]
-    subgraph appc["Container: app (Go)"]
-      air["air (hot reload, dev)"]
-      goapp["Go binary (prod)"]
-      templ["templ-generated code"]
-    end
-    subgraph dbc["Container: db (PostgreSQL)"]
-      pg["PostgreSQL 15"]
-      data["Volume: pgdata"]
-    end
+  client["Browser"]
+  mux["http.ServeMux\n(de main.go)"]
+  arth["ArticuloHandler\nServeHTTP"]
+  vendh["VendedorHandler\nServeHTTP"]
+  usuh["UsuarioHandler\nServeHTTP"]
+
+  subgraph Market["GET /"]
+    mkt["ArticuloHandler.MarketplaceHandler\nGetArticulos → views.Marketplace"]
   end
-  host["Host\n:8080 (app)\n:5433 (db dev)"]
-  host --> appc
-  appc -- "TCP 5432" --> dbc
-  dbc --> data
+  subgraph Carrito["GET /carrito"]
+    car["ArticuloHandler.CarritoHandler\nGetCarritoByUsuario → views.Carrito"]
+  end
+  subgraph Compra["GET/POST /compra"]
+    comp["ArticuloHandler.CompraHandler\nGetCarritoCompra + CreateCompra + CreateDetalleCompra"]
+  end
+  subgraph Fav["GET /favoritos"]
+    fav["ArticuloHandler.FavoritosHandler\nGetFavoritosByUsuario → views.Favoritos"]
+  end
+  subgraph Vender["POST /vender (vendedor)"]
+    vend["VendedorHandler.VenderHandler\nvalida campos → upload → CreateArticulo"]
+  end
+  subgraph Login["GET/POST /login, /registrarse, /mi_cuenta"]
+    usu["UsuarioHandler\nLogin, Registrarse, MiCuenta"]
+  end
+
+  client --> mux
+  mux --> arth
+  mux --> vendh
+  mux --> usu
+  arth --> mkt
+  arth --> car
+  arth --> comp
+  arth --> fav
+  vendh --> Vender
+  usu --> Login
+
+  mkt --> sqlc
+  comp --> sqlc
+  fav --> sqlc
+  Vender --> sqlc
+  Login --> sqlc
+  sqlc --> pg
+  templ --> browser
 ```
 
-## 4. Modelo de datos (ERD)
+## Modelo de datos (ERD)
 
 ```mermaid
 erDiagram
@@ -86,6 +113,9 @@ erDiagram
   VENDEDOR {
     int id_vendedor PK,FK
     bigint telefono
+    text direccion_xmr
+    text cbu
+    text alias
   }
   ARTICULO {
     int id_articulo PK
@@ -133,3 +163,14 @@ erDiagram
   USUARIO ||--o{ FAVORITO : "guarda"
   ARTICULO ||--o{ FAVORITO : "en"
 ```
+
+---
+
+## Notas de implementación
+
+- **No hay JSON**. La capa de presentación es HTML generado con templ.
+- **Autenticación**: cookie `user_id` (valor entero = `id_usuario`). El handler determina si el usuario es vendedor si el registro de `vendedor` existe.
+- **Validación de formularios**: en `VenderHandler` y `RegistrarseHandler`; los errores se muestran como `errMsg` en la vista.
+- **Subida de imágenes**: `sanitize()` + `os.MkdirAll("uploads", 0755)` + `io.Copy`. La ruta guardada es `/uploads/<nombre>`.
+- **Migrations**: Atlas (`db/migrations/*.sql`). También los ficheros `.sql` en `db/schema/schema.sql` y `db/queries/*.sql` se usan para codegen de sqlc.
+- **Docker**: `Dockerfile.prod` (builder + final alpine), `compose.prod.yaml` (api/db/nginx), `run-app.sh` (dev). Persistencia XMR: `db/uploads`, PG: `pgdata`.

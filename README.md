@@ -1,5 +1,4 @@
-
-# Mi Primera aplicacion web, TAN-BIT
+# Mi primera aplicacion web, TAN-BIT
 
 ![Alt text](./images/tanbit_logo.png)
 
