@@ -26,6 +26,7 @@ templ Carrito(arts []db.GetCarritoByUsuarioRow) {
           <section class="cart-items">
             for _, a := range arts {
               <div class="cart-item">
+                <img class="item-detail" src={ a.RutaImagen.String } alt={ a.Titulo } />
                 <span>{ a.Titulo }</span>
                 <span>x{ a.Cantidad }</span>
                 <span>${ a.Precio }</span>
@@ -45,17 +46,14 @@ templ Carrito(arts []db.GetCarritoByUsuarioRow) {
               <hr />
               <div>
                 <span>Productos ({ len(arts) })</span>
-                <span>
-                  for _, a := range arts {
-                    sum := { a.Precio }
-                  }
-                </span></div>
+                <span>$0</span>
+                </div>
               <div><span>Envío</span><span>A coordinar</span></div>
               <hr />
               <small>TOTAL DE PRODUCTOS</small>
               <strong>
                   for _, a := range arts {
-                    sum += { a.Precio }
+                  { a.Precio * a.Cantidad }
                   }
               </strong>
               <p>

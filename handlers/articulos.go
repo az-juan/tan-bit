@@ -98,6 +98,11 @@ func (h *ArticuloHandler) CarritoHandler(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 		return
 	}
+	sum := 0
+	for _, a := range arts {
+		sum += strconv.ParseFloat(a.Precio) * a.Cantidad
+	}
+
 	views.Carrito(arts).Render(r.Context(), w)
 }
 

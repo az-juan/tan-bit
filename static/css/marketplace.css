@@ -52,13 +52,14 @@
 }
 .hero-art img {
   width: 50%;
-  height: 75%;
+  height: 90%;
   opacity: 0.92;
 }
 .catalog {
   position: relative;
   padding-top: 46px;
   background: #686461;
+  background-clip: content-box;
 }
 .filters {
   position: absolute;
@@ -70,7 +71,6 @@
 .filters button {
   padding: 12px 20px;
   border: 0;
-  border-top: 4px solid var(--sand);
   background: var(--paper);
   color: var(--panel);
   font-family: "VT323:Regular";

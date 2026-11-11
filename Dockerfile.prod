@@ -16,5 +16,4 @@ WORKDIR /app
 USER app
 COPY --from=builder /app/tan-bit /usr/local/bin/tan-bit
 COPY static static
-COPY uploads /app/uploads
 CMD ["tan-bit"]
