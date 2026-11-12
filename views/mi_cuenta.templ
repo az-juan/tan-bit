@@ -4,6 +4,19 @@ import (
   "tan-bit.com/tan-bit/db/sqlc"
   )
 
+templ MiCuentaError(msg string) {
+<div class="error-banner">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; flex-shrink: 0;">
+    <path d="M12 9v4" />
+    <path d="M12 17h.01" />
+    <path d="M12 2H12.01" />
+    <path d="M12 2L12 4" />
+    <path d="M12 4L14 4" />
+  </svg>
+  <span>{ msg }</span>
+</div>
+}
+
 templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr string, articulos []db.GetArticulosByVendedorRow, favoritos []db.GetFavoritosByUsuarioRow, compras []db.GetComprasByUsuarioRow) {
 <!doctype html>
 <html lang="es">
