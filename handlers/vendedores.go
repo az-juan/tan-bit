@@ -58,7 +58,7 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 	v, err := h.queries.GetVendedorByID(r.Context(), int32(id))
 	if err != nil || v.Telefono == 0 {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		// w.Write([]byte("<script>alert('Debe cargar un telefono para vender'); window.location='/mi_cuenta';</script>"))
+		views.MiCuentaError("Debés cargar un teléfono, cbu y/o alias para vender.").Render(r.Context(), w)
 		return
 	}
 	if r.Method == http.MethodPost {
