@@ -1,8 +1,10 @@
 package views
 
-import "tan-bit.com/tan-bit/db/sqlc"
+import (
+	db "tan-bit.com/tan-bit/db/sqlc"
+)
 
-templ Carrito(arts []db.GetCarritoByUsuarioRow) {
+templ Carrito(arts []db.GetCarritoByUsuarioRow, total float64, totalXmr float64) {
  <!doctype html>
 <html lang="es">
   <head>
@@ -44,18 +46,11 @@ templ Carrito(arts []db.GetCarritoByUsuarioRow) {
             <div class="pixel-frame veg-vl codo-2steel copper cart-summary">
               <h2 class="display">TU CARRITO [{ len(arts) }]</h2>
               <hr />
-              <div>
-                <span>Productos ({ len(arts) })</span>
-                <span>$0</span>
-                </div>
               <div><span>Envío</span><span>A coordinar</span></div>
               <hr />
               <small>TOTAL DE PRODUCTOS</small>
-              <strong>
-                  for _, a := range arts {
-                  { a.Precio * a.Cantidad }
-                  }
-              </strong>
+              <strong>${ total }</strong>
+              <strong>{ totalXmr } XMR</strong>
               <p>
                 El envío no está incluido. Vas a ver el detalle de cada vendedor antes de confirmar.
               </p>

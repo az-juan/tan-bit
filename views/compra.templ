@@ -1,8 +1,10 @@
 package views
 
-import "tan-bit.com/tan-bit/db/sqlc"
+import (
+	"tan-bit.com/tan-bit/db/sqlc"
+)
 
-templ Compra(arts []db.GetCarritoCompraRow, entregas []string, total string) {
+templ Compra(arts []db.GetCarritoCompraRow, entregas []string, total float64, totalXmr float64) {
 
 <!doctype html>
 <html lang="es">
@@ -22,50 +24,50 @@ templ Compra(arts []db.GetCarritoCompraRow, entregas []string, total string) {
         </div>
         <h1 class="display page-title">COMPRA</h1>
         <form method="POST" action="/compra" id="compra-form" class="compra-layout">
-          <section class="payment-block pixel-frame veg-tr codo-2steel veg-2 copper">
-            <h2 class="display">MÉTODO DE PAGO</h2>
-            <div class="payment-options">
-              <label class="payment-option">
-                <input type="radio" name="metodo" value="tarjeta" checked />
-                <span class="payment-name">TARJETA</span>
-                <span class="payment-hint">Crédito / débito</span>
-              </label>
-              <label class="payment-option">
-                <input type="radio" name="metodo" value="transferencia" />
-                <span class="payment-name">TRANSFERENCIA</span>
-                <span class="payment-hint">CBU / alias</span>
-              </label>
-              <label class="payment-option">
-                <input type="radio" name="metodo" value="monero" />
-                <span class="payment-name">MONERO</span>
-                <span class="payment-hint">Crypto · XMR</span>
-              </label>
-            </div>
-            <div id="tarjeta-fields" class="payment-fields metodo-tarjeta">
-              <label class="field-label">NÚMERO DE TARJETA</label>
-              <input class="field" name="num_tarjeta" placeholder="0000 0000 0000 0000" />
-              <div class="field-row">
-                <div>
-                  <label class="field-label">VENCIMIENTO</label>
-                  <input class="field" name="vencimiento" placeholder="MM/AA" />
-                </div>
-                <div>
-                  <label class="field-label">CVV</label>
-                  <input class="field" name="cvv" placeholder="123" />
-                </div>
-              </div>
-            </div>
-            <div id="transferencia-fields" class="payment-fields metodo-transferencia">
-              <label class="field-label">CBU</label>
-              <p class="payment-info">0000000000000000000000</p>
-              <label class="field-label">ALIAS</label>
-              <p class="payment-info">tanbit.pagos</p>
-            </div>
-            <div id="monero-fields" class="payment-fields metodo-monero">
-              <label class="field-label">DIRECCIÓN MONERO</label>
-              <p class="payment-info">4...</p>
-            </div>
-          </section>
+          // <section class="payment-block pixel-frame veg-tr codo-2steel veg-2 copper">
+          //   <h2 class="display">MÉTODO DE PAGO</h2>
+          //   <div class="payment-options">
+          //     <label class="payment-option">
+          //       <input type="radio" name="metodo" value="tarjeta" checked />
+          //       <span class="payment-name">TARJETA</span>
+          //       <span class="payment-hint">Crédito / débito</span>
+          //     </label>
+          //     <label class="payment-option">
+          //       <input type="radio" name="metodo" value="transferencia" />
+          //       <span class="payment-name">TRANSFERENCIA</span>
+          //       <span class="payment-hint">CBU / alias</span>
+          //     </label>
+          //     <label class="payment-option">
+          //       <input type="radio" name="metodo" value="monero" />
+          //       <span class="payment-name">MONERO</span>
+          //       <span class="payment-hint">Crypto · XMR</span>
+          //     </label>
+          //   </div>
+          //   <div id="tarjeta-fields" class="payment-fields metodo-tarjeta">
+          //     <label class="field-label">NÚMERO DE TARJETA</label>
+          //     <input class="field" name="num_tarjeta" placeholder="0000 0000 0000 0000" />
+          //     <div class="field-row">
+          //       <div>
+          //         <label class="field-label">VENCIMIENTO</label>
+          //         <input class="field" name="vencimiento" placeholder="MM/AA" />
+          //       </div>
+          //       <div>
+          //         <label class="field-label">CVV</label>
+          //         <input class="field" name="cvv" placeholder="123" />
+          //       </div>
+          //     </div>
+          //   </div>
+          //   <div id="transferencia-fields" class="payment-fields metodo-transferencia">
+          //     <label class="field-label">CBU</label>
+          //     <p class="payment-info">0000000000000000000000</p>
+          //     <label class="field-label">ALIAS</label>
+          //     <p class="payment-info">tanbit.pagos</p>
+          //   </div>
+          //   <div id="monero-fields" class="payment-fields metodo-monero">
+          //     <label class="field-label">DIRECCIÓN MONERO</label>
+          //     <p class="payment-info">4...</p>
+          //   </div>
+          // </section>
           <aside class="order-block">
             <div class="pixel-frame veg-vlsteel veg-3 copper order-summary">
               <h2 class="display">TU PEDIDO</h2>
@@ -76,6 +78,7 @@ templ Compra(arts []db.GetCarritoCompraRow, entregas []string, total string) {
                     <th>PRODUCTO</th>
                     <th>CANTIDAD</th>
                     <th>PRECIO</th>
+                    <th>XMR</th>
                     <th>ALIAS DEL VENDEDOR</th>
                     <th>CBU</th>
                     <th>DIRECCIÓN XMR</th>
@@ -87,6 +90,9 @@ templ Compra(arts []db.GetCarritoCompraRow, entregas []string, total string) {
                       <td>{ a.Titulo }</td>
                       <td>×{ a.Cantidad }</td>
                       <td>${ a.Precio }</td>
+                      if a.PrecioXmr > 0 {
+                        <td>XMR ${ a.PrecioXmr }</td>
+                      }
                       <td>{ a.Alias }</td>
                       <td>{ a.Cbu }</td>
                       <td>{ a.DireccionXmr.String }</td>
@@ -110,11 +116,18 @@ templ Compra(arts []db.GetCarritoCompraRow, entregas []string, total string) {
               <div class="order-total">
                 <span>TOTAL</span>
                 <strong>${ total }</strong>
+                if totalXmr > 0 {
+                  <span>(${ totalXmr } XMR)</span>
+                }
               </div>
               <button type="submit" class="btn">COMPRAR ↗</button>
               <small>Pesos argentinos · Otros medios según el vendedor.</small>
             </div>
           </aside>
+          <div class="delivery-block">
+            <img src="static/assets/finn_jake_bmo.gif" alt="finn. jake y bmo">
+            <h2 class="display">A un paso de tu compra.</h2>
+          </div>
         </form>
       </main>
       @Footer()

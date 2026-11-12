@@ -1,8 +1,8 @@
 # Decisiones y arquitectura de la aplicación
 
-Architectural style: client/server (3 tiers: presentacion, business logic, db)  
+Estilo arquitectónico: client/server (3 tiers: presentacion, lógica de negocio, datos)  
 Lenguaje para la API: Go  
-Uso de Docker y Docker Compose  
+Uso de Docker y Docker Compose   
 Base de datos relacional: PostgreSQL  
 Estrategia para el acceso a datos: **sqlc** (queries tipadas, generadas del SQL) + **Atlas** (migraciones)
 
@@ -13,13 +13,13 @@ Herramientas principales:
 | Presentación | [templ](https://templ.guide) (componentes HTML tipados) |
 | Lógica de negocio | Handlers nativos de `net/http` (no HTTP REST, no JSON API) |
 | Datos | sqlc (queries compiladas) + Atlas (migraciones) |
-| Empaquetado | Dockerfile.prod + compose.prod.yaml (api + db + nginx) |
+| Deploy | Dockerfile.prod + compose.prod.yaml (api + db + nginx) |
 
 ---
 
 ## Arquitectura por capas
 
-La aplicación sigue un patrón **client/server** con tres capas bien separadas. No hay JSON, ni `_json.go`, ni `encoding/json` en los handlers. Todas las respuestas son **HTML renderizado con templ**.
+La aplicación sigue un patrón **client/server** con tres capas. No hay JSON, ni `_json.go`, ni `encoding/json` en los handlers. Todas las respuestas son **HTML renderizado con templ**.
 
 ```text
 ┌─────────────────────────────────────────────┐
@@ -61,7 +61,7 @@ Programación en **templ**: cada plantilla es un `templ Nombre(params)` que escr
 | `Vender` | Formulario de publicación | `data VenderData`, `categorias`, `condiciones`, `errMsg` |
 | `Favoritos` | Lista de favoritos | `arts []db.GetFavoritosByUsuarioRow`, `filtros` |
 | `MiCuenta` | Panel personal: datos, piezas, favoritos, compras | `nombre, apellido, email, telefono, alias, cbu, direccionXmr` + `articulos`, `favoritos`, `compras` |
-| `Login` | Login | nada |
+| `Login` | Login | - |
 
 **Herramientas de presentación en uso:**
 
@@ -75,7 +75,7 @@ Programación en **templ**: cada plantilla es un `templ Nombre(params)` que escr
 
 ## Capa de lógica de negocio (`handlers/`)
 
-Los handlers son **structs con un método `ServeHTTP`**, registrados como `http.Handler` en `main.go`. No son simples funciones; tienen estado (la instancia `*db.Queries`) y pueden expandirse con métodos privados de validación/regla de negocio.
+Los handlers son **structs con un método `ServeHTTP`**, registrados como `http.Handler` en `main.go`. Tienen estado (la instancia `*db.Queries`) y pueden expandirse con métodos privados de validación/regla de negocio.
 
 ### `ArticuloHandler` (`handlers/articulos.go`)
 
@@ -116,10 +116,10 @@ type VendedorHandler struct { queries *db.Queries }
 | `ServeHTTP` | `/vender` | Rutas de publicación. |
 | `VenderHandler` | `GET /vender` | Render `views.Vender` (formulario vacío o con `errMsg`). `POST /vender`: valida campos obligatorios, guarda imágenes en `uploads/`, `CreateArticulo`, redirige a `/`. |
 
-**Points críticos de negocio:**
+**Puntos críticos de negocio:**
 
 - Valida campos **obligatorios** antes de insertar: `título`, `descripcion`, `precio`, `ubicación`, `zona_entrega`, `tipo_entrega`.
-- La **imagen** se guarda en `uploads/` con nombre `idVendedor_sanitized_titulo_1.ext`.
+- La **imagen** se guarda en `uploads/` con nombre `idVendedor_sanitized_titulo_1.ext` usando nginx para servir las imágenes estáticas (solo para producción).
 - La ruta de la imagen se guarda en la DB como `/uploads/<nombre>`.
 
 ### `UsuarioHandler` (`handlers/usuarios.go`)
@@ -311,7 +311,8 @@ erDiagram
     condicion condicion
     categoria categoria
     text ruta_imagen
-    numeric precio
+    double precio
+    double precio_xmr
     int stock
     timestamptz fecha_publicacion
     int id_vendedor FK
@@ -320,13 +321,15 @@ erDiagram
     int id_compra PK
     int id_comprador FK
     timestamp fecha
-    numeric total
+    double total
+    double total_xmr
   }
   DETALLE_COMPRA {
     int id_compra PK,FK
     int id_articulo PK,FK
     int cantidad
-    numeric precio_historico_unitario
+    double precio_historico_unitario
+    double precio_historico_unitario_xmr
   }
   CARRITO {
     int id_usuario PK,FK

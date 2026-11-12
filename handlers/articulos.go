@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"sort"
 	"strconv"
@@ -98,12 +97,15 @@ func (h *ArticuloHandler) CarritoHandler(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 		return
 	}
-	sum := 0
+
+	var total float64
+	var totalXmr float64
 	for _, a := range arts {
-		sum += strconv.ParseFloat(a.Precio) * a.Cantidad
+		total += a.Precio * float64(a.Cantidad)
+		totalXmr += a.PrecioXmr * float64(a.Cantidad)
 	}
 
-	views.Carrito(arts).Render(r.Context(), w)
+	views.Carrito(arts, total, totalXmr).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) {
@@ -129,11 +131,12 @@ func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) 
 		}
 		sort.Strings(entregaSlice)
 		var total float64
+		var totalXmr float64
 		for _, a := range arts {
-			p, _ := strconv.ParseFloat(a.Precio, 64)
-			total += p * float64(a.Cantidad)
+			total += a.Precio * float64(a.Cantidad)
+			totalXmr += a.PrecioXmr * float64(a.Cantidad)
 		}
-		views.Compra(arts, entregaSlice, fmt.Sprintf("%.2f", total)).Render(r.Context(), w)
+		views.Compra(arts, entregaSlice, total, totalXmr).Render(r.Context(), w)
 		return
 	}
 	// POST
@@ -143,31 +146,34 @@ func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var total float64
+	var totalXmr float64
 	for _, a := range arts {
-		p, _ := strconv.ParseFloat(a.Precio, 64)
-		total += p * float64(a.Cantidad)
+		total += a.Precio * float64(a.Cantidad)
+		totalXmr += a.PrecioXmr * float64(a.Cantidad)
 	}
 	_ = r.FormValue("entrega")
 	compra, err := h.queries.CreateCompra(r.Context(), db.CreateCompraParams{
 		IDComprador: int32(id),
-		Total:       fmt.Sprintf("%.2f", total),
+		Total:       total,
+		TotalXmr:    totalXmr,
 	})
 	if err != nil {
 		http.Error(w, "Error al crear compra", http.StatusInternalServerError)
 		return
 	}
 	for _, a := range arts {
-		p, _ := strconv.ParseFloat(a.Precio, 64)
 		h.queries.CreateDetalleCompra(r.Context(), db.CreateDetalleCompraParams{
-			IDCompra:                compra.IDCompra,
-			IDArticulo:              a.IDArticulo,
-			Cantidad:                a.Cantidad,
-			PrecioHistoricoUnitario: fmt.Sprintf("%.2f", p),
+			IDCompra:                   compra.IDCompra,
+			IDArticulo:                 a.IDArticulo,
+			Cantidad:                   a.Cantidad,
+			PrecioHistoricoUnitario:    a.Precio,
+			PrecioHistoricoUnitarioXmr: a.PrecioXmr,
 		})
 	}
 	h.queries.ClearCarrito(r.Context(), int32(id))
 	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 }
+
 func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("user_id")
 	if err != nil {

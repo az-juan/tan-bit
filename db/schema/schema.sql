@@ -15,7 +15,7 @@ CREATE TABLE vendedor (
     telefono        BIGINT   UNIQUE NOT NULL,
     direccion_xmr   TEXT     UNIQUE     NULL,
     cbu             TEXT     UNIQUE NOT NULL,
-    alias           text     UNIQUE NOT NULL
+    alias           TEXT     UNIQUE NOT NULL
 );
 
 CREATE TABLE articulo (
@@ -25,12 +25,13 @@ CREATE TABLE articulo (
     condicion       condicion    NOT NULL,
     categoria       categoria    NOT NULL,
     ruta_imagen     text         NULL,
-    precio          NUMERIC(10, 2) NOT NULL CHECK (precio >= 0),
+    precio          DOUBLE PRECISION NOT NULL CHECK (precio >= 0),
+    precio_xmr      DOUBLE PRECISION NOT NULL CHECK (precio_xmr >= 0),
     stock           INTEGER        NOT NULL CHECK (stock >= 0),
     fecha_publicacion TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     ubicacion       text         NOT NULL,
     tipo_entrega    entrega      NOT NULL,
-    costo_envio     NUMERIC(10,2)    NULL CHECK (costo_envio >= 0),
+    costo_envio     DOUBLE PRECISION    NULL CHECK (costo_envio >= 0),
     zona_entrega    text             NULL,
     id_vendedor     INTEGER      NOT NULL CONSTRAINT fk_producto_vendedor REFERENCES vendedor(id_vendedor)
 );
@@ -39,13 +40,15 @@ CREATE TABLE compra (
     id_compra       SERIAL          CONSTRAINT pk_compra PRIMARY KEY,
     id_comprador    INTEGER         NOT NULL CONSTRAINT fk_compra_usuario REFERENCES usuario(id_usuario),
     fecha           TIMESTAMP       NOT NULL,
-    total           NUMERIC(10, 2)  NOT NULL CHECK (total >= 1)
+    total           DOUBLE PRECISION  NOT NULL CHECK (total >= 1),
+    total_xmr       DOUBLE PRECISION  NOT NULL CHECK (total >= 0)
 );
 CREATE TABLE detalle_compra (
     id_compra       INTEGER     NOT NULL CONSTRAINT fk_detalle_compra REFERENCES compra(id_compra),
     id_articulo     INTEGER     NOT NULL CONSTRAINT fk_detalle_producto REFERENCES articulo(id_articulo),
     cantidad        INTEGER     NOT NULL CHECK (cantidad >= 1),
-    precio_historico_unitario NUMERIC(10, 2) NOT NULL,
+    precio_historico_unitario DOUBLE PRECISION NOT NULL CHECK (precio_historico_unitario >= 1),
+    precio_historico_unitario_xmr DOUBLE PRECISION NOT NULL CHECK (precio_historico_unitario_xmr >= 0),
     CONSTRAINT pk_detalle_compra PRIMARY KEY (id_compra, id_articulo)
 );
 

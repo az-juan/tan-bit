@@ -153,7 +153,7 @@ func (h *UsuarioHandler) MiCuentaHandler(w http.ResponseWriter, r *http.Request)
 	direccionXmr := ""
 	articulos := []db.GetArticulosByVendedorRow{}
 	favoritos := []db.GetFavoritosByUsuarioRow{}
-	compras := []db.Compra{}
+	compras := []db.GetComprasByUsuarioRow{}
 
 	cookie, err := r.Cookie("user_id")
 	if err == nil {
@@ -171,14 +171,14 @@ func (h *UsuarioHandler) MiCuentaHandler(w http.ResponseWriter, r *http.Request)
 					direccionXmr = v.DireccionXmr.String
 				}
 			}
-			if v, err := h.queries.GetArticulosByVendedor(r.Context(), int32(id)); err == nil {
-				articulos = v
+			if a, err := h.queries.GetArticulosByVendedor(r.Context(), int32(id)); err == nil {
+				articulos = a
 			}
-			if v, err := h.queries.GetFavoritosByUsuario(r.Context(), int32(id)); err == nil {
-				favoritos = v
+			if f, err := h.queries.GetFavoritosByUsuario(r.Context(), int32(id)); err == nil {
+				favoritos = f
 			}
-			if v, err := h.queries.GetComprasByUsuario(r.Context(), int32(id)); err == nil {
-				compras = v
+			if c, err := h.queries.GetComprasByUsuario(r.Context(), int32(id)); err == nil {
+				compras = c
 			}
 		}
 	} else {

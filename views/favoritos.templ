@@ -44,7 +44,11 @@ templ Favoritos(arts []db.GetFavoritosByUsuarioRow, filtros []FiltroCategoria) {
                 </div>
                 <div class="product-info">
                   <h2 class="product-name">{ a.Titulo }</h2>
-                  <p class="product-price">${ a.Precio }</p>
+                  if a.PrecioXmr > 0 {
+                    <p class="product-price">${ a.Precio } · { a.PrecioXmr } XMR</p>
+                  } else {
+                    <p class="product-price">${ a.Precio }</p>
+                  }
                 </div>
               </article>
             }

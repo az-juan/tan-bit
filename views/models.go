@@ -42,6 +42,7 @@ type VenderData struct {
 	Categoria   db.Categoria
 	Ubicacion   string
 	Precio      string
+	PrecioXMR   string
 	Stock       string
 	TipoEntrega db.Entrega
 	CostoEnvio  string

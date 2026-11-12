@@ -76,7 +76,10 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 			missing = append(missing, "descripción")
 		}
 		if data.Precio == "" {
-			missing = append(missing, "precio")
+			data.Precio = "0"
+		}
+		if data.PrecioXMR == "" {
+			data.PrecioXMR = "0"
 		}
 		if data.Ubicacion == "" {
 			missing = append(missing, "ubicación")
@@ -93,7 +96,6 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 			views.Vender(data, views.CategoriasDB(), views.CondicionesDB(), errMsg).Render(r.Context(), w)
 			return
 		}
-
 		idVendedor := int32(0)
 		if cookie, err := r.Cookie("user_id"); err == nil {
 			if v, err := strconv.Atoi(cookie.Value); err == nil {
@@ -103,6 +105,20 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 		if idVendedor == 0 {
 			http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 			return
+		}
+
+		// Parseo de valores
+		precio := 0.0
+		if v := r.FormValue("precio"); v != "" {
+			precio, _ = strconv.ParseFloat(v, 64)
+		}
+		precioXmr := 0.0
+		if v := r.FormValue("precio_xmr"); v != "" {
+			precioXmr, _ = strconv.ParseFloat(v, 64)
+		}
+		costoEnvio := 0.0
+		if v := data.CostoEnvio; v != "" {
+			costoEnvio, _ = strconv.ParseFloat(v, 64)
 		}
 
 		// guardar imagen
@@ -132,12 +148,13 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 			Descripcion: data.Descripcion,
 			Condicion:   data.Condicion,
 			Categoria:   data.Categoria,
-			Precio:      data.Precio,
+			Precio:      precio,
+			PrecioXmr:   precioXmr,
 			Stock:       stock,
 			IDVendedor:  idVendedor,
 			Ubicacion:   data.Ubicacion,
 			TipoEntrega: data.TipoEntrega,
-			CostoEnvio:  sql.NullString{String: data.CostoEnvio, Valid: data.CostoEnvio != ""},
+			CostoEnvio:  sql.NullFloat64{Float64: costoEnvio, Valid: costoEnvio != 0},
 			ZonaEntrega: sql.NullString{String: data.ZonaEntrega, Valid: data.ZonaEntrega != ""},
 			RutaImagen:  sql.NullString{String: data.RutaImagen, Valid: data.RutaImagen != ""},
 		}

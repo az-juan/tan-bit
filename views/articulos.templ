@@ -48,7 +48,11 @@ templ Articulos(articulos []db.GetArticulosRow) {
             <div class="product-meta"><span>{ articulo.Stock } u</span><span>▪ EN STOCK</span></div>
             <h2 class="product-name">{ articulo.Titulo }</h2>
             <p class="product-description">{ articulo.Descripcion }</p>
-            <p class="product-price">{ articulo.Precio }</p>
+            if articulo.PrecioXmr > 0 {
+              <p class="product-price">${ articulo.Precio  } · { articulo.PrecioXmr } XMR</p>
+            } else {
+              <p class="product-price">${ articulo.Precio }</p>
+            }
             <div class="product-actions">
               <form method="POST" action="/carrito/add" style="display:inline">
                 <input type="hidden" name="id_articulo" value={ fmt.Sprint(articulo.IDArticulo) } />

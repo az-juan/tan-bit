@@ -27,7 +27,6 @@
 .filters button {
   padding: 12px 20px;
   border: 0;
-  border-top: 4px solid var(--sand);
   background: var(--paper);
   color: var(--panel);
   font-family: "VT323:Regular";

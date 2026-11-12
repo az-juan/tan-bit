@@ -4,7 +4,7 @@ import (
   "tan-bit.com/tan-bit/db/sqlc"
   )
 
-templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr string, articulos []db.GetArticulosByVendedorRow, favoritos []db.GetFavoritosByUsuarioRow, compras []db.Compra) {
+templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr string, articulos []db.GetArticulosByVendedorRow, favoritos []db.GetFavoritosByUsuarioRow, compras []db.GetComprasByUsuarioRow) {
 <!doctype html>
 <html lang="es">
   <head>
@@ -72,7 +72,11 @@ templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr strin
                     <div class="pixel-frame mini-card">
                       <img src={ a.RutaImagen.String } alt={ a.Titulo }>
                       <strong>{ a.Titulo }</strong>
-                      <small>{ a.Categoria } · { a.Precio }</small>
+                      if a.PrecioXmr > 0 {
+                        <small>{ a.Categoria } · ${ a.Precio } · { a.PrecioXmr } XMR</small>
+                      } else {
+                        <small>{ a.Categoria } · { a.Precio }</small>
+                      }
                     </div>
                   }
                 } else {
@@ -88,7 +92,7 @@ templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr strin
                     <div class="pixel-frame veg-tl codo-2 codo-3brass veg-2 mini-card">
                       <img src={ f.RutaImagen.String } alt={f.Titulo} class="mini-card-img" />
                       <strong>{f.Titulo}</strong>
-                      <small>{f.Categoria} · {f.Precio}</small>
+                      <small>{ f.Categoria } · ${ f.Precio } · { f.PrecioXmr } XMR</small>
                     </div>
                   }
                 } else {

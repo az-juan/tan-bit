@@ -1,4 +1,4 @@
-h1:7DEFlLOqGHAGBVhNAWrBzgB/GUkIuilthAA42929PkM=
+h1:Qv21Wa55ackjy0D+5wVBr50MSBmwJLkOqWeD+MFxW/A=
 20261018000558_telefono.sql h1:V2L9bbCASo7EPtQFDKvYxG5FENDDHp04xKzA1am7l8w=
 20261018002540_telefono.sql h1:4nHDODXj/nSReVabS9HkII5b1tZ/yjVQe+pGhDw8XkI=
 20261106211516_favs y carrito.sql h1:FZxVBuZQtPtMD7JxSG44CxIBCMVl5N53eXdEKYYxkKk=
@@ -6,3 +6,4 @@ h1:7DEFlLOqGHAGBVhNAWrBzgB/GUkIuilthAA42929PkM=
 20261108021303_agrego password a usuario.sql h1:aYla+HWqexTOhKBRINnMO3AgQIQgSMMGcKNNFXiPABU=
 20261108201223_agrego tipo_entrega,costo_envio y zona_entrega a articulos.sql h1:bWaq5qB9qLnNTsH8GvhBHp7zsAqralUvKx2IHEJZ8cw=
 20261110203038_agrego cbu, alias y xmr a vendedor.sql h1:5GKP/GKQ3awAL+aG4LP3GMq3oga6vLBHTFMaoQL0BXs=
+20261111231434_agrego precios xmr.sql h1:tG9RoX2QHmRiMp72ZlqJnhXtip2/XCCCrveJUEOOZzw=

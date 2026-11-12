@@ -85,6 +85,7 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
             </div>
             <div class="form-columns">
               <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" required/></label>
+              <label><span>PRECIO XMR *</span><input class="field" name="precio_xmr" value={ data.PrecioXMR } placeholder="0.00" type="number" step="0.01" /></label>
               <label><span>STOCK *</span><input class="field" name="stock" value={ data.Stock } placeholder="1" type="number" min="1" /></label>
             </div>
             <div class="form-columns">
