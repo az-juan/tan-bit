@@ -31,9 +31,9 @@ templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr strin
             <nav class="account-nav">
               <a class="active">Datos personales</a>
               <a href='#mis_piezas'>Mis piezas</a>
-              <a>Favoritos</a>
-              <a>Pedidos</a>
-              <a>Seguridad</a>
+              <a href='#favoritos'>Favoritos</a>
+              <a href='#pedidos'>Pedidos</a>
+              <a href='#seguridad'>Seguridad</a>
             </nav>
           </aside>
           <section class="account-content">
@@ -85,7 +85,7 @@ templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr strin
               </div>
             </div>
             <div class="pixel-frame veg-b codo-2 codo-3steel-dark account-card">
-              <h2 class="display">FAVORITOS</h2>
+              <h2 class="display" id="favoritos">FAVORITOS</h2>
               <div class="account-form">
                 if favoritos != nil && len(favoritos) > 0 {
                   for _,f := range favoritos {
@@ -101,7 +101,7 @@ templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr strin
               </div>
             </div>
             <div class="pixel-frame veg-b codo-2 codo-3steel-dark account-card">
-              <h2 class="display">PEDIDOS</h2>
+              <h2 class="display" id="pedidos">PEDIDOS</h2>
               <div class="account-form">
                 if compras != nil && len(compras) > 0 {
                   for _,c := range compras {
@@ -116,7 +116,7 @@ templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr strin
               </div>
             </div>
             <div class="pixel-frame veg-vs codo-2 codo-3steel-dark account-card">
-              <h2 class="display">SEGURIDAD</h2>
+              <h2 class="display" id="seguridad">SEGURIDAD</h2>
               <div class="account-form">
                 <label class="form-group"><span class="field-label">CONTRASEÑA ACTUAL</span><input class="field" type="password" /></label>
                 <label class="form-group"><span class="field-label">NUEVA CONTRASEÑA</span><input class="field" type="password" /></label>
