@@ -51,10 +51,11 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 			Descripcion: "notebook empresarial de buena calidad",
 			Condicion:   "muy bueno",
 			Categoria:   "notebook",
-			Precio:      "3000000.00",
+			Precio:      3000000.00,
+			PrecioXmr:   3000000.00,
 			Stock:       3,
 			IDVendedor:  vendedorCreado.IDVendedor,
-			TipoEntrega: "ambos",
+			TipoEntrega: "retiro a domicilio",
 		})
 	if err != nil {
 		log.Fatalf("Error al crear articulo: %v", err)
@@ -79,7 +80,8 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 		Descripcion: articuloCreado.Descripcion,
 		Condicion:   articuloCreado.Condicion,
 		Categoria:   articuloCreado.Categoria,
-		Precio:      "3500000.00",
+		Precio:      3500000.00,
+		PrecioXmr:   3500000.00,
 		Stock:       2,
 	})
 	if err != nil {
