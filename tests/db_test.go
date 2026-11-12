@@ -55,7 +55,7 @@ func TestPG(t *testing.T) { //Firma std en _test.go (Test+Mayus y recibe un punt
 			PrecioXmr:   3000000.00,
 			Stock:       3,
 			IDVendedor:  vendedorCreado.IDVendedor,
-			TipoEntrega: "retiro a domicilio",
+			TipoEntrega: "envio a domicilio",
 		})
 	if err != nil {
 		log.Fatalf("Error al crear articulo: %v", err)
