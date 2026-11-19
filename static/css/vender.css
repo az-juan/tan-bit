@@ -1,9 +1,3 @@
-.sell-page {
-  --page-height: 1780px;
-}
-.sell-main {
-  gap: 46px;
-}
 .sell-intro {
   display: flex;
   flex-direction: column;

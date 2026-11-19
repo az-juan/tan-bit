@@ -3,39 +3,24 @@ package views
 import "tan-bit.com/tan-bit/db/sqlc"
 
 templ Favoritos(arts []db.GetFavoritosByUsuarioRow, filtros []FiltroCategoria) {
-
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>TAN-BIT · Favoritos</title>
-    <link rel="stylesheet" href="/static/css/shared.css" />
-    <link rel="stylesheet" href="/static/css/favoritos.css" />
-  </head>
-  <body>
-    <div class="page favorites-page">
-    @Header()
-     <main class="container favorites-main">
         <section>
           <div class="route">
             <span>INICIO / FAVORITOS</span><span class="green">■ COLECCIÓN PERSONAL</span>
           </div>
           <h1 class="display page-title">TUS JOYAS, A MANO.</h1>
         </section>
+        // <div id="search-results"></div>
         <div class="favorite-controls">
-          <div class="filters">
+          <div class="filters" role="tablist">
           for i, f := range filtros {
-            if i == 0 {
-              <button class="active">{ f.Label } [{ f.Count }]</button>
-            } else {
-              <button>{ f.Label } [{ f.Count }]</button>
-            }
+            <a role="tab" href={ "./?categoria=" + string(f.Key) } class={"filter-btn tab "+map[bool]string{true: "active", false: ""}[i == 0]} hx-get={ "./?categoria=" + string(f.Key) } hx-target="#favoritos-content" hx-swap="innerHTML" hx-push-url="true">
+              { f.Label } [{ f.Count }]
+            </a>
           }
         </div>
           <span>ORDENAR: GUARDADOS RECIENTEMENTE ↓</span>
         </div>
-        <section class="pixel-frame veg-bl codo-2oxide veg-2 favorites-articulos">
+        <section class="pixel-frame veg-bl codo-2oxide veg-2 favorites-articulos" id="favoritos-content">
           <div class="articulo-grid">
             for _, a := range arts {
               <article class="product-card">
@@ -64,10 +49,6 @@ templ Favoritos(arts []db.GetFavoritosByUsuarioRow, filtros []FiltroCategoria) {
               Conocé los talleres y las personas que hacen distinto el hardware de todos los días.
             </p>
           </div>
-          <a class="btn" href="./creadores">Conocer creadores ↗</a>
+          <a>Conocer creadores ↗</a>
         </section>
-      </main>
-      @Footer()
-    </div>
-  </body>
-</html>}
+}

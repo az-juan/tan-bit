@@ -1,17 +1,3 @@
-.marketplace-page {
-  --page-height: 1680px;
-}
-.market-header {
-  display: flex;
-  height: 80px;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  border-bottom: 1px solid var(--sand);
-}
-.market-main {
-  padding: 60px 50px;
-}
 .hero {
   display: grid;
   width: 1030px;
@@ -67,8 +53,6 @@
   left: 0;
   display: flex;
   gap: 12px;
-}
-.filters button {
   padding: 12px 20px;
   border: 0;
   background: var(--paper);
@@ -76,6 +60,7 @@
   font-family: "VT323:Regular";
   font-size: 22px;
 }
+
 .filters .active {
   background: #95392c;
   color: #e5dfd5;

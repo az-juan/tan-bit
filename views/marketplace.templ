@@ -5,55 +5,34 @@ import (
 )
 
 templ Marketplace(articulos []db.GetArticulosRow, filtros []FiltroCategoria) {
-
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TAN-BIT · Marketplace</title>
-    <link rel="stylesheet" href="/static/css/shared.css" />
-    <link rel="stylesheet" href="/static/css/marketplace.css" />
-  </head>
-  <body>
-    <div class="page marketplace-page">
-      @Header()
-      <main class="market-main">
-        <section class="hero pixel-frame veg-vs codo-2verdigris copper">
-          <div class="hero-copy">
-            <h1 class="display">TU PRÓXIMA JOYA DEL<br />HARDWARE.</h1>
-            <nav class="hero-links">
-              <a href="./vender">·&gt; VENDER</a>
-              <a href="./evento">·&gt; IR A EVENTO</a>
-              <a href="#productos">·&gt; ARTÍCULOS RECIENTES</a>
-            </nav>
-          </div>
-          <div class="hero-art">
-            <img
-             src="/static/assets/retro_console.gif"
-             width="300"
-             alt="Gamecube en tv retro"
-            />
-          </div>
-        </section>
-        
-        <section id="productos" class="catalog">
-          <div class="filters">
-          for i, f := range filtros {
-            if i == 0 {
-              <button class="active">{ f.Label } [{ f.Count }]</button>
-            } else {
-              <button>{ f.Label } [{ f.Count }]</button>
-            }
-          }
-        </div>
-          <div class="product-grid market-products">
-            @Articulos(articulos)
-          </div>
-        </section>
-      </main>
-      @Footer()
+  <section class="hero pixel-frame veg-vs codo-2verdigris copper">
+    <div class="hero-copy">
+      <h1 class="display">TU PRÓXIMA JOYA DEL<br />HARDWARE.</h1>
+      <nav class="hero-links">
+        <a href="./vender">·&gt; VENDER</a>
+        <a href="./evento">·&gt; IR A EVENTO</a>
+        <a href="./creadores">·&gt; CREADORES</a>
+      </nav>
     </div>
-  </body>
-</html>
- }
+    <div class="hero-art">
+      <img
+       src="/static/assets/retro_console.gif"
+       width="300"
+       alt="Gamecube en tv retro"
+      />
+    </div>
+  </section>
+
+  <section id="articulos" class="catalog">
+    <div class="filters" role="tablist">
+    for i, f := range filtros {
+      <a role="tab" href={ "./?categoria=" + string(f.Key) } class={"filter-btn tab "+map[bool]string{true: "active", false: ""}[i == 0]} hx-get={ "./?categoria=" + string(f.Key) } hx-target="closest #productos" hx-swap="outerHTML" hx-push-url="true">
+        { f.Label } [{ f.Count }]
+      </a>
+    }
+  </div>
+    <div class="product-grid market-products">
+      @Articulos(articulos)
+    </div>
+  </section>
+}

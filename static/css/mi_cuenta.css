@@ -1,9 +1,7 @@
-.account-page { --page-height: 1700px; }
-.account-main { display: flex; flex-direction: column; gap: 32px; }
 .account-grid { display: grid; grid-template-columns: 280px 1fr; gap: 32px; align-items: start; }
 .account-sidebar { display: flex; flex-direction: column; gap: 24px; }
 .account-profile { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px; text-align: center; }
-.account-profile img { width: 64px; height: 64px; }
+.account-profile img { width: auto; height: auto; }
 .account-profile strong { font-family: "VT323:Regular"; font-size: 22px; font-weight: 300; color: var(--paper); }
 .account-profile small { font-size: 10px; color: var(--sand); }
 .account-nav { display: flex; flex-direction: column; gap: 8px; }

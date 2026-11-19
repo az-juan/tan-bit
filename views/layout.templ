@@ -1,14 +1,25 @@
 package views
 
-templ Header() {
+import (
+  "tan-bit.com/tan-bit/logic"
+	"net/http"
+)
+templ Header(userRole string) {
     <header class="site-header">
       <a class="brand" href="./">
         <img src="/static/assets/tanbit_logo.svg" alt="TAN-BIT logo" />
-        // <span>TAN-BIT</span>
       </a>
       <div class="site-search">
         <img src="/static/assets/search.svg" alt="" />
-        <span>Buscar tu próxima joya del hardware</span>
+        <form class="search-form" hx-get="/search" hx-target="#search-results" hx-trigger="input changed delay:300ms" hx-push-url="true" hx-params="no-body">
+          <input
+            type="text"
+            name="q"
+            placeholder="Buscar artículos..."
+            class="search-input"
+            autocomplete="off"
+          />
+        </form>
       </div>
       <nav class="header-actions">
         <a href="./vender">VENDER</a>
@@ -16,14 +27,22 @@ templ Header() {
           <img src="/static/assets/heart.svg" alt="Favoritos" />
         </a>
         <a class="cart-link" href="./carrito">
-          <img src="/static/assets/cart.svg" alt="" />CARRITO [0]
+          <img src="/static/assets/carrito.svg" alt="" />
         </a>
-        <a href="./mi_cuenta">
-          <img class="account" src="/static/assets/account.svg" alt="Cuenta" />
-        </a>
+        <div class="account-dropdown-wrap">
+          <a href="./mi_cuenta" class="account-btn">
+            <img class="account" src="/static/assets/account.svg" alt="Cuenta" />
+          </a>
+        </div>
       </nav>
     </header>
- }
+}
+
+templ SearchForm() {
+    <div class="search-inline-results-wrap">
+      <div class="search-inline-results" id="search-results"></div>
+    </div>
+}
 
 templ Footer() {
       <footer class="site-footer">
@@ -51,7 +70,6 @@ templ Footer() {
           <div class="footer-column">
             <div class="footer-brand">
               <img src="/static/assets/tanbit_logo.svg" alt="TAN-BIT logo" />
-              // <h3>TAN-BIT</h3>
             </div>
             <p>Con el fin de facilitar la circulación del hardware.</p>
           </div>
@@ -64,7 +82,7 @@ templ Footer() {
             <a href="./historia">Historia</a><a href="./creadores">Creadores</a>
           </div>
           <div class="footer-column">
-            <h3>AVISOS</h3>
+            <h3 class="aviso-title">AVISOS</h3>
             <p>Hallazgos, historias y un poco de ruido de señal.</p>
             <div class="newsletter">tu.señal@correo.com <span>→</span></div>
           </div>
@@ -73,4 +91,52 @@ templ Footer() {
           <span>© 2026 TAN-BIT. Todos los derechos reservados.</span><a href="./privacidad">Política de privacidad &nbsp;</a><a href="./terminos">Términos del servicio &nbsp;</a><span>Argentina · Pesos $ · Crypto</span>
         </div>
       </footer>
+}
+
+templ Head() {
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TAN-BIT · Marketplace</title>
+  <link rel="stylesheet" href="/static/css/shared.css" />
+  <link rel="stylesheet" href="/static/css/colors.css" />
+  <link rel="stylesheet" href="/static/css/fonts.css" />
+  <link rel="stylesheet" href="/static/css/carrito.css" />
+  <link rel="stylesheet" href="/static/css/favoritos.css" />
+  <link rel="stylesheet" href="/static/css/mi_cuenta.css" />
+  <link rel="stylesheet" href="/static/css/contacto.css" />
+  <link rel="stylesheet" href="/static/css/evento.css" />
+  <link rel="stylesheet" href="/static/css/terminos.css" />
+  <link rel="stylesheet" href="/static/css/privacidad.css" />
+  <link rel="stylesheet" href="/static/css/marketplace.css" />
+  <link rel="stylesheet" href="/static/css/login.css" />
+  <link rel="stylesheet" href="/static/css/registrarse.css" />
+  <link rel="stylesheet" href="/static/css/vender.css" />
+  <link rel="stylesheet" href="/static/css/historia.css" />
+  <link rel="stylesheet" href="/static/css/creadores.css" />
+  <script src="/static/htmx.min.js"></script>
+  <script>htmx.config.historyRestoreAsHxRequest = false</script>
+</head>
+}
+
+templ Base(contenido templ.Component) {
+  <!doctype html>
+  <html lang="es">
+    <body hx-boost="true" hx-target="#main">
+      @Head()
+      @Header("")
+      <main class="container" id="main">
+        @contenido
+      </main>
+      @Footer()
+    </body>
+  </html>
+}
+
+templ Pagina(r *http.Request, contenido templ.Component) {
+    if logic.IsHtmxRequest(r) {
+        @contenido   // solo el fragmento
+    } else {
+        @Base(contenido)
+    }
 }

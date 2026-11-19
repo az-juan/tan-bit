@@ -1,0 +1,31 @@
+/* ============================================================
+   TAN-BIT COLORS — CSS Variables (colores)
+   ============================================================ */
+
+:root {
+  --ink: #1b2026;
+  --panel: #242e35;
+  --paper: #d1d0cf;
+  --night: #0d0b0a;
+  --brown: #2f1e1a;
+  --brown-light: #343230;
+  --copper: #c47e3e;
+  --orange: #f5a95b;
+  --sand: #aa9c8a;
+  --line: #5c4a38;
+  --muted: #64635f;
+  --green: #81a38e;
+  --yellow: #c8a84b;
+
+  /* Notification specific */
+  --notification-border: #5c4a38;
+  --notification-bg: #242e35;
+  --notification-bg-light: #2a3642;
+  --notification-text: #d1d0cf;
+  --notification-text-muted: #64635f;
+  --notification-accent-success: #81a38e;
+  --notification-accent-info: #5b8def;
+  --notification-accent-warning: #e0a84b;
+  --notification-accent-error: #e06b6b;
+  --notification-accent-brown: #8a6d4b;
+}

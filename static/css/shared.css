@@ -1,44 +1,11 @@
-@font-face {
-  font-family: "IBM Plex Mono:Regular";
-  src: url("https://static.figma.com/font/IBMPlexMono-Regular_2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-}
-@font-face {
-  font-family: "IBM Plex Mono:SemiBold";
-  src: url("https://static.figma.com/font/IBMPlexMono-SemiBold_3") format("woff2");
-  font-style: normal;
-  font-weight: 600;
-}
-@font-face {
-  font-family: "VT323:Regular";
-  src: url("https://static.figma.com/font/VT323-Regular_1") format("woff2");
-  font-style: normal;
-  font-weight: 350;
-}
-
-:root {
-  --ink: #1b2026;
-  --panel: #242e35;
-  --paper: #d1d0cf;
-  --night: #0d0b0a;
-  --brown: #2f1e1a;
-  --brown-light: #343230;
-  --copper: #c47e3e;
-  --orange: #f5a95b;
-  --sand: #aa9c8a;
-  --line: #5c4a38;
-  --muted: #64635f;
-  --green: #81a38e;
-  --yellow: #c8a84b;
-}
-
 * {
   box-sizing: border-box;
 }
+
 html {
   background: var(--night);
 }
+
 body {
   margin: 0;
   min-width: 320px;
@@ -47,23 +14,28 @@ body {
   font-family: "IBM Plex Mono:Regular", monospace;
   font-size: 12px;
 }
+
 button,
 input,
 textarea,
 select {
   font: inherit;
 }
+
 button,
 a {
   color: inherit;
 }
+
 a {
   text-decoration: none;
 }
+
 img {
   display: block;
   max-width: 100%;
 }
+
 p,
 h1,
 h2,
@@ -81,23 +53,28 @@ h3 {
   overflow: hidden;
   background: var(--ink);
 }
+
 .display {
   color: var(--orange);
   font-family: "VT323:Regular", monospace;
   font-weight: 400;
   line-height: 1.05;
 }
+
 .eyebrow {
   color: var(--orange);
   font-size: 11px;
   line-height: 1.5;
 }
+
 .muted {
   color: var(--sand);
 }
+
 .green {
   color: var(--green);
 }
+
 .route {
   display: flex;
   align-items: center;
@@ -106,9 +83,11 @@ h3 {
   font-size: 11px;
   line-height: 1.5;
 }
+
 .page-title {
   font-size: 64px;
 }
+
 .container {
   display: flex;
   flex-direction: column;
@@ -116,6 +95,7 @@ h3 {
   padding: 64px;
 }
 
+/* Header */
 .site-header {
   display: flex;
   width: 100%;
@@ -127,25 +107,33 @@ h3 {
   border-bottom: 4px solid var(--line);
   box-shadow: 0 2px 0 0 var(--line);
 }
+
 .brand,
 .header-actions,
 .cart-link {
   display: flex;
   align-items: center;
 }
+
 .brand {
   gap: 12px;
 }
+
 .brand img {
   image-rendering: pixelated;
   width: 180px;
   height: 32px;
+  /* width: auto; */
+  /* max-width: 100%; */
+  /* height: auto; */
 }
+
 .brand span {
   color: var(--orange);
   font-family: "VT323:Regular";
   font-size: 26px;
 }
+
 .site-search {
   display: flex;
   width: 400px;
@@ -158,33 +146,44 @@ h3 {
   color: var(--sand);
   font-size: 11px;
 }
+
 .site-search img {
-  width: 18px;
-  height: 18px;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  /* width: 18px; */
+  /* height: 18px; */
 }
+
 .header-actions {
   gap: 22px;
   color: var(--orange);
   font-family: "VT323:Regular";
   font-size: 20px;
 }
+
 .header-actions > img {
   width: 22px;
   height: 22px;
 }
+
 .header-actions .account {
-  width: 42px;
-  height: 42px;
+  width: 28px;
+  height: 40px;
 }
+
 .cart-link {
   gap: 8px;
   font-size: 18px;
 }
+
 .cart-link img {
-  width: 22px;
-  height: 22px;
+  width: auto;
+  max-width: 100%;
+  height: auto;
 }
 
+/* Frame */
 .pixel-frame {
   position: relative;
   border: 6px solid var(--copper);
@@ -221,9 +220,12 @@ h3 {
     16px 4px
   );
 }
+
 .pixel-frame.copper {
   border-color: var(--copper);
 }
+
+/* Buttons */
 .btn {
   display: inline-flex;
   min-height: 46px;
@@ -237,11 +239,14 @@ h3 {
   font-family: "IBM Plex Mono:SemiBold";
   cursor: pointer;
 }
+
 .btn.ghost {
   border-color: var(--sand);
   background: transparent;
   color: var(--paper);
 }
+
+/* Form Fields */
 .field {
   display: flex;
   min-height: 42px;
@@ -251,110 +256,115 @@ h3 {
   background: var(--ink);
   color: var(--sand);
 }
+
 .field::placeholder {
   color: var(--sand);
   opacity: 1;
 }
+
 .field-label {
   color: var(--sand);
   font-size: 10px;
   line-height: 1.5;
 }
 
+/* Product Card - marketplace style */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;
 }
+
 .product-card {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  border: 1px solid #aaa8a3;
+  border: 1px solid var(--line);
   background: var(--paper);
   color: var(--panel);
+  padding: 0;
 }
+
 .product-image {
   position: relative;
-  height: 228px;
+  height: 200px;
   overflow: hidden;
 }
+
 .product-image > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.heart-badge {
+
+.product-fav {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 10px;
+  left: 10px;
   display: grid;
-  width: 32px;
-  height: 30px;
+  width: 30px;
+  height: 28px;
   place-items: center;
   background: var(--ink);
 }
-
-.heart-img {
-    width: 20px;
-    height: 16px;
-    background-image: url('../assets/heart-empty.svg');
-    background-size: cover;
-    position: center;
-    transition: background-image 0.3s ease;
-}
-.heart-img:hover {
-    background-image: url('../assets/heart.svg');
-}   
 
 .product-info {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 10px;
-  padding: 18px;
+  gap: 8px;
+  padding: 14px;
 }
+
 .product-meta {
   display: flex;
   justify-content: space-between;
   color: var(--muted);
   font-size: 10px;
 }
+
 .product-name {
   color: var(--panel);
   font-family: "VT323:Regular";
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 300;
 }
-.product-description,
-.installments {
+
+.product-description {
   color: var(--muted);
   font-size: 10px;
 }
+
 .product-price {
   color: var(--panel);
   font-family: "IBM Plex Mono:SemiBold";
-  font-size: 23px;
+  font-size: 22px;
 }
+
 .product-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: auto;
 }
+
 .product-actions .btn {
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 38px;
+  padding: 8px 14px;
   font-size: 11px;
 }
+
 .text-link {
   color: var(--panel);
   font-size: 11px;
 }
 
+/* Footer */
 .site-footer {
   margin-top: auto;
   width: 100%;
 }
+
 .values {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -364,16 +374,19 @@ h3 {
   border-bottom: 4px solid var(--line);
   background: var(--brown-light);
 }
+
 .value {
   display: flex;
   align-items: center;
   gap: 16px;
   min-width: 0;
 }
+
 .value img {
   width: 26px;
   height: 26px;
 }
+
 .value strong {
   display: block;
   margin-bottom: 6px;
@@ -382,11 +395,13 @@ h3 {
   font-size: 18px;
   font-weight: 400;
 }
+
 .value span {
   color: var(--sand);
   font-size: 11px;
   line-height: 1.7;
 }
+
 .footer-main {
   display: grid;
   grid-template-columns: 280px 150px 160px 380px;
@@ -395,32 +410,38 @@ h3 {
   padding: 32px 64px;
   background: var(--brown);
 }
+
 .footer-column {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
+
 .footer-column h3 {
   color: var(--orange);
   font-family: "VT323:Regular";
   font-size: 20px;
   font-weight: 400;
 }
+
 .footer-column p,
 .footer-column a {
   color: var(--sand);
   font-size: 11px;
   line-height: 1.7;
 }
+
 .footer-brand {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 .footer-brand img {
   width: 180px;
   height: 32px;
 }
+
 .newsletter {
   display: flex;
   align-items: center;
@@ -429,6 +450,7 @@ h3 {
   border: 4px solid var(--line);
   background: #1a1614;
 }
+
 .legal {
   display: flex;
   justify-content: space-between;
@@ -439,11 +461,13 @@ h3 {
   font-size: 10px;
 }
 
+/* Responsive */
 @media (max-width: 900px) {
   .page {
     width: 100%;
     min-height: 100dvh;
   }
+
   .site-header {
     height: auto;
     min-height: 80px;
@@ -451,99 +475,62 @@ h3 {
     gap: 14px;
     padding: 14px 20px;
   }
+
   .site-search {
     order: 3;
     width: 100%;
   }
+
   .header-actions {
     gap: 12px;
   }
+
   .container {
     padding: 40px 20px;
   }
+
   .page-title {
     font-size: clamp(44px, 12vw, 64px);
   }
+
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .values,
   .footer-main {
     grid-template-columns: 1fr;
   }
+
   .values,
   .footer-main,
   .legal {
     padding-right: 20px;
     padding-left: 20px;
   }
+
   .legal {
     flex-direction: column;
     gap: 10px;
   }
 }
+
 @media (max-width: 520px) {
   .brand span,
   .header-actions > a:first-child {
     display: none;
   }
+
   .header-actions {
     font-size: 16px;
   }
+
   .product-grid {
     grid-template-columns: 1fr;
   }
 }
 
-/* /* Cool infinite background scrolling animation. */
- /* * Twitter: @kootoopas */
- /* */ */
-/* Exo thin font from Google. */
-/* @import url(https://fonts.googleapis.com/css?family=Exo:100); */
-/* Background data (Original source: https://subtlepatterns.com/grid-me/) */
-/* Animations */
-/* @-webkit-keyframes bg-scrolling-reverse { */
-  /* 100% { */
-    /* background-position: 50px 50px; */
-  /* } */
-/* } */
-/* @-moz-keyframes bg-scrolling-reverse { */
-  /* 100% { */
-    /* background-position: 50px 50px; */
-  /* } */
-/* } */
-/* @-o-keyframes bg-scrolling-reverse { */
-  /* 100% { */
-    /* background-position: 50px 50px; */
-  /* } */
-/* } */
-/* @keyframes bg-scrolling-reverse { */
-  /* 100% { */
-    /* background-position: 50px 50px; */
-  /* } */
-/* } */
-/* @-webkit-keyframes bg-scrolling { */
-  /* 0% { */
-    /* background-position: 50px 50px; */
-  /* } */
-/* } */
-/* @-moz-keyframes bg-scrolling { */
-  /* 0% { */
-    /* background-position: 50px 50px; */
-  /* } */
-/* } */
-/* @-o-keyframes bg-scrolling { */
-  /* 0% { */
-    /* background-position: 50px 50px; */
-  /* } */
-/* } */
-/* @keyframes bg-scrolling { */
-  /* 100% { */
-    /* background-position: 50px 50px; */
-  /* } */
-/* } */
-
-/* Frame variants: color tones */
+/* Frame color variants */
 .pixel-frame.steel { border-color: #8a9aa6; box-shadow: inset 0 0 0 2px #5c4a38; }
 .pixel-frame.oxide { border-color: #a0522d; box-shadow: inset 0 0 0 2px #5c3a2a; }
 .pixel-frame.verdigris { border-color: #5a7a6a; box-shadow: inset 0 0 0 2px #3f5a4a; }
@@ -552,7 +539,7 @@ h3 {
 .pixel-frame.copper-green { border-color: #7fa38e; box-shadow: inset 0 0 0 2px #3f5a4a; }
 .pixel-frame.copper-new { border-color: #e09a5a; box-shadow: inset 0 0 0 2px #5c4a38; }
 
-/* Decorative overlays: manguito + vegetation on frames */
+/* Decorative overlays */
 .pixel-frame { position: relative; }
 .pixel-frame::before {
   content: "";
@@ -579,7 +566,6 @@ h3 {
 .pixel-frame.veg-2::after { background-image: url("../assets/vegetacion_2.svg"); width: 42px; height: 48px; }
 .pixel-frame.veg-3::after { background-image: url("../assets/vegetacion_3.svg"); width: 60px; height: 36px; bottom: -6px; }
 
-
 /* vegetation position modifiers */
 .pixel-frame.veg-tl::after { top: -10px; left: -8px; bottom: auto; right: auto; }
 .pixel-frame.veg-tr::after { top: -10px; right: -8px; bottom: auto; left: auto; }
@@ -589,6 +575,6 @@ h3 {
 .pixel-frame.veg-vl::after { background-image: url("../assets/vegetacion_vine_long.svg"); width: 12px; height: 90px; left: -6px; top: 50%; transform: translateY(-50%); bottom: auto; }
 .pixel-frame.veg-vs::after { background-image: url("../assets/vegetacion_vine_short.svg"); width: 12px; height: 36px; right: -6px; top: 50%; transform: translateY(-50%); bottom: auto; left: auto; }
 
-/* codo overlays: extra manguitos along frame */
+/* codo overlays */
 .pixel-frame.codo-2 { background-image: inherit, url("../assets/manguito.svg"); background-repeat: no-repeat, no-repeat; background-position: center, 30% 10%; background-size: auto, 18px 13px; }
 .pixel-frame.codo-3 { background-image: inherit, url("../assets/manguito-steel.svg"); background-repeat: no-repeat, no-repeat; background-position: center, 70% 90%; background-size: auto, 18px 13px; }

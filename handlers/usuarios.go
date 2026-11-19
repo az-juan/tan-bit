@@ -1,13 +1,11 @@
 package handlers
 
 import (
-	// "encoding/json"
-	// "errors"
 	"database/sql"
 	"net/http"
 	"strconv"
-
 	db "tan-bit.com/tan-bit/db/sqlc"
+	"tan-bit.com/tan-bit/logic"
 	"tan-bit.com/tan-bit/views"
 )
 
@@ -39,7 +37,6 @@ func (h *UsuarioHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		views.Registrarse("", "usuario").Render(r.Context(), w)
 		return
 	}
@@ -59,13 +56,13 @@ func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Reque
 
 	terminos := r.FormValue("terminos")
 	if terminos != "on" {
-		views.Registrarse("Debes aceptar los términos del servicio y la política de privacidad.", role).Render(r.Context(), w)
+		views.Pagina(r, views.Registrarse("Debes aceptar los términos del servicio y la política de privacidad.", role)).Render(r.Context(), w)
 		return
 	}
 
 	if role == "vendedor" {
 		if r.FormValue("telefono") == "" || r.FormValue("cbu") == "" || r.FormValue("alias") == "" {
-			views.Registrarse("Para registrarte como vendedor necesitás completar TELÉFONO, CBU y ALIAS.", role).Render(r.Context(), w)
+			views.Pagina(r, views.Registrarse("Para registrarte como vendedor necesitás completar TELÉFONO, CBU y ALIAS.", role)).Render(r.Context(), w)
 			return
 		}
 	}
@@ -78,8 +75,20 @@ func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Reque
 	}
 	nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
 	if err != nil {
-		if esViolacionUnique(err) {
-			views.Registrarse("El email ya está registrado. ¿Tenés cuenta? Iniciá sesión.", role).Render(r.Context(), w)
+		if logic.EsViolacionUnique(err) {
+			col := logic.ColumnaViolacionUnique(err)
+			var msg string
+			switch col {
+			case "cbu":
+				msg = "Este CBU ya está asociado a otra cuenta vendedora."
+			case "alias":
+				msg = "Este alias ya está en uso."
+			case "telefono":
+				msg = "Este teléfono ya está asociado a otra cuenta vendedora."
+			default:
+				msg = "El email ya está registrado. ¿Tenés cuenta? Iniciá sesión."
+			}
+			views.Registrarse(msg, role).Render(r.Context(), w)
 			return
 		}
 		http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
@@ -111,14 +120,12 @@ func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	http.SetCookie(w, &http.Cookie{Name: "user_id", Value: strconv.Itoa(int(nuevoUsuario.IDUsuario)), Path: "/"})
-	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
+	// http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 }
 
-// Manejador para /login
 func (h *UsuarioHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		views.Login().Render(r.Context(), w)
+		views.Pagina(r, views.Login()).Render(r.Context(), w)
 		return
 	}
 	if r.Method != http.MethodPost {
@@ -141,249 +148,44 @@ func (h *UsuarioHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.SetCookie(w, &http.Cookie{Name: "user_id", Value: strconv.Itoa(int(u.IDUsuario)), Path: "/"})
-	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
+	// views.NotificationList(logic.GetNotifications()).Render(r.Context(), w)
 }
 
 func (h *UsuarioHandler) MiCuentaHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	id, ok := logic.GetCookieOrRedirect(w, r)
+	if !ok {
+		return
+	}
 	nombre, apellido, email := "", "", ""
-	telefono := ""
+	anonTelefono := ""
 	alias := ""
 	cbu := ""
 	direccionXmr := ""
-	articulos := []db.GetArticulosByVendedorRow{}
-	favoritos := []db.GetFavoritosByUsuarioRow{}
-	compras := []db.GetComprasByUsuarioRow{}
+	anarticulos := []db.GetArticulosByVendedorRow{}
+	anfavoritos := []db.GetFavoritosByUsuarioRow{}
+	ancompras := []db.GetComprasByUsuarioRow{}
 
-	cookie, err := r.Cookie("user_id")
-	if err == nil {
-		if id, err := strconv.Atoi(cookie.Value); err == nil {
-			if u, err := h.queries.GetUsuarioByID(r.Context(), int32(id)); err == nil {
-				nombre = u.Nombre
-				apellido = u.Apellido
-				email = u.Email
-			}
-			if v, err := h.queries.GetVendedorByID(r.Context(), int32(id)); err == nil {
-				telefono = strconv.FormatInt(v.Telefono, 10)
-				alias = v.Alias
-				cbu = v.Cbu
-				if v.DireccionXmr.Valid {
-					direccionXmr = v.DireccionXmr.String
-				}
-			}
-			if a, err := h.queries.GetArticulosByVendedor(r.Context(), int32(id)); err == nil {
-				articulos = a
-			}
-			if f, err := h.queries.GetFavoritosByUsuario(r.Context(), int32(id)); err == nil {
-				favoritos = f
-			}
-			if c, err := h.queries.GetComprasByUsuario(r.Context(), int32(id)); err == nil {
-				compras = c
-			}
-		}
-	} else {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
+	if u, err := h.queries.GetUsuarioByID(r.Context(), int32(id)); err == nil {
+		nombre = u.Nombre
+		apellido = u.Apellido
+		email = u.Email
 	}
-	views.MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr, articulos, favoritos, compras).Render(r.Context(), w)
+	if v, err := h.queries.GetVendedorByID(r.Context(), int32(id)); err == nil {
+		anonTelefono = strconv.FormatInt(v.Telefono, 10)
+		alias = v.Alias
+		cbu = v.Cbu
+		if v.DireccionXmr.Valid {
+			direccionXmr = v.DireccionXmr.String
+		}
+	}
+	if a, err := h.queries.GetArticulosByVendedor(r.Context(), int32(id)); err == nil {
+		anarticulos = a
+	}
+	if f, err := h.queries.GetFavoritosByUsuario(r.Context(), int32(id)); err == nil {
+		anfavoritos = f
+	}
+	if c, err := h.queries.GetComprasByUsuario(r.Context(), int32(id)); err == nil {
+		ancompras = c
+	}
+	views.Pagina(r, views.MiCuenta(nombre, apellido, email, anonTelefono, alias, cbu, direccionXmr, anarticulos, anfavoritos, ancompras)).Render(r.Context(), w)
 }
-
-// type UsuarioRequest struct {
-// 	Apellido string `json:"apellido"`
-// 	Nombre   string `json:"nombre"`
-// 	Email    string `json:"email"`
-// 	Password string `json:"password"`
-// }
-
-// type UsuarioResponse struct {
-// 	IDUsuario int32  `json:"id_usuario"`
-// 	Apellido  string `json:"apellido"`
-// 	Nombre    string `json:"nombre"`
-// 	Email     string `json:"email"`
-// }
-
-// func toUsuarioResponse(u db.Usuario) UsuarioResponse {
-// 	return UsuarioResponse{
-// 		IDUsuario: u.IDUsuario,
-// 		Apellido:  u.Apellido,
-// 		Nombre:    u.Nombre,
-// 		Email:     u.Email,
-// 	}
-// }
-
-// func toUsuariosFromGet(usuarios []db.Usuario) []UsuarioResponse {
-// 	res := make([]UsuarioResponse, 0, len(usuarios))
-// 	for _, u := range usuarios {
-// 		res = append(res, toUsuarioResponse(u))
-// 	}
-// 	return res
-// }
-//
-// Manejador para /usuarios
-// func (h *UsuarioHandler) UsersHandler(w http.ResponseWriter, r *http.Request) {
-// 	switch r.Method {
-// 	case http.MethodGet:
-// 		h.getUsuarios(w, r)
-// 	case http.MethodPost:
-// 		h.createUsuario(w, r)
-// 	default:
-// 		http.Error(w, "Metodo no permitido", http.StatusMethodNotAllowed)
-// 	}
-// }
-
-// Manejador para /usuarios/{id}
-// func (h *UsuarioHandler) UserHandler(w http.ResponseWriter, r *http.Request) {
-// 	// Extraer ID del path
-// 	parts := strings.Split(r.URL.Path, "/")
-// 	if len(parts) != 3 {
-// 		http.Error(w, "Invalid URL", http.StatusBadRequest)
-// 		return
-// 	}
-// 	id, err := strconv.Atoi(parts[2])
-
-// 	if err != nil {
-// 		http.Error(w, "ID de usuario invalido", http.StatusBadRequest)
-// 		return
-// 	}
-// 	switch r.Method {
-// 	case http.MethodGet:
-// 		h.getUsuario(w, r, int32(id))
-// 	case http.MethodPut:
-// 		h.updateUsuario(w, r, int32(id))
-// 	case http.MethodDelete:
-// 		h.deleteUsuario(w, r, int32(id))
-// 	default:
-// 		http.Error(w, "Metodo no permitido",
-// 			http.StatusMethodNotAllowed)
-// 	}
-// }
-
-// GET /usuarios - Obtener todos los usuarios
-// func (h *UsuarioHandler) getUsuarios(w http.ResponseWriter, r *http.Request) {
-// 	usuarios, err := h.queries.GetUsuarios(r.Context())
-// 	if err != nil {
-// 		http.Error(w, "Error al obtener usuarios: "+err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(toUsuariosFromGet(usuarios))
-// }
-
-// POST /usuarios - Crear nuevo usuario
-// func (h *UsuarioHandler) createUsuario(w http.ResponseWriter, r *http.Request) {
-// 	ct := r.Header.Get("Content-Type")
-// 	if ct == "application/x-www-form-urlencoded" || (len(ct) >= 33 && ct[:33] == "multipart/form-data") {
-// 		if err := r.ParseForm(); err != nil {
-// 			http.Error(w, "Formulario inválido", http.StatusBadRequest)
-// 			return
-// 		}
-// 		params := db.CreateUsuarioParams{
-// 			Apellido: r.FormValue("apellido"),
-// 			Nombre:   r.FormValue("nombre"),
-// 			Email:    r.FormValue("email"),
-// 			Password: r.FormValue("password"),
-// 		}
-// 		nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
-// 		if err != nil {
-// 			http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
-// 			return
-// 		}
-// 		if tel := r.FormValue("telefono"); tel != "" {
-// 			t, _ := strconv.ParseInt(tel, 10, 64)
-// 			_, _ = h.queries.CreateVendedor(r.Context(), db.CreateVendedorParams{IDVendedor: nuevoUsuario.IDUsuario, Telefono: t})
-// 		}
-// 		http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
-// 		return
-// 	}
-
-// 	var req UsuarioRequest
-// 	err := json.NewDecoder(r.Body).Decode(&req)
-// 	if err != nil {
-// 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-// 	params := db.CreateUsuarioParams{
-// 		Apellido: req.Apellido,
-// 		Nombre:   req.Nombre,
-// 		Email:    req.Email,
-// 		Password: req.Password,
-// 	}
-// 	nuevoUsuario, err := h.queries.CreateUsuario(r.Context(), params)
-// 	if esViolacionUnique(err) {
-// 		http.Error(w, "Email ya existente.", http.StatusConflict)
-// 		return
-// 	}
-// 	if err != nil {
-// 		http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusCreated)
-// 	json.NewEncoder(w).Encode(toUsuarioResponse(nuevoUsuario))
-// }
-
-// GET /usuarios/{id} - Obtener usuario específico
-// func (h *UsuarioHandler) getUsuario(w http.ResponseWriter, r *http.Request, id int32) {
-// 	usuario, err := h.queries.GetUsuarioByID(r.Context(), id)
-// 	if errors.Is(err, sql.ErrNoRows) {
-// 		http.Error(w, "Usuario no encontrado.", http.StatusNotFound)
-// 		return
-// 	}
-// 	if err != nil {
-// 		http.Error(w, "Error al obtener el usuario: "+err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(toUsuarioResponse(usuario))
-// }
-
-// PUT /usuarios/{id} - Actualizar usuario
-// func (h *UsuarioHandler) updateUsuario(w http.ResponseWriter, r *http.Request, id int32) {
-// 	var req UsuarioRequest
-
-// 	err := json.NewDecoder(r.Body).Decode(&req)
-// 	if err != nil {
-// 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	params := db.UpdateUsuarioParams{
-// 		IDUsuario: id,
-// 		Apellido:  req.Apellido,
-// 		Nombre:    req.Nombre,
-// 		Email:     req.Email,
-// 	}
-
-// 	filas, err := h.queries.UpdateUsuario(r.Context(), params)
-// 	if esViolacionUnique(err) {
-// 		http.Error(w, "Email ya existente.", http.StatusConflict)
-// 		return
-// 	}
-// 	if err != nil {
-// 		http.Error(w, "Error al actualizar el usuario: "+err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	if filas == 0 {
-// 		http.Error(w, "Usuario no encontrado", http.StatusNotFound)
-// 		return
-// 	}
-// 	w.WriteHeader(http.StatusNoContent)
-// }
-
-// DELETE /usuarios/{id} - Eliminar usuario
-// func (h *UsuarioHandler) deleteUsuario(w http.ResponseWriter, r *http.Request, id int32) {
-// 	filas, err := h.queries.DeleteUsuario(r.Context(), id)
-// 	if esViolacionFK(err) {
-// 		http.Error(w, "El usuario es vendedor o tiene compras asociadas, no es posible eliminarlo.", http.StatusConflict)
-// 		return
-// 	}
-// 	if err != nil {
-// 		http.Error(w, "Error al eliminar el usuario: "+err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	if filas == 0 {
-// 		http.Error(w, "Usuario no encontrado.", http.StatusNotFound)
-// 		return
-// 	}
-// 	w.WriteHeader(http.StatusNoContent)
-// }

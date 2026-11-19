@@ -16,7 +16,7 @@ func main() {
 	}
 	defer db.Close()
 
-	queries := sqlc.New(db) //Instanciamos queries para ejecutarse en nuestro pool
+	queries := sqlc.New(db) //Instancimos queries para ejecutarse en nuestro pool
 	artHandler := handlers.NewArticuloHandler(queries)
 	userHandler := handlers.NewUsuarioHandler(queries)
 	vendHandler := handlers.NewVendedorHandler(queries)
@@ -34,10 +34,11 @@ func main() {
 	http.HandleFunc("/contacto", handlers.ContactoHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", us))
-	http.Handle("/vender", vendHandler)
+	http.HandleFunc("/vender", vendHandler.ServeHTTP)
 	http.Handle("/registrarse", userHandler)
 	http.Handle("/login", userHandler)
 	http.Handle("/mi_cuenta", userHandler)
+	// http.HandleFunc("/notifications", handlers.NotificationsHandler)
 	http.Handle("/", artHandler)
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)

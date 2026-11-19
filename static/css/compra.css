@@ -1,7 +1,3 @@
-.compra-page { --page-height: 1100px; }
-
-.compra-main { gap: 24px; }
-
 .compra-layout {
   display: grid;
   grid-template-columns: 1.4fr 1fr;

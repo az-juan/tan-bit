@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 	db "tan-bit.com/tan-bit/db/sqlc"
+	"tan-bit.com/tan-bit/logic"
 	"tan-bit.com/tan-bit/views"
 )
 
@@ -24,97 +27,84 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.MarketplaceHandler(w, r)
 	case "/carrito":
 		h.CarritoHandler(w, r)
-	case "/carrito/add":
-		h.AddCarritoHandler(w, r)
+	case "/carrito/":
+		h.RemoveCarritoHandler(w, r)
 	case "/compra":
 		h.CompraHandler(w, r)
 	case "/favoritos":
 		h.FavoritosHandler(w, r)
-	case "/favoritos/add":
-		h.AddFavoritoHandler(w, r)
+	case "/favoritos/":
+		h.RemoveFavoritoHandler(w, r)
+	case "/articulos/":
+		h.DeleteArticuloHandler(w, r)
 	default:
 		NotFoundHandler(w, r)
 	}
 }
 
 func (h *ArticuloHandler) MarketplaceHandler(w http.ResponseWriter, r *http.Request) {
-	arts, err := h.queries.GetArticulos(r.Context())
+	categoria := r.FormValue("categoria")
+	var arts []db.GetArticulosRow
+	var err error
+	if categoria != "" {
+		artsRows, err := h.queries.GetArticulosByCategoria(r.Context(), db.Categoria(categoria))
+		if err != nil {
+			http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
+			return
+		}
+		arts = make([]db.GetArticulosRow, len(artsRows))
+		for i, a := range artsRows {
+			arts[i] = db.GetArticulosRow{
+				IDArticulo:       a.IDArticulo,
+				Titulo:           a.Titulo,
+				Descripcion:      a.Descripcion,
+				Condicion:        a.Condicion,
+				Categoria:        a.Categoria,
+				Precio:           a.Precio,
+				PrecioXmr:        a.PrecioXmr,
+				Stock:            a.Stock,
+				FechaPublicacion: a.FechaPublicacion,
+				RutaImagen:       a.RutaImagen,
+				Ubicacion:        a.Ubicacion,
+				TipoEntrega:      a.TipoEntrega,
+				CostoEnvio:       a.CostoEnvio,
+				ZonaEntrega:      a.ZonaEntrega,
+			}
+		}
+	} else {
+		arts, err = h.queries.GetArticulos(r.Context())
+	}
 	if err != nil {
 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 		return
 	}
-	views.Marketplace(arts, views.BuildFiltros(arts)).Render(r.Context(), w)
-}
-
-func (h *ArticuloHandler) AddCarritoHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	cookie, err := r.Cookie("user_id")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-	id, _ := strconv.Atoi(cookie.Value)
-	artID, _ := strconv.Atoi(r.FormValue("id_articulo"))
-	h.queries.AddToCarrito(r.Context(), db.AddToCarritoParams{
-		IDUsuario:  int32(id),
-		IDArticulo: int32(artID),
-		Cantidad:   1,
-	})
-	http.Redirect(w, r, "/carrito", http.StatusSeeOther)
-}
-
-func (h *ArticuloHandler) AddFavoritoHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	cookie, err := r.Cookie("user_id")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
-	id, _ := strconv.Atoi(cookie.Value)
-	artID, _ := strconv.Atoi(r.FormValue("id_articulo"))
-	h.queries.AddFavorito(r.Context(), db.AddFavoritoParams{
-		IDUsuario:  int32(id),
-		IDArticulo: int32(artID),
-	})
-	http.Redirect(w, r, "/favoritos", http.StatusSeeOther)
+	views.Pagina(r, views.Marketplace(arts, views.BuildFiltros(arts))).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) CarritoHandler(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("user_id")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	id, ok := logic.GetCookieOrRedirect(w, r)
+	if !ok {
 		return
 	}
-	id, _ := strconv.Atoi(cookie.Value)
 	arts, err := h.queries.GetCarritoByUsuario(r.Context(), int32(id))
 	if err != nil {
 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 		return
 	}
-
 	var total float64
 	var totalXmr float64
 	for _, a := range arts {
 		total += a.Precio * float64(a.Cantidad)
 		totalXmr += a.PrecioXmr * float64(a.Cantidad)
 	}
-
-	views.Carrito(arts, total, totalXmr).Render(r.Context(), w)
+	views.Pagina(r, views.Carrito(arts, total, totalXmr)).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("user_id")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	id, ok := logic.GetCookieOrRedirect(w, r)
+	if !ok {
 		return
 	}
-	id, _ := strconv.Atoi(cookie.Value)
 	if r.Method == http.MethodGet {
 		arts, err := h.queries.GetCarritoCompra(r.Context(), int32(id))
 		if err != nil {
@@ -136,7 +126,7 @@ func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) 
 			total += a.Precio * float64(a.Cantidad)
 			totalXmr += a.PrecioXmr * float64(a.Cantidad)
 		}
-		views.Compra(arts, entregaSlice, total, totalXmr).Render(r.Context(), w)
+		views.Pagina(r, views.Compra(arts, entregaSlice, total, totalXmr)).Render(r.Context(), w)
 		return
 	}
 	// POST
@@ -171,300 +161,127 @@ func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) 
 		})
 	}
 	h.queries.ClearCarrito(r.Context(), int32(id))
-	http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
+	views.Pagina(r, views.MiCuenta("", "", "", "", "", "", "", []db.GetArticulosByVendedorRow{}, []db.GetFavoritosByUsuarioRow{}, []db.GetComprasByUsuarioRow{})).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("user_id")
-	if err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	id, ok := logic.GetCookieOrRedirect(w, r)
+	if !ok {
 		return
 	}
-	id, _ := strconv.Atoi(cookie.Value)
 	arts, err := h.queries.GetFavoritosByUsuario(r.Context(), int32(id))
 	if err != nil {
 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 		return
 	}
-	views.Favoritos(arts, views.BuildFiltrosFav(arts)).Render(r.Context(), w)
+	views.Pagina(r, views.Favoritos(arts, views.BuildFiltrosFav(arts))).Render(r.Context(), w)
 }
 
-// type CreateArticuloRequest struct {
-// 	Titulo      string `json:"titulo"`
-// 	Descripcion string `json:"descripcion"`
-// 	Condicion   string `json:"condicion"`
-// 	Categoria   string `json:"categoria"`
-// 	Precio      string `json:"precio"`
-// 	Stock       int32  `json:"stock"`
-// 	IDVendedor  int32  `json:"id_vendedor"`
-// 	Ubicacion   string `json:"ubicacion"`
-// 	TipoEntrega string `json:"tipo_entrega"`
-// 	CostoEnvio  string `json:"costo_envio"`
-// 	ZonaEntrega string `json:"zona_entrega"`
-// }
+func (h *ArticuloHandler) AddCarritoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	userId, ok := logic.GetCookieOrRedirect(w, r)
+	if !ok {
+		return
+	}
+	artID, _ := strconv.Atoi(r.FormValue("id_articulo"))
+	h.queries.AddToCarrito(r.Context(), db.AddToCarritoParams{
+		IDUsuario:  int32(userId),
+		IDArticulo: int32(artID),
+		Cantidad:   1,
+	})
+}
 
-// type UpdateArticuloRequest struct {
-// 	Titulo      string `json:"titulo"`
-// 	Descripcion string `json:"descripcion"`
-// 	Condicion   string `json:"condicion"`
-// 	Categoria   string `json:"categoria"`
-// 	Precio      string `json:"precio"`
-// 	Stock       int32  `json:"stock"`
-// }
+func (h *ArticuloHandler) AddFavoritoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	userId, ok := logic.GetCookieOrRedirect(w, r)
+	if !ok {
+		return
+	}
+	artID, _ := strconv.Atoi(r.FormValue("id_articulo"))
+	h.queries.AddFavorito(r.Context(), db.AddFavoritoParams{
+		IDUsuario:  int32(userId),
+		IDArticulo: int32(artID),
+	})
+}
 
-// type ArticuloResponse struct {
-// 	IDArticulo       int32      `json:"id_articulo"`
-// 	Titulo           string     `json:"titulo"`
-// 	Descripcion      string     `json:"descripcion"`
-// 	Condicion        string     `json:"condicion"`
-// 	Categoria        string     `json:"categoria"`
-// 	Precio           string     `json:"precio"`
-// 	Stock            int32      `json:"stock"`
-// 	IDVendedor       int32      `json:"id_vendedor,omitempty"`
-// 	FechaPublicacion *time.Time `json:"fecha_publicacion,omitempty"`
-// }
+// DELETE /articulos/{id} - Eliminar articulo publicado
+func (h *ArticuloHandler) DeleteArticuloHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Metodo no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/articulos/"))
+	if err != nil {
+		http.Error(w, "ID de articulo inválido", http.StatusBadRequest)
+		return
+	}
+	filas, err := h.queries.DeleteArticulo(r.Context(), int32(id))
+	if err != nil {
+		http.Error(w, "Error al eliminar el artículo: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if filas == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "Artículo no encontrado")
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
 
-// func toArticuloFromCreate(a db.CreateArticuloRow) ArticuloResponse {
-// 	return ArticuloResponse{
-// 		IDArticulo:  a.IDArticulo,
-// 		Titulo:      a.Titulo,
-// 		Descripcion: a.Descripcion,
-// 		Condicion:   string(a.Condicion),
-// 		Categoria:   string(a.Categoria),
-// 		Precio:      a.Precio,
-// 		Stock:       a.Stock,
-// 		IDVendedor:  a.IDVendedor,
-// 	}
-// }
+// DELETE /carrito/{id} - Eliminar articulo del carrito
+func (h *ArticuloHandler) RemoveCarritoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Metodo no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/carrito/"))
+	if err != nil {
+		http.Error(w, "ID de articulo inválido", http.StatusBadRequest)
+		return
+	}
+	userId, ok := logic.GetCookieOrRedirect(w, r)
+	if !ok {
+		return
+	}
+	err = h.queries.RemoveFromCarrito(r.Context(), db.RemoveFromCarritoParams{
+		IDUsuario:  int32(userId),
+		IDArticulo: int32(id),
+	})
+	if err != nil {
+		http.Error(w, "Error al eliminar del carrito: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
 
-// func toArticuloFromGetByID(a db.GetArticuloByIDRow) ArticuloResponse {
-// 	var fecha *time.Time
-// 	if a.FechaPublicacion.Valid {
-// 		fecha = &a.FechaPublicacion.Time
-// 	}
-// 	return ArticuloResponse{
-// 		IDArticulo:       a.IDArticulo,
-// 		Titulo:           a.Titulo,
-// 		Descripcion:      a.Descripcion,
-// 		Condicion:        string(a.Condicion),
-// 		Categoria:        string(a.Categoria),
-// 		Precio:           a.Precio,
-// 		Stock:            a.Stock,
-// 		FechaPublicacion: fecha,
-// 	}
-// }
-
-// func toArticulosFromGet(arts []db.GetArticulosRow) []ArticuloResponse {
-// 	res := make([]ArticuloResponse, 0, len(arts))
-// 	for _, a := range arts {
-// 		var fecha *time.Time
-// 		if a.FechaPublicacion.Valid {
-// 			fecha = &a.FechaPublicacion.Time
-// 		}
-// 		res = append(res, ArticuloResponse{
-// 			IDArticulo:       a.IDArticulo,
-// 			Titulo:           a.Titulo,
-// 			Descripcion:      a.Descripcion,
-// 			Condicion:        string(a.Condicion),
-// 			Categoria:        string(a.Categoria),
-// 			Precio:           a.Precio,
-// 			Stock:            a.Stock,
-// 			FechaPublicacion: fecha,
-// 		})
-// 	}
-// 	return res
-// }
-
-// Manejador para /articulos
-// func (h *ArticuloHandler) ArtsHandler(w http.ResponseWriter, r *http.Request) {
-// 	switch r.Method {
-// 	case http.MethodGet:
-// 		h.GetArticulos(w, r)
-// 	case http.MethodPost:
-// 		h.createArticulo(w, r)
-// 	default:
-// 		http.Error(w, "Metodo no permitido",
-// 			http.StatusMethodNotAllowed)
-// 	}
-// }
-
-// Manejador para /articulos/{id}
-// func (h *ArticuloHandler) ArtHandler(w http.ResponseWriter, r *http.Request) {
-// 	// Extraer ID del path
-// 	parts := strings.Split(r.URL.Path, "/")
-// 	if len(parts) != 3 {
-// 		http.Error(w, "Invalid URL", http.StatusBadRequest)
-// 		return
-// 	}
-// 	id, err := strconv.Atoi(parts[2])
-
-// 	if err != nil {
-// 		http.Error(w, "ID de articulo invalido", http.StatusBadRequest)
-// 		return
-// 	}
-// 	switch r.Method {
-// 	case http.MethodGet:
-// 		h.getArticulo(w, r, int32(id))
-// 	case http.MethodPut:
-// 		h.updateArticulo(w, r, int32(id))
-// 	case http.MethodDelete:
-// 		h.deleteArticulo(w, r, int32(id))
-// 	default:
-// 		http.Error(w, "Metodo no permitido",
-// 			http.StatusMethodNotAllowed)
-// 	}
-// }
-
-// GET /articulos - Obtener todos los articulos
-// func (h *ArticuloHandler) GetArticulos(w http.ResponseWriter, r *http.Request) {
-// 	arts, err := h.queries.GetArticulos(r.Context())
-// 	if err != nil {
-// 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(toArticulosFromGet(arts))
-// }
-
-// POST /articulos - Crear nuevo articulo
-// func (h *ArticuloHandler) createArticulo(w http.ResponseWriter, r *http.Request) {
-// 	if r.Header.Get("Content-Type") != "" && (r.Header.Get("Content-Type") == "application/x-www-form-urlencoded" || (len(r.Header.Get("Content-Type")) >= 33 && r.Header.Get("Content-Type")[:33] == "multipart/form-data")) {
-// 		if err := r.ParseForm(); err != nil {
-// 			http.Error(w, "Formulario inválido: "+err.Error(), http.StatusBadRequest)
-// 			return
-// 		}
-// 		titulo := r.FormValue("titulo")
-// 		descripcion := r.FormValue("descripcion")
-// 		condicion := r.FormValue("condicion")
-// 		categoria := r.FormValue("categoria")
-// 		precio := r.FormValue("precio")
-// 		stockStr := r.FormValue("stock")
-// 		stock := int32(1)
-// 		if v, err := strconv.Atoi(stockStr); err == nil {
-// 			stock = int32(v)
-// 		}
-// 		idVendedor := int32(1)
-// 		if cookie, err := r.Cookie("user_id"); err == nil {
-// 			if v, err := strconv.Atoi(cookie.Value); err == nil {
-// 				idVendedor = int32(v)
-// 			}
-// 		}
-// 		params := db.CreateArticuloParams{
-// 			Titulo:      titulo,
-// 			Descripcion: descripcion,
-// 			Condicion:   db.Condicion(condicion),
-// 			Categoria:   db.Categoria(categoria),
-// 			Precio:      precio,
-// 			Stock:       stock,
-// 			IDVendedor:  idVendedor,
-// 			Ubicacion:   r.FormValue("ubicacion"),
-// 			TipoEntrega: sql.NullString{String: r.FormValue("tipo_entrega"), Valid: r.FormValue("tipo_entrega") != ""},
-// 			CostoEnvio:  sql.NullString{String: r.FormValue("costo_envio"), Valid: r.FormValue("costo_envio") != ""},
-// 			ZonaEntrega: sql.NullString{String: r.FormValue("zona_entrega"), Valid: r.FormValue("zona_entrega") != ""},
-// 		}
-// 		_, err := h.queries.CreateArticulo(r.Context(), params)
-// 		if err != nil {
-// 			http.Error(w, "Error al crear el artículo: "+err.Error(), http.StatusInternalServerError)
-// 			return
-// 		}
-// 		http.Redirect(w, r, "/", http.StatusSeeOther)
-// 		return
-// 	}
-
-// 	var req CreateArticuloRequest
-// 	err := json.NewDecoder(r.Body).Decode(&req)
-// 	if err != nil {
-// 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-// 	params := db.CreateArticuloParams{
-// 		Titulo:      req.Titulo,
-// 		Descripcion: req.Descripcion,
-// 		Condicion:   db.Condicion(req.Condicion),
-// 		Categoria:   db.Categoria(req.Categoria),
-// 		Precio:      req.Precio,
-// 		Stock:       req.Stock,
-// 		IDVendedor:  req.IDVendedor,
-// 		Ubicacion:   req.Ubicacion,
-// 		TipoEntrega: sql.NullString{String: req.TipoEntrega, Valid: req.TipoEntrega != ""},
-// 		CostoEnvio:  sql.NullString{String: req.CostoEnvio, Valid: req.CostoEnvio != ""},
-// 		ZonaEntrega: sql.NullString{String: req.ZonaEntrega, Valid: req.ZonaEntrega != ""},
-// 	}
-// 	nuevoArticulo, err := h.queries.CreateArticulo(r.Context(), params)
-// 	if esViolacionFK(err) {
-// 		http.Error(w, "No existe tal vendedor", http.StatusBadRequest)
-// 		return
-// 	}
-// 	if err != nil {
-// 		http.Error(w, "Error al crear el artículo: "+err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusCreated)
-// 	json.NewEncoder(w).Encode(toArticuloFromCreate(nuevoArticulo))
-// }
-
-// GET /articulos/{id} - Obtener articulo específico
-// func (h *ArticuloHandler) getArticulo(w http.ResponseWriter, r *http.Request, id int32) {
-// 	articulo, err := h.queries.GetArticuloByID(r.Context(), id)
-// 	if errors.Is(err, sql.ErrNoRows) {
-// 		http.Error(w, "Articulo no encontrado", http.StatusNotFound)
-// 		return
-// 	}
-// 	if err != nil {
-// 		http.Error(w, "Error al obtener el articulo", http.StatusInternalServerError)
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	json.NewEncoder(w).Encode(toArticuloFromGetByID(articulo))
-// }
-
-// PUT /articulos/{id} - Actualizar articulo
-// func (h *ArticuloHandler) updateArticulo(w http.ResponseWriter, r *http.Request, id int32) {
-// 	var req UpdateArticuloRequest
-
-// 	err := json.NewDecoder(r.Body).Decode(&req)
-// 	if err != nil {
-// 		http.Error(w, "JSON inválido: "+err.Error(), http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	params := db.UpdateArticuloParams{
-// 		IDArticulo:  id,
-// 		Titulo:      req.Titulo,
-// 		Descripcion: req.Descripcion,
-// 		Condicion:   db.Condicion(req.Condicion),
-// 		Categoria:   db.Categoria(req.Categoria),
-// 		Precio:      req.Precio,
-// 		Stock:       req.Stock,
-// 	}
-
-// 	filas, err := h.queries.UpdateArticulo(r.Context(), params)
-// 	if err != nil {
-// 		http.Error(w, "Error al actualizar el artículo: "+err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	if filas == 0 {
-// 		http.Error(w, "Articulo no encontrado", http.StatusNotFound)
-// 		return
-// 	}
-// 	w.WriteHeader(http.StatusNoContent)
-// }
-
-// DELETE /articulos/{id} - Eliminar articulo
-// func (h *ArticuloHandler) deleteArticulo(w http.ResponseWriter, r *http.Request, id int32) {
-// 	filas, err := h.queries.DeleteArticulo(r.Context(), id)
-// 	if esViolacionFK(err) {
-// 		http.Error(w, "El articulo tiene compras asociadas", http.StatusConflict)
-// 		return
-// 	}
-// 	if err != nil {
-// 		http.Error(w, "Error al eliminar el artículo: "+err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// 	if filas == 0 {
-// 		http.Error(w, "Articulo no encontrado", http.StatusNotFound)
-// 		return
-// 	}
-// 	w.WriteHeader(http.StatusNoContent)
-// }
+// DELETE /favoritos/{id} - Eliminar favorito
+func (h *ArticuloHandler) RemoveFavoritoHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		http.Error(w, "Metodo no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/favoritos/"))
+	if err != nil {
+		http.Error(w, "ID de articulo inválido", http.StatusBadRequest)
+		return
+	}
+	userId, ok := logic.GetCookieOrRedirect(w, r)
+	if !ok {
+		return
+	}
+	err = h.queries.RemoveFavorito(r.Context(), db.RemoveFavoritoParams{
+		IDUsuario:  int32(userId),
+		IDArticulo: int32(id),
+	})
+	if err != nil {
+		http.Error(w, "Error al eliminar el favorito: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}

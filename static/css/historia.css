@@ -1,9 +1,3 @@
-.historia-page {
-  --page-height: 2000px;
-}
-.historia-main {
-  gap: 48px;
-}
 .historia-intro {
   display: flex;
   flex-direction: column;

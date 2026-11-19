@@ -19,6 +19,12 @@ FROM articulo
 WHERE categoria = $1
 ORDER BY id_articulo;
 
+-- name: SearchArticulos :many
+SELECT id_articulo, titulo, descripcion, condicion, categoria, precio, precio_xmr, stock, fecha_publicacion, ruta_imagen, ubicacion, tipo_entrega, costo_envio, zona_entrega
+FROM articulo
+WHERE titulo ILIKE '%' || $1 || '%' OR descripcion ILIKE '%' || $1 || '%'
+ORDER BY id_articulo;
+
 -- name: UpdateArticulo :execrows
 UPDATE articulo
 SET titulo = $2, descripcion = $3, condicion = $4, categoria = $5, precio = $6, precio_xmr = $7, stock = $8, ubicacion = $9, tipo_entrega = $10, costo_envio = $11, zona_entrega = $12

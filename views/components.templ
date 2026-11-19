@@ -1,0 +1,58 @@
+package views
+
+// ---------------------------------------------------------------------------
+// Bloques reutilizables
+// ---------------------------------------------------------------------------
+
+// Hero es la sección de portada que aparece en la pantalla principal.
+templ Hero(titulo, subtitulo, accion string, accionHref string) {
+	<section class="hero pixel-frame veg-vs codo-2verdigris copper">
+		<div class="hero-copy">
+			<h1 class="display">{ titulo }</h1>
+			if subtitulo != "" {
+				<p class="hero-subtitle">{ subtitulo }</p>
+			}
+		</div>
+		<div class="hero-art">
+			<img src="/static/assets/hero.png" alt="Ilustración hero" />
+		</div>
+	</section>
+}
+
+// Frame es un bloque de título con borde pixelado.
+templ Frame(title string) {
+	<div class="pixel-frame veg-tr codo-3copper veg-2">
+		<h2 class="display">{ title }</h2>
+	</div>
+}
+
+// Block es un bloque genérico con título y contenido.
+templ Block(title string, content templ.Component) {
+	<div class="pixel-frame veg-vs codo-2verdigris veg-2">
+		<h3 class="display">{ title }</h3>
+		@content
+	</div>
+}
+
+// InputField es un campo de formulario genérico.
+templ InputField(label, name, value, placeholder, inputType string, disabled bool) {
+	<div class="form-group">
+		<label class="field-label">{ label }</label>
+		<input
+			class="field"
+			type={ inputType }
+			name={ name }
+			value={ value }
+			placeholder={ placeholder }
+			disabled={ disabled }
+		/>
+	</div>
+}
+
+// ButtonSubmit es un botón de envío genérico.
+templ ButtonSubmit(text string) {
+	<button class="btn btn-primary" type="submit">
+		{ text } ↗
+	</button>
+}
+

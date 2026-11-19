@@ -1,9 +1,3 @@
-.cart-page {
-  --page-height: 1515px;
-}
-.cart-main {
-  gap: 36px;
-}
 .checkout-steps {
   display: flex;
   gap: 56px;
@@ -154,6 +148,7 @@
 .return-cta h2 {
   font-size: 32px;
 }
+
 @media (max-width: 900px) {
   .cart-layout {
     grid-template-columns: 1fr;

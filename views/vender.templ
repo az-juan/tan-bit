@@ -1,129 +1,106 @@
 package views
 
 import (
-	"tan-bit.com/tan-bit/db/sqlc"
+	db "tan-bit.com/tan-bit/db/sqlc"
 )
 
 templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condicion, errorMsg string) {
-
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>TAN-BIT · Vender</title>
-    <link rel="stylesheet" href="/static/css/shared.css" />
-    <link rel="stylesheet" href="/static/css/vender.css" />
-  </head>
-  <body>
-    <div class="page sell-page">
-    @Header()
-      <main class="container sell-main">
-        <section class="sell-intro">
-          <div class="route"><span>INICIO / VENDER</span></div>
-          <h1 class="display page-title">DALE CIRCULACIÓN A TU HARDWARE.</h1>
-        </section>
-        // <nav class="sell-steps">
-          // <span class="active">01 / TU PIEZA</span>
-          // <span>02 / REVISAR Y PUBLICAR</span>
-        // </nav>
-        <div class="sell-layout">
-          <form class="pixel-frame veg-tr codo-3copper veg-2 sell-form" method="post" action="/vender" enctype="multipart/form-data">
-          if errorMsg != "" {
-            <div class="form-error">{ errorMsg }</div>
-          }
-            <div class="form-title">
-              <h2 class="display">01. CONTANOS SOBRE TU PIEZA</h2>
-              <span>* OBLIGATORIO</span>
-            </div>
-            <label>
-              <span>TÍTULO DE LA PUBLICACIÓN *</span>
-              <input class="field" name="titulo" value={ data.Titulo } placeholder="Ej. Teclado mecánico de nogal · 75%" required/>
-            </label>
-            <div class="form-columns">
-              <label>
-                <span>CATEGORÍA *</span>
-                  <select class="field" name="categoria">
-                  for _, c := range categorias {
-                    <option value={ string(c) } selected?={ data.Categoria == c }>{ CategoriaLabel(c) }</option>
-                  }
-                  </select></label>
-                <label><span>ESTADO *</span><select class="field" name="condicion">
-                  for _, c := range condiciones {
-                    <option value={ string(c) } selected?={ data.Condicion == c }>{ string(c) }</option>
-                  }
-                </select></label>
-            </div>
-            <label><span>DESCRIPCIÓN *</span><textarea
-                class="field"
-                name="descripcion"
-                rows="4"
-                placeholder="Contá qué la hace especial: materiales, proceso, compatibilidad y todo lo que incluye."
-                required
-              >{ data.Descripcion }</textarea>
-            </label>
-            <small
-              >Hecho por vos, contado por vos. Sé preciso con el estado y las especificaciones. Una
-              buena ficha evita sorpresas.</small>
-            <h3 class="display">FOTOS DE TU HARDWARE</h3>
-            <div class="upload">
-              <label class="upload-action">
-                <strong>+</strong>
-                <div>
-                  <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 3 a 8 imágenes</small>
-                </div>
-                <input type="file" name="fotos" accept="image/*" multiple />
-              </label>
-            </div>
-            <div class="form-columns">
-            <label>
-              <span>UBICACIÓN *</span><input class="field" name="ubicacion" value={ data.Ubicacion } placeholder="Tandil, Buenos Aires" required/>
-            </label>
-            </div>
-            <div class="form-title">
-              <h2 class="display">02. PRECIO Y ENTREGA</h2>
-            </div>
-            <div class="form-columns">
-              <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" required/></label>
-              <label><span>PRECIO XMR *</span><input class="field" name="precio_xmr" value={ data.PrecioXMR } placeholder="0.00" type="number" step="0.01" /></label>
-              <label><span>STOCK *</span><input class="field" name="stock" value={ data.Stock } placeholder="1" type="number" min="1" /></label>
-            </div>
-            <div class="form-columns">
-              <label><span>TIPO DE ENTREGA *</span><select class="field" name="tipo_entrega"><option value="envio a domicilio">Envío a domicilio</option><option value="retiro en persona">Retiro en persona</option><option value="ambos">Ambos</option></select></label>
-              <label><span>COSTO DE ENVÍO</span><input class="field" name="costo_envio" value={ data.CostoEnvio } placeholder="0.00" type="number" step="0.01" /></label>
-            </div>
-            <label><span>ZONA DE ENTREGA *</span><input class="field" name="zona_entrega" value={ data.ZonaEntrega } placeholder="Tandil y alrededores" required /></label>
-            <div class="form-submit">
-              <span>Tu publicación todavía no es visible. Revisá que los datos esten bien antes de publicar.</span><button class="btn">Publicar ↗</button>
-            </div>
-          </form>
-          <aside class="sell-aside">
-            <div class="pixel-frame veg-br codo-2copper veg-3 preview"><small>VISTA PREVIA / BORRADOR</small><img src="" alt="Vista previa del articulo" />
-              <h2 class="display">TU PRÓXIMA PUBLICACIÓN</h2>
-              <p>
-                Las fotos y los detalles de tu pieza aparecerán acá mientras completás la ficha.
-              </p>
-              <span class="green">■ GUARDADO COMO BORRADOR</span>
-            </div>
-            <div class="tips">
-              <h2 class="display">UNA BUENA FICHA, MÁS CONFIANZA.</h2>
-              <p>01 &nbsp; Luz natural y fondo simple.</p>
-              <p>02 &nbsp; Mostrá conexiones y detalles.</p>
-              <p>03 &nbsp; Aclará marcas de uso o fallas.</p>
-              <p>04 &nbsp; Contá quién está detrás.</p>
-            </div>
-          </aside>
-        </div>
-        <section class="honesty">
-          <h2 class="display">HECHO CON HONESTIDAD.</h2>
-          <p>
-            Publicá solo piezas propias o que puedas vender. Sin copias engañosas, sin
-            especificaciones inventadas. Leé los términos antes de publicar.
-          </p>
-        </section>
-      </main>
-      @Footer()
-    </div>
-  </body>
-</html>
+	<section class="sell-intro">
+		<div class="route"><span>INICIO / VENDER</span></div>
+		<h1 class="display page-title">DALE CIRCULACIÓN A TU HARDWARE.</h1>
+	</section>
+  <div class="sell-layout">
+    <form class="pixel-frame veg-tr codo-3copper veg-2 sell-form" method="post" action="/vender" enctype="multipart/form-data" hx-post="/vender" hx-target="#main" hx-swap="innerHTML" hx-push-url="true">
+    if errorMsg != "" {
+      <div class="form-error">{ errorMsg }</div>
+    }
+      <div class="form-title">
+        <h2 class="display">01. CONTANOS SOBRE TU PIEZA</h2>
+        <span>* OBLIGATORIO</span>
+      </div>
+      <label>
+        <span>TÍTULO DE LA PUBLICACIÓN *</span>
+        <input class="field" name="titulo" value={ data.Titulo } placeholder="Ej. Teclado mecánico de nogal · 75%" required />
+      </label>
+      <div class="form-columns">
+        <label>
+          <span>CATEGORÍA *</span>
+            <select class="field" name="categoria">
+            for _, c := range categorias {
+              <option value={ string(c) } selected?={ data.Categoria == c }>{ CategoriaLabel(c) }</option>
+            }
+            </select></label>
+          <label><span>ESTADO *</span><select class="field" name="condicion">
+            for _, c := range condiciones {
+              <option value={ string(c) } selected?={ data.Condicion == c }>{ string(c) }</option>
+            }
+          </select></label>
+      </div>
+      <label><span>DESCRIPCIÓN *</span><textarea
+          class="field"
+          name="descripcion"
+          rows="4"
+          placeholder="Contá qué la hace especial: materiales, proceso, compatibilidad y todo lo que incluye."
+          required
+        >{ data.Descripcion }</textarea>
+      </label>
+      <small
+        >Hecho por vos, contado por vos. Sé preciso con el estado y las especificaciones. Una
+        buena ficha evita sorpresas.</small>
+      <h3 class="display">FOTOS DE TU HARDWARE</h3>
+      <div class="upload">
+        <label class="upload-action">
+          <strong>+</strong>
+          <div>
+            <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 3 a 8 imágenes</small>
+          </div>
+          <input type="file" name="fotos" accept="image/*" multiple />
+        </label>
+      </div>
+      <div class="form-columns">
+      <label>
+        <span>UBICACIÓN *</span><input class="field" name="ubicacion" value={ data.Ubicacion } placeholder="Tandil, Buenos Aires" required />
+      </label>
+      </div>
+      <div class="form-title">
+        <h2 class="display">02. PRECIO Y ENTREGA</h2>
+      </div>
+      <div class="form-columns">
+        <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" required /></label>
+        <label><span>PRECIO XMR *</span><input class="field" name="precio_xmr" value={ data.PrecioXMR } placeholder="0.00" type="number" step="0.01" /></label>
+        <label><span>STOCK *</span><input class="field" name="stock" value={ data.Stock } placeholder="1" type="number" min="1" /></label>
+      </div>
+      <div class="form-columns">
+        <label><span>TIPO DE ENTREGA *</span><select class="field" name="tipo_entrega"><option value="envio a domicilio">Envío a domicilio</option><option value="retiro en persona">Retiro en persona</option><option value="ambos">Ambos</option></select></label>
+        <label><span>COSTO DE ENVÍO</span><input class="field" name="costo_envio" value={ data.CostoEnvio } placeholder="0.00" type="number" step="0.01" /></label>
+      </div>
+      <label><span>ZONA DE ENTREGA *</span><input class="field" name="zona_entrega" value={ data.ZonaEntrega } placeholder="Tandil y alrededores" required /></label>
+      <div class="form-submit">
+        <span>Tu publicación todavía no es visible. Revisá que los datos esten bien antes de publicar.</span><button href="./" class="btn">Publicar ↗</button>
+      </div>
+    </form>
+    <aside class="sell-aside">
+      <div class="pixel-frame veg-br codo-2copper veg-3 preview"><small>VISTA PREVIA / BORRADOR</small><img src="" alt="Vista previa del articulo" />
+        <h2 class="display">TU PRÓXIMA PUBLICACIÓN</h2>
+        <p>
+          Las fotos y los detalles de tu pieza aparecerán acá mientras completás la ficha.
+        </p>
+        <span class="green">■ GUARDADO COMO BORRADOR</span>
+      </div>
+      <div class="tips">
+        <h2 class="display">UNA BUENA FICHA, MÁS CONFIANZA.</h2>
+        <p>01 &nbsp; Luz natural y fondo simple.</p>
+        <p>02 &nbsp; Mostrá conexiones y detalles.</p>
+        <p>03 &nbsp; Aclará marcas de uso o fallas.</p>
+        <p>04 &nbsp; Contá quién está detrás.</p>
+      </div>
+    </aside>
+  </div>
+  <section class="honesty">
+    <h2 class="display">HECHO CON HONESTIDAD.</h2>
+    <p>
+      Publicá solo piezas propias o que puedas vender. Sin copias engañosas, sin
+      especificaciones inventadas. Leé los términos antes de publicar.
+    </p>
+  </section>
 }

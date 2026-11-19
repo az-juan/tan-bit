@@ -1,0 +1,87 @@
+package views
+
+import "tan-bit.com/tan-bit/logic"
+
+// NotificationPanel is the full notification tray (dropdown)
+templ NotificationPanel(userLoggedIn bool, notifs []logic.Notification) {
+	<div class="notification-panel">
+		// <!-- Header -->
+		<div class="notification-panel-header">
+			<span class="notification-panel-title">NOTIFICACIONES [<span class="notification-count">{ len(notifs) }</span>]</span>
+			<button class="notification-panel-close" onclick="this.closest('.notification-panel').remove()">✕</button>
+		</div>
+		// <!-- List -->
+		<div class="notification-panel-list">
+			for _, n := range notifs {
+				<div class="notification-item notification-item-{ n.Type }">
+					<div class="notification-icon notification-icon-{ n.Type }">
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							if n.Type == "success" {
+								<circle cx="12" cy="12" r="10" />
+								<path d="M12 8v8" />
+								<path d="M8 12h8" />
+							} else if n.Type == "error" {
+								<circle cx="12" cy="12" r="10" />
+								<path d="M12 8v8" />
+								<path d="M12 16v.01" />
+							} else if n.Type == "warning" {
+								<path d="M12 9v6" />
+								<path d="M12 17h.01" />
+								<path d="M15 12h-6" />
+							} else {
+								<circle cx="12" cy="12" r="10" />
+								<path d="M12 16v-4" />
+								<path d="M12 8h.01" />
+							}
+						</svg>
+					</div>
+					<div class="notification-content">
+						<div class="notification-title">{ n.Title }</div>
+						<div class="notification-message">{ n.Message }</div>
+					</div>
+					<button class="notification-dismiss" onclick="removeNotification('{ n.ID }')">✕</button>
+				</div>
+			}
+			if len(notifs) == 0 {
+				<div class="notification-empty">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+						<path d="M22 4L12 14.01l-3-3" />
+					</svg>
+					<span>No hay notificaciones</span>
+				</div>
+			}
+		</div>
+		// <!-- Footer -->
+		<div class="notification-panel-footer">
+			<button class="notification-mark-all">Marcar todas como leídas</button>
+		</div>
+	</div>
+}
+
+// NotificationList renders a list of notifications as an HTML fragment
+// Uses hx-swap-oob to update the notifications container in place
+templ NotificationList(notifs []logic.Notification) {
+	<div class="notifications-container" id="notifications-container" hx-swap-oob="true">
+		for _, n := range notifs {
+			<div class="notification-toast notification-toast-{ n.Type }">
+				<div class="toast-icon">
+					if n.Type == "success" {
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+					} else if n.Type == "info" {
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+					} else if n.Type == "warning" {
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v6"/><path d="M12 17h.01"/><path d="M15 12h-6"/></svg>
+					} else {
+						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M12 16v.01"/></svg>
+					}
+				</div>
+				<div class="toast-content">
+					<div class="toast-title">{ n.Title }</div>
+					<div class="toast-message">{ n.Message }</div>
+				</div>
+				<button class="toast-close" onclick="removeNotification('{ n.ID }')">✕</button>
+			</div>
+		}
+	</div>
+}

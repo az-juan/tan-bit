@@ -1,6 +1,5 @@
-.creadores-page { --page-height: 2200px; }
-.creadores-main { gap: 40px; }
 .creadores-intro { display: flex; flex-direction: column; gap: 18px; }
+
 .creadores-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding: 28px; }
 .creadores-hero-art img { width: 100%; height: 360px; object-fit: cover; border: 4px solid var(--line); }
 .creadores-hero-copy { display: flex; flex-direction: column; gap: 16px; }
@@ -8,12 +7,16 @@
 .creadores-hero-copy p { font-size: 14px; line-height: 1.7; }
 .creadores-hero-copy small { font-size: 11px; color: var(--sand); }
 .creadores-hero-copy .btn { align-self: flex-start; }
+
 .directory-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .directory-head h2 { font-size: 34px; }
+
 .directory-filters { display: flex; gap: 16px; }
 .directory-filters a { font-size: 11px; color: var(--sand); }
 .directory-filters a.active { color: var(--orange); }
+
 .creadores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
 .maker-card { display: flex; flex-direction: column; background: var(--paper); color: var(--panel); }
 .maker-card > img { width: 100%; height: 200px; object-fit: cover; }
 .maker-info { display: flex; flex-direction: column; gap: 12px; padding: 18px; }
@@ -25,12 +28,14 @@
 .maker-info p { font-size: 12px; line-height: 1.7; color: var(--muted); }
 .maker-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
 .maker-foot span { font-size: 11px; color: var(--panel); }
+
 .creadores-cta { display: flex; flex-direction: column; gap: 16px; }
 .creadores-cta small { font-size: 10px; color: var(--sand); }
 .creadores-cta-box { display: flex; flex-direction: column; gap: 16px; padding: 32px; }
 .creadores-cta-box h2 { font-size: 32px; }
 .creadores-cta-box p { font-size: 13px; line-height: 1.7; }
 .creadores-cta-box .btn { align-self: flex-start; }
+
 @media (max-width: 900px) {
   .creadores-hero, .creadores-grid { grid-template-columns: 1fr; }
   .directory-head { flex-direction: column; align-items: flex-start; }
