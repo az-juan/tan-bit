@@ -2,7 +2,7 @@
    ESTADO BASE DE LA TARJETA
 ------------------------------------------------------------ */
 .product-card {
-  background: var(--panel);
+  background: var(--paper);
   border: 1px solid var(--line);
   padding: 16px;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -43,13 +43,13 @@
 }
 
 .product-name {
-  font-size: 1.1rem;
+  font-size: 2.1rem;
   font-weight: 300;
-  font-family: 'VT323:Regular'; 
   color: var(--text);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
+  padding-top: 5px;
   text-overflow: ellipsis;
 }
 
@@ -101,14 +101,16 @@
 
 /* Enlace "Ver ficha" */
 .text-link {
-  font-size: 0.85rem;
-  color: var(--copper);
+  font-size: 0.75rem;
+  background: var(--verde-1);
   text-decoration: none;
   font-weight: 600;
   white-space: nowrap;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 
 .text-link:hover {
+  color: var(--orange);
   text-decoration: underline;
 }
 

@@ -279,12 +279,37 @@ body {
   color: var(--night);
   font-family: var(--font-mono-bold);
   cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  border-color: var(--orange);
+  background: var(--orange);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
 }
 
 .btn.ghost {
   border-color: var(--sand);
   background: transparent;
   color: var(--paper);
+}
+
+.btn.ghost:hover {
+  border-color: var(--copper);
+  background: var(--copper);
+  color: var(--night);
 }
 
 .btn.danger {
@@ -295,6 +320,43 @@ body {
 
 .btn.danger:hover {
   background: var(--rojo-1);
+}
+
+/* ------------------------------------------------------------
+   HOVERS DE ENLACES (header, navegación y filtros)
+------------------------------------------------------------ */
+.brand,
+.header-actions > a,
+.cart-link,
+.account-btn,
+.filter-nav a,
+.section-head a {
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.header-actions > a:hover,
+.filter-nav a:hover,
+.section-head a:hover {
+  color: var(--copper);
+}
+
+.cart-link img,
+.account-btn img {
+  transition: transform 0.15s ease;
+}
+
+.cart-link:hover img,
+.account-btn:hover img {
+  transform: translateY(-2px);
+}
+
+.header-actions > a:focus-visible,
+.cart-link:focus-visible,
+.account-btn:focus-visible,
+.filter-nav a:focus-visible,
+.section-head a:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
 }
 
 /* ------------------------------------------------------------
@@ -319,6 +381,15 @@ body {
   color: #e5dfd5;
 }
 
+.filters a {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.filters a:hover {
+  background: #95392c;
+  color: #e5dfd5;
+}
+
 .filter-nav {
   display: flex;
   gap: 16px;
@@ -331,6 +402,16 @@ body {
 
 .filter-nav a.active {
   color: var(--orange);
+}
+
+.footer-column a,
+.legal a {
+  transition: color 0.2s ease;
+}
+
+.footer-column a:hover,
+.legal a:hover {
+  color: var(--copper);
 }
 
 /* ------------------------------------------------------------
@@ -355,6 +436,20 @@ body {
 .field::placeholder {
   color: var(--sand);
   opacity: 1;
+}
+
+.field {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field:hover {
+  border-color: var(--sand);
+}
+
+.field:focus {
+  border-color: var(--copper);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(184, 115, 51, 0.35);
 }
 
 .field-label {
@@ -700,7 +795,7 @@ body {
 
 .toast-action {
   flex: none;
-  color: var(--orange);
+  color: var(--ink);
   font-size: 11px;
   text-transform: uppercase;
 }

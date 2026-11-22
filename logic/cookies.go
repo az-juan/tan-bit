@@ -53,3 +53,34 @@ func CheckAuth(r *http.Request) (bool, int) {
 	}
 	return true, id
 }
+
+// CarritoCookie devuelve las unidades del carrito guardadas en la cookie.
+// El header la usa para elegir el ícono sin consultar la base.
+func CarritoCookie(r *http.Request) int {
+	c, err := r.Cookie("cart")
+	if err != nil {
+		return 0
+	}
+	n, err := strconv.Atoi(c.Value)
+	if err != nil || n <= 0 {
+		return 0
+	}
+	return n
+}
+
+// SetCarritoCookie guarda la cantidad del carrito; 0 la invalida.
+func SetCarritoCookie(w http.ResponseWriter, cantidad int) {
+	valor := "0"
+	maxAge := -1
+	if cantidad > 0 {
+		valor = strconv.Itoa(cantidad)
+		maxAge = 0
+	}
+	http.SetCookie(w, &http.Cookie{
+		Name:     "cart",
+		Value:    valor,
+		Path:     "/",
+		MaxAge:   maxAge,
+		SameSite: http.SameSiteLaxMode,
+	})
+}

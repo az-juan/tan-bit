@@ -107,8 +107,8 @@ body {
 }
 
 .header-actions .account {
-  width: 28px;
-  height: 40px;
+  width: auto;
+  height: auto;
 }
 
 .cart-link {
@@ -117,26 +117,14 @@ body {
   font-size: 18px;
 }
 
+.cart-icon {
+  display: inline-flex;
+}
+
 .cart-link img {
   width: auto;
   max-width: 100%;
   height: auto;
-}
-
-.cart-count {
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  display: inline-grid;
-  min-width: 18px;
-  height: 18px;
-  place-items: center;
-  padding: 0 4px;
-  background: var(--copper);
-  color: var(--night);
-  font-family: var(--font-mono-bold);
-  font-size: 10px;
-  line-height: 1;
 }
 
 /* ------------------------------------------------------------

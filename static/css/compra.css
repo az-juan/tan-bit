@@ -5,6 +5,39 @@
   align-items: start;
 }
 
+.compra-info {
+  grid-column: 1;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.compra-arte {
+  position: sticky;
+  top: 24px;
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border: 3px solid var(--line);
+  background: var(--panel);
+}
+
+.compra-arte img {
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+}
+
+.compra-arte span {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--sand);
+  text-align: center;
+}
+
 .order-block {
   display: flex;
   flex-direction: column;
@@ -78,6 +111,11 @@
 }
 
 .delivery-option input { accent-color: var(--copper); }
+
+.delivery-option:hover {
+  border-color: var(--copper);
+  color: var(--orange);
+}
 
 .order-total {
   display: flex;

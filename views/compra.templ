@@ -6,18 +6,25 @@ templ Compra(arts []ArticuloData, entregas []string, total float64, totalXmr flo
 	@Formulario("/compra", "post", "compra-layout", "", false, CompraForm(arts, entregas, total, totalXmr))
 }
 
+// CompraForm deja el pedido y el resumen a la izquierda, y la ilustración a la derecha.
 templ CompraForm(arts []ArticuloData, entregas []string, total float64, totalXmr float64) {
-	<aside class="order-block">
-		@Marco("veg-vl steel veg-3 copper order-summary", ResumenPedido(arts, entregas, total, totalXmr))
-		<div class="productos-resumen">
-			<h3 class="display">RESUMEN DE PRODUCTOS</h3>
-			<div class="productos-list">
-				for _, a := range arts {
-					@Articulo(a, ArticuloConfig{})
-				}
+	<div class="compra-info">
+		<aside class="order-block">
+			@Marco("veg-vl steel veg-3 copper order-summary", ResumenPedido(arts, entregas, total, totalXmr))
+			<div class="productos-resumen">
+				<h3 class="display">RESUMEN DE PRODUCTOS</h3>
+				<div class="productos-list">
+					for _, a := range arts {
+						@Articulo(a, ArticuloConfig{})
+					}
+				</div>
 			</div>
-		</div>
-	</aside>
+		</aside>
+	</div>
+	<div class="compra-arte">
+		<img src="/static/assets/finn_jake_bmo.gif" alt="Finn y Jake con una compu" />
+		<span>A un paso de obtener tu compra.</span>
+	</div>
 }
 
 templ ResumenPedido(arts []ArticuloData, entregas []string, total float64, totalXmr float64) {

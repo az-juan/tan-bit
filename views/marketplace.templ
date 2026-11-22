@@ -30,11 +30,11 @@ func CategoriasDB() []FiltroCategoria {
     return filtros
 }
 
-templ Filtros(filtros []FiltroCategoria, articulos int) {
+templ Filtros(filtros []FiltroCategoria) {
     <div class="filters" role="tablist">
       for _, f := range filtros {
-        <a role="tab" href="/?categoria={ string(f.Key) }" hx-get="/?categoria={ string(f.Key) }" hx-target="#articulos" hx-swap="outerHTML" hx-push-url="true">
-          { f.Label } [{ articulos }]
+        <a role="tab" href={"/?categoria=" + string(f.Key) } hx-get={"/?categoria=" + string(f.Key) } hx-target="#articulos" hx-swap="outerHTML" hx-push-url="true">
+          { f.Label } [{ f.Count }]
         </a>
       }
     </div>
@@ -44,7 +44,7 @@ templ Marketplace(articulos []ArticuloData, filtros []FiltroCategoria) {
   @Route("", "EXPLORA PRODUCTOS")
   @Hero("TU PRÓXIMA JOYA DEL HARDWARE.", HeroLinks(), HeroArte())
   <section class="catalog">
-  @Filtros(filtros, len(articulos))
+  @Filtros(filtros)
     @GrillaMarketplace(articulos)
   </section>
 

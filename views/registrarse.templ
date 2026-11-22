@@ -23,6 +23,8 @@ templ Registrarse() {
       </div>
 }
 
+var vendedor = false
+
 templ RegistrarseForm(input logic.RegistrarseInput, role string) {
         <p class="eyebrow">[ NUEVA CUENTA ]</p>
         <h2 class="display">BIENVENIDO.</h2>
@@ -36,6 +38,7 @@ templ RegistrarseForm(input logic.RegistrarseInput, role string) {
           <label class="role-option">
             <input type="radio" name="role" value="vendedor" checked={ role == "vendedor" } />
             <span>VENDEDOR</span>
+            {{ vendedor = true }}
           </label>
         </div>
 
@@ -47,17 +50,20 @@ templ RegistrarseForm(input logic.RegistrarseInput, role string) {
           @Campo("CONTRASEÑA", "password", "password", "••••••••", "", true)
           @Campo("REPETIR CONTRASEÑA", "password2", "password", "••••••••", "", true)
         </div>
-
-        <div id="vendedor-fields" class="vendedor-fields">
-          <div class="form-section">
-            <h3 class="subsection-title">DATOS COMPLEMENTARIOS · VENDEDOR</h3>
-            @Campo("TELÉFONO", "telefono", "text", "+54 ...", input.Telefono, false)
-            @Campo("CBU", "cbu", "text", "Cuenta bancaria", input.CBU, true)
-            @Campo("ALIAS", "alias", "text", "Alias para tu perfil", input.Alias, false)
-            @Campo("DIRECCIÓN XMR (opcional)", "direccion_xmr", "text", "Dirección de Monero", input.DireccionXmr, false)
+        if vendedor == true {
+          <div id="vendedor-fields" class="vendedor-fields">
+            <div class="form-section">
+              <h3 class="subsection-title">DATOS COMPLEMENTARIOS · VENDEDOR</h3>
+              @Campo("TELÉFONO", "telefono", "text", "+54 ...", input.Telefono, false)
+              if role == "vendedor" {
+                @Campo("CBU", "cbu", "text", "Cuenta bancaria", input.CBU, true)
+              }
+              @Campo("ALIAS", "alias", "text", "Alias para tu perfil", input.Alias, false)
+              @Campo("DIRECCIÓN XMR (opcional)", "direccion_xmr", "text", "Dirección de Monero", input.DireccionXmr, false)
+            </div>
           </div>
-        </div>
-
+        }
+          
         <p class="form-hint">
           Si elegís registrarte como <strong>vendedor</strong>, completá los campos de
           abajo para que puedas publicar piezas.

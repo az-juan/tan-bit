@@ -4,7 +4,7 @@ import (
 	"tan-bit.com/tan-bit/logic"
 	"net/http"
 )
-templ Header(userRole string, cantidad int) {
+templ Header(rol string, lleno bool) {
     <header class="site-header">
       <a class="brand" href="./">
         <img src="/static/assets/tanbit_logo.svg" alt="TAN-BIT logo" />
@@ -27,16 +27,13 @@ templ Header(userRole string, cantidad int) {
           <img src="/static/assets/heart.svg" alt="Favoritos" />
         </a>
         <a class="cart-link" href="./carrito">
-        	if cantidad > 0 {
-        		return "/static/assets/carrito_lleno.svg"
-        	}
-        	return "/static/assets/carrito.svg"
+          @CartIcon(lleno, false)
         </a>
         <div class="account-dropdown-wrap">
           <a href="./mi_cuenta" class="account-btn">
-            if userRole == "vendedor" {
+            if rol == "vendedor" {
               <img class="account" src="/static/assets/account_seller.svg" alt="Cuenta" />
-            } else if userRole == "usuario" {
+            } else if rol == "usuario" {
               <img class="account" src="/static/assets/account_user.svg" alt="Cuenta" />
             } else {
               <img class="account" src="/static/assets/account.svg" alt="Cuenta" />
@@ -53,26 +50,14 @@ templ SearchForm() {
     </div>
 }
 
-// IconoCarrito elige el asset según si hay unidades en el carrito.
-func IconoCarrito(cantidad int32) string {
-	if cantidad > 0 {
-		return "/static/assets/carrito_lleno.svg"
-	}
-	return "/static/assets/carrito.svg"
-}
-
-// CartWidget es el contenido del ícono de carrito dentro del enlace del header.
-// El hx-target explícito evita heredar hx-target="#main" del body (hx-boost),
-// que antes hacía que el ícono se insertara en el main y lo reemplazara.
-templ CartWidget(cantidad int32, oob bool) {
-  <span
-    id="cart-widget"
-    if oob { hx-swap-oob="outerHTML" }
-    if !oob { hx-get="/carrito/widget" hx-target="#cart-widget" hx-trigger="load" hx-swap="outerHTML" }
-  >
-    <img src={ IconoCarrito(cantidad) } alt="" />
-    if cantidad > 0 {
-      <span class="cart-count">{ cantidad }</span>
+// CartIcon dibuja el ícono del carrito; lleno=true usa carrito_lleno.svg.
+// Con oob=true se emite para un swap OOB (tras quitar del carrito por htmx).
+templ CartIcon(lleno bool, oob bool) {
+  <span id="cart-widget" class="cart-icon" if oob { hx-swap-oob="true" }>
+    if lleno {
+      <img src="/static/assets/carrito_lleno.svg" alt="" />
+    } else {
+      <img src="/static/assets/carrito.svg" alt="" />
     }
   </span>
 }
@@ -153,12 +138,12 @@ templ Head() {
 </head>
 }
 
-templ Base(contenido templ.Component, session string, rol string) {
+templ Base(contenido templ.Component, session string, rol string, lleno bool) {
   <!doctype html>
   <html lang="es">
     <body hx-boost="true" hx-target="#main">
       @Head()
-      @Header(rol, 0)
+      @Header(rol, lleno)
       <main class="container" id="main">
         @contenido
       </main>
@@ -174,6 +159,6 @@ templ Pagina(w http.ResponseWriter, r *http.Request, contenido templ.Component) 
         @Notificaciones(logic.TakeNotifications(logic.SessionID(w, r)))
         @contenido   // solo el fragmento + notificaciones OOB
     } else {
-        @Base(contenido, logic.SessionID(w, r), logic.RolCookie(r))
+        @Base(contenido, logic.SessionID(w, r), logic.RolCookie(r), logic.CarritoCookie(r) > 0)
     }
 }

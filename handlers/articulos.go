@@ -30,8 +30,6 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.CarritoHandler(w, r)
 	case path == "/carrito/add":
 		h.AddCarritoHandler(w, r)
-	case path == "/carrito/widget":
-		h.CartWidgetHandler(w, r)
 	case strings.HasPrefix(path, "/carrito/"):
 		h.RemoveCarritoHandler(w, r)
 	case path == "/compra":
@@ -67,6 +65,7 @@ func (h *ArticuloHandler) MarketplaceHandler(w http.ResponseWriter, r *http.Requ
 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 		return
 	}
+	todos := arts // lista completa: de ahí salen los contadores de cada filtro
 	if categoria := r.FormValue("categoria"); categoria != "" {
 		filtered := make([]db.GetArticulosRow, 0, len(arts))
 		for _, a := range arts {
@@ -104,7 +103,7 @@ func (h *ArticuloHandler) MarketplaceHandler(w http.ResponseWriter, r *http.Requ
 		views.Pagina(w, r, views.GrillaMarketplace(data)).Render(r.Context(), w)
 		return
 	}
-	views.Pagina(w, r, views.Marketplace(data, views.BuildFiltros(arts))).Render(r.Context(), w)
+	views.Pagina(w, r, views.Marketplace(data, views.BuildFiltros(todos))).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) CarritoHandler(w http.ResponseWriter, r *http.Request) {
@@ -222,6 +221,7 @@ func (h *ArticuloHandler) CompraHandler(w http.ResponseWriter, r *http.Request) 
 			http.Error(w, "Error al confirmar la compra: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+		logic.SetCarritoCookie(w, 0)
 		notificar(w, r, logic.NotificationSuccess, "éxito", "Compra confirmada", "Tu pedido quedó registrado y el stock se actualizó.", "/mi_cuenta", "Ver mis pedidos")
 		http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 		return
@@ -240,6 +240,7 @@ func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Reques
 		http.Error(w, "Error al obtener articulos", http.StatusInternalServerError)
 		return
 	}
+	todos := arts // lista completa: de ahí salen los contadores de cada filtro
 	if categoria := r.FormValue("categoria"); categoria != "" {
 		filtered := make([]db.GetFavoritosByUsuarioRow, 0, len(arts))
 		for _, a := range arts {
@@ -276,18 +277,7 @@ func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Reques
 		views.Pagina(w, r, views.GrillaFavoritos(data)).Render(r.Context(), w)
 		return
 	}
-	views.Pagina(w, r, views.Favoritos(data, views.BuildFiltrosFav(arts))).Render(r.Context(), w)
-}
-
-// CartWidgetHandler devuelve el ícono del carrito con su cantidad.
-func (h *ArticuloHandler) CartWidgetHandler(w http.ResponseWriter, r *http.Request) {
-	_, id := logic.CheckAuth(r)
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if id == 0 {
-		views.CartWidget(0, false).Render(r.Context(), w)
-		return
-	}
-	views.CartWidget(h.datos.CantidadCarrito(int32(id)), false).Render(r.Context(), w)
+	views.Pagina(w, r, views.Favoritos(data, views.BuildFiltrosFav(todos))).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) AddCarritoHandler(w http.ResponseWriter, r *http.Request) {
@@ -313,6 +303,7 @@ func (h *ArticuloHandler) AddCarritoHandler(w http.ResponseWriter, r *http.Reque
 		http.Redirect(w, r, destinoPost(r), http.StatusSeeOther)
 		return
 	}
+	logic.SetCarritoCookie(w, int(h.datos.CantidadCarrito(int32(userId))))
 	notificar(w, r, logic.NotificationInfo, "información", "Agregado al carrito", "La pieza quedó reservada en tu carrito.", "/carrito", "Ver carrito")
 	if logic.IsHtmxRequest(r) {
 		// Con hx-boost el 303 se sigue por XHR y el header no se re-renderiza;
@@ -419,10 +410,12 @@ func (h *ArticuloHandler) RemoveCarritoHandler(w http.ResponseWriter, r *http.Re
 		http.Error(w, "Error al eliminar del carrito: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
+	n := h.datos.CantidadCarrito(int32(userId))
+	logic.SetCarritoCookie(w, int(n))
 	notificar(w, r, logic.NotificationInfo, "información", "Pieza quitada del carrito", "La pieza ya no ocupa lugar en tu carrito.", "/carrito", "Ver carrito")
 	responderNotificaciones(w, r)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.CartWidget(h.datos.CantidadCarrito(int32(userId)), true).Render(r.Context(), w)
+	views.CartIcon(n > 0, true).Render(r.Context(), w)
 }
 
 // DELETE /favoritos/{id} - Eliminar favorito

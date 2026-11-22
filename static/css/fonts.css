@@ -30,7 +30,6 @@
 /* Selectores que no declaran familia explícita y heredan de body. Se fijan
    acá para que usen siempre las fuentes de fonts.css. */
 .route,
-.product-name,
 .product-description,
 .product-meta,
 .text-link,
@@ -49,4 +48,7 @@
 .sin-stock,
 .account-nav a {
   font-family: var(--font-mono);
+}
+.product-name {
+  font-family: var(--font-display);
 }
