@@ -22,30 +22,30 @@ func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func EventoHandler(w http.ResponseWriter, r *http.Request) {
-	views.Pagina(r, views.Evento()).Render(r.Context(), w)
+	views.Pagina(w, r, views.Evento()).Render(r.Context(), w)
 }
 
 func PrivacidadHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Pagina(r, views.Privacidad()).Render(r.Context(), w)
+	views.Pagina(w, r, views.Privacidad()).Render(r.Context(), w)
 }
 
 func ContactoHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Pagina(r, views.Contacto()).Render(r.Context(), w)
+	views.Pagina(w, r, views.Contacto()).Render(r.Context(), w)
 }
 
 func TerminosHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Pagina(r, views.Terminos()).Render(r.Context(), w)
+	views.Pagina(w, r, views.Terminos()).Render(r.Context(), w)
 }
 
 func HistoriaHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Pagina(r, views.Historia()).Render(r.Context(), w)
+	views.Pagina(w, r, views.Historia()).Render(r.Context(), w)
 }
 
 func CreadoresHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	views.Pagina(r, views.Creadores()).Render(r.Context(), w)
+	views.Pagina(w, r, views.Creadores()).Render(r.Context(), w)
 }

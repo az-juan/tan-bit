@@ -1,0 +1,37 @@
+package views
+
+// VistaFicha es el contenido del modal de ficha (custom dialog de htmx).
+templ VistaFicha(a ArticuloData) {
+	<div class="modal-underlay" hx-on:click="document.getElementById('modal').innerHTML=''"></div>
+	<div class="modal-content pixel-frame copper">
+		<div class="modal-header">
+			<h2 class="display">{ a.Titulo }</h2>
+			<button type="button" class="modal-close" hx-on:click="document.getElementById('modal').innerHTML=''">Cerrar</button>
+		</div>
+		if a.RutaImagen.Valid {
+			<div class="modal-image"><img src={ a.RutaImagen.String } alt={ a.Titulo } /></div>
+		}
+		<div class="modal-price">${ a.Precio }<small>{ a.PrecioXmr } XMR · { a.Categoria } · { a.Condicion }</small></div>
+		<p>{ a.Descripcion }</p>
+		<div class="modal-meta">
+			<span><strong>Ubicación:</strong> { a.Ubicacion }</span>
+			<span><strong>Entrega:</strong> { EntregaLabel(a.TipoEntrega) }</span>
+			if a.ZonaEntrega.Valid {
+				<span><strong>Zona:</strong> { a.ZonaEntrega.String }</span>
+			}
+			<span><strong>Vendedor:</strong> { a.Alias }</span>
+			<span><strong>CBU:</strong> { a.Cbu }</span>
+			if a.DireccionXmr.Valid {
+				<span><strong>Dirección XMR:</strong> { a.DireccionXmr.String }</span>
+			}
+		</div>
+		<div class="modal-actions">
+			@BotonFavorito(a.IDArticulo)
+			if a.Stock > 0 {
+				@BotonCarrito(a.IDArticulo)
+			} else {
+				<span class="sin-stock">Sin stock</span>
+			}
+		</div>
+	</div>
+}

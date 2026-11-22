@@ -1,0 +1,45 @@
+package views
+
+import "tan-bit.com/tan-bit/logic"
+
+// Notificaciones es el contenedor flotante; se actualiza con swap OOB.
+templ Notificaciones(items []logic.Notification) {
+	<div id="notifications-container" class="notifications-container" hx-swap-oob="true">
+		for _, n := range items {
+			@Notificacion(n)
+		}
+	</div>
+}
+
+// Notificacion es un toast con variación según el tipo (success, info, warning, error).
+templ Notificacion(n logic.Notification) {
+	<div class={ "notification-toast toast-" + string(n.Type) } role="status">
+		<div class="toast-header">
+			<span class="toast-icon">
+				if n.Type == logic.NotificationSuccess {
+					✓
+				} else if n.Type == logic.NotificationError {
+					!!
+				} else if n.Type == logic.NotificationWarning {
+					!
+				} else {
+					+
+				}
+			</span>
+			<span class="toast-label">{ n.Label }</span>
+			<button type="button" class="toast-close" hx-on:click="this.closest('.notification-toast').remove()">×</button>
+		</div>
+		<div class="toast-body">
+			<div class="toast-text">
+				<p class="toast-title">{ n.Title }</p>
+				if n.Message != "" {
+					<p class="toast-message">{ n.Message }</p>
+				}
+			</div>
+			if n.ActionHref != "" {
+				<a class="toast-action" href={ n.ActionHref }>{ n.ActionText } ›</a>
+			}
+		</div>
+		<span class="toast-progress" hx-on:animationend="if (event.animationName === 'toastbar') this.closest('.notification-toast').remove()"></span>
+	</div>
+}

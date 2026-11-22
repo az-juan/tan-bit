@@ -1,9 +1,7 @@
 package views
 
 templ Login() {
-        <div class="route">
-          <span>INICIO / LOGIN</span><span class="green">■ CONEXIÓN SEGURA</span>
-        </div>
+        @Route("LOGIN", "CONEXIÓN SEGURA")
         <div class="login-grid">
           <section class="login-intro">
             <p class="eyebrow">HARDWARE CON IDENTIDAD.</p>
@@ -12,26 +10,26 @@ templ Login() {
             <img src="/static/assets/hero.png" alt="Ilustracion de aparatos tecnologicos" />
           </section>
           <section class="login-form-wrap">
-            <form class="pixel-frame veg-bloxide veg-3 login-form" method="post" action="/login" hx-post="/login" hx-target="#main" hx-swap="innerHTML" hx-push-url="true">
-              <p class="eyebrow">[ ACCESO A TU CUENTA ]</p>
-              <h2 class="display">HOLA DE NUEVO.</h2>
-              <p>Ingresá para seguir donde lo dejaste.</p>
-              <label class="form-group"
-                ><span class="field-label">EMAIL</span><input class="field" type="email" name="email" placeholder="tu.señal@correo.com" required /></label>
-              <label class="form-group"
-                ><span class="field-label">CONTRASEÑA</span><input class="field" type="password" name="password" value="" required /></label>
-              <div class="remember">
-                <label><input type="checkbox" /> Recordarme</label><a>Olvidé mi contraseña</a>
-              </div>
-              <button class="btn" href="./mi_cuenta" type="submit">Iniciar sesión &nbsp; ↗</button>
-              <hr />
-              <p>¿Primera vez por acá?</p>
-              <a class="btn ghost" href="./registrarse">Crear una cuenta &nbsp; ↗</a>
-            </form>
+            @Formulario("/login", "post", "veg-bl oxide veg-3", "/login", true, LoginForm())
             <p class="form-legal">
               Al ingresar, accedés a un espacio de intercambio respetuoso. Consultá los términos y
               la política de privacidad.
             </p>
           </section>
         </div>
+}
+
+templ LoginForm() {
+    <p class="eyebrow">[ ACCESO A TU CUENTA ]</p>
+    <h2 class="display">HOLA DE NUEVO.</h2>
+    <p>Ingresá para seguir donde lo dejaste.</p>
+    @Campo("EMAIL", "email", "email", "tu.señal@correo.com", "", true)
+    @Campo("CONTRASEÑA", "password", "password", "••••••••", "", true)
+    <div class="remember">
+      <label><input type="checkbox" /> Recordarme</label><a>Olvidé mi contraseña</a>
+    </div>
+    <button class="btn" type="submit">Iniciar sesión &nbsp; ↗</button>
+    <hr />
+    <p>¿Primera vez por acá?</p>
+    <a class="btn ghost" href="./registrarse">Crear una cuenta &nbsp; ↗</a>
 }

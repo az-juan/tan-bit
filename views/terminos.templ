@@ -2,9 +2,7 @@ package views
 
 templ Terminos() {
 	<section class="privacy-intro">
-	  <div class="route">
-	    <span>INICIO / TÉRMINOS</span><span class="green">■ PLANTILLA EDITABLE / V.01</span>
-	  </div>
+    @Route("TERMINOS", "PLANTILLA EDITABLE / v 0.1")
 	  <h1 class="display page-title">TÉRMINOS DEL SERVICIO, SIN RUIDO.</h1>
     <p>
       Una plantilla clara para definir las reglas de uso del marketplace, las responsabilidades de
@@ -98,11 +96,9 @@ templ Terminos() {
       </div>
     </article>
   </div>
-  <section class="rules-cta">
-    <div>
-      <h2 class="display">LAS REGLAS TAMBIÉN HACEN COMUNIDAD.</h2>
-      <p>Información clara para compartir, crear y dar una nueva vida al hardware.</p>
-    </div>
-    <a class="btn" href="/">Volver al marketplace ↗</a>
-  </section>
+  @Bloque(
+    "LAS REGLAS TAMBIÉN HACEN COMUNIDAD.",
+    "Información clara para compartir, crear y dar una nueva vida al hardware.",
+    BotonEnlace("Volver al marketplace ↗", "/"),
+  )
 }

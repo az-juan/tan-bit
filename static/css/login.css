@@ -62,9 +62,7 @@
 }
 
 @media (max-width: 900px) {
-  .login-main {
-    padding: 40px 20px;
-  }
+
   .login-grid {
     grid-template-columns: 1fr;
   }

@@ -2,9 +2,7 @@ package views
 
 templ Privacidad() {
 	<section class="privacy-intro">
-		<div class="route">
-			<span>INICIO / PRIVACIDAD</span><span class="green">■ PLANTILLA EDITABLE / V.01</span>
-		</div>
+    @Route ("PRIVACIDAD", "PLANTILLA EDITABLE")
 		<h1 class="display page-title">TU PRIVACIDAD, SIN RUIDO.</h1>
     <p>
       Una plantilla clara para explicar qué datos se usan, para qué y cómo ejercer tus
@@ -106,11 +104,9 @@ templ Privacidad() {
       </div>
     </article>
   </div>
-  <section class="rules-cta">
-    <div>
-      <h2 class="display">LAS REGLAS TAMBIÉN HACEN COMUNIDAD.</h2>
-      <p>Información clara para compartir, crear y dar una nueva vida al hardware.</p>
-    </div>
-    <a class="btn" href="/">Volver al marketplace ↗</a>
-  </section>
+  @Bloque(
+    "LAS REGLAS TAMBIÉN HACEN COMUNIDAD.",
+    "Información clara para compartir, crear y dar una nueva vida al hardware.",
+    BotonEnlace("Volver al marketplace ↗", "/"),
+  )
 }

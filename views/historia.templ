@@ -1,69 +1,69 @@
 package views
 
 templ Historia() {
-	      		<section class="historia-intro">
-	      		  <div class="route">
-	      		    <span>INICIO / MEET TAN-BIT / HISTORIA</span><span class="green">■ ORIGEN: TANDIL</span>
-	      		  </div>
-	      		  <h1 class="display page-title">EL HARDWARE TAMBIÉN TIENE HISTORIA.</h1>
-	          <p class="historia-sub">DESDE TANDIL, PIEZA A PIEZA.</p>
-	        </section>
-	        <section class="historia-hero">
-	          <div class="historia-copy">
-	            <h2 class="display">MENOS DESCARTAR. MÁS CONECTAR.</h2>
-	            <p>
-	              TAN-BIT es un punto de encuentro para quienes ven posibilidades donde otros ven componentes
-	              sueltos. Madera que se convierte en gabinete. Cobre que disipa calor. Una placa que vuelve a
-	              encender. Nos interesa ese cruce entre tecnología, oficio y segunda vida.
-	            </p>
-	            <a>Conocé a los creadores <img src="/static/assets/arrow.svg" alt="" /></a>
-	          </div>
-	          <figure class="historia-figure">
-	            <img src="/static/assets/gabinete.png" alt="Gabinete de madera en el taller" />
-	            <figcaption>DONDE LA TECNOLOGÍA SE ENCUENTRA CON EL OFICIO.</figcaption>
-	          </figure>
-	        </section>
-	        <section class="historia-exists">
-	          <div class="exists-left">
-	            <span class="eyebrow">01 / POR QUÉ EXISTIMOS</span>
-	            <h2 class="display">QUE LAS BUENAS PIEZAS SIGAN CIRCULANDO.</h2>
-	          </div>
-	          <div class="exists-right">
-	            <p>
-	              El hardware no tiene por qué ser anónimo, idéntico ni descartable. Detrás de cada elección de
-	              material y de cada reparación hay conocimiento que vale la pena compartir.
-	            </p>
-	            <p>
-	              Por eso acercamos a quienes crean, recuperan y transforman con quienes buscan una pieza con
-	              identidad. Sin perder el contacto directo ni la escala humana del taller.
-	            </p>
-	          </div>
-	        </section>
-	        <section class="historia-source">
-	          <h2 class="display source-title">NUESTRO CÓDIGO FUENTE.</h2>
-	          <div class="source-grid">
-	            <article class="source-item">
-	              <span class="source-num">[01]</span>
-	              <h3 class="display">OFICIO VISIBLE</h3>
-	              <p>Mostramos materiales, procesos y decisiones. El detalle no es un extra: es parte de la pieza.</p>
-	            </article>
-	            <article class="source-item">
-	              <span class="source-num">[02]</span>
-	              <h3 class="display">OTRA VIDA ÚTIL</h3>
-	              <p>Reparar, recuperar y hacer circular. A veces el próximo gran proyecto empieza con lo que ya existe.</p>
-	            </article>
-	            <article class="source-item">
-	              <span class="source-num">[03]</span>
-	              <h3 class="display">COMUNIDAD LOCAL</h3>
-	              <p>Personas que se conocen, comparten saberes y construyen confianza. De Tandil al próximo escritorio.</p>
-	            </article>
-	          </div>
-	        </section>
-	        <section class="historia-cta">
-	          <div>
-	            <h2 class="display">ESTA HISTORIA SE ARMA ENTRE TODOS.</h2>
-	            <p>Si hacés, reparás o transformás hardware, hay lugar para tu próxima pieza en TAN-BIT.</p>
-	          </div>
-	          <a>Quiero vender ↗</a>
-	        </section>
+	<section>
+		@Route("HISTORIA", "ORIGEN: TANDIL")
+		<h1 class="display page-title">EL HARDWARE TAMBIÉN TIENE HISTORIA.</h1>
+		<p>DESDE TANDIL, PIEZA A PIEZA.</p>
+	</section>
+	@Hero(
+		"MENOS DESCARTAR. MÁS CONECTAR.",
+		HistoriaCopy(),
+		HistoriaArt(),
+	)
+	<section class="bloque">
+		<div>
+			<span class="eyebrow">01 / POR QUÉ EXISTIMOS</span>
+			<h2 class="display">QUE LAS BUENAS PIEZAS SIGAN CIRCULANDO.</h2>
+		</div>
+		<div>
+			<p>
+				El hardware no tiene por qué ser anónimo, idéntico ni descartable. Detrás de cada elección de
+				material y de cada reparación hay conocimiento que vale la pena compartir.
+			</p>
+			<p>
+				Por eso acercamos a quienes crean, recuperan y transforman con quienes buscan una pieza con
+				identidad. Sin perder el contacto directo ni la escala humana del taller.
+			</p>
+		</div>
+	</section>
+	<section>
+		<h2 class="display">NUESTRO CÓDIGO FUENTE.</h2>
+		<div class="cards-grid">
+			@FuenteItem("[01]", "OFICIO VISIBLE", "Mostramos materiales, procesos y decisiones. El detalle no es un extra: es parte de la pieza.")
+			@FuenteItem("[02]", "OTRA VIDA ÚTIL", "Reparar, recuperar y hacer circular. A veces el próximo gran proyecto empieza con lo que ya existe.")
+			@FuenteItem("[03]", "COMUNIDAD LOCAL", "Personas que se conocen, comparten saberes y construyen confianza. De Tandil al próximo escritorio.")
+		</div>
+	</section>
+	@Bloque(
+		"ESTA HISTORIA SE ARMA ENTRE TODOS.",
+		"Si hacés, reparás o transformás hardware, hay lugar para tu próxima pieza en TAN-BIT.",
+		BotonEnlace("Quiero vender ↗", "./vender"),
+	)
+}
+
+templ HistoriaCopy() {
+	<p>
+		TAN-BIT es un punto de encuentro para quienes ven posibilidades donde otros ven componentes
+		sueltos. Madera que se convierte en gabinete. Cobre que disipa calor. Una placa que vuelve a
+		encender. Nos interesa ese cruce entre tecnología, oficio y segunda vida.
+	</p>
+	<a class="btn" href="./creadores">Conocé a los creadores ↗</a>
+}
+
+templ HistoriaArt() {
+	<figure>
+		<img src="/static/assets/gabinete.png" alt="Gabinete de madera en el taller" />
+		<figcaption>DONDE LA TECNOLOGÍA SE ENCUENTRA CON EL OFICIO.</figcaption>
+	</figure>
+}
+
+templ FuenteItem(num string, titulo string, texto string) {
+	<article class="carta">
+		<div>
+			<span class="card-num">{ num }</span>
+			<h3 class="display">{ titulo }</h3>
+			<p>{ texto }</p>
+		</div>
+	</article>
 }

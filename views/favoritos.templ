@@ -1,54 +1,48 @@
 package views
 
-import "tan-bit.com/tan-bit/db/sqlc"
+import (
+)
 
-templ Favoritos(arts []db.GetFavoritosByUsuarioRow, filtros []FiltroCategoria) {
+templ Favoritos(arts []ArticuloData, filtros []FiltroCategoria) {
         <section>
-          <div class="route">
-            <span>INICIO / FAVORITOS</span><span class="green">■ COLECCIÓN PERSONAL</span>
-          </div>
+          @Route("FAVORITOS", "COLECCIÓN PERSONAL")
           <h1 class="display page-title">TUS JOYAS, A MANO.</h1>
         </section>
-        // <div id="search-results"></div>
         <div class="favorite-controls">
           <div class="filters" role="tablist">
-          for i, f := range filtros {
-            <a role="tab" href={ "./?categoria=" + string(f.Key) } class={"filter-btn tab "+map[bool]string{true: "active", false: ""}[i == 0]} hx-get={ "./?categoria=" + string(f.Key) } hx-target="#favoritos-content" hx-swap="innerHTML" hx-push-url="true">
-              { f.Label } [{ f.Count }]
-            </a>
-          }
-        </div>
-          <span>ORDENAR: GUARDADOS RECIENTEMENTE ↓</span>
-        </div>
-        <section class="pixel-frame veg-bl codo-2oxide veg-2 favorites-articulos" id="favoritos-content">
-          <div class="articulo-grid">
-            for _, a := range arts {
-              <article class="product-card">
-                <div class="product-image">
-                  <img src={ a.RutaImagen.String } alt={ a.Titulo } />
-                </div>
-                <div class="product-info">
-                  <h2 class="product-name">{ a.Titulo }</h2>
-                  if a.PrecioXmr > 0 {
-                    <p class="product-price">${ a.Precio } · { a.PrecioXmr } XMR</p>
-                  } else {
-                    <p class="product-price">${ a.Precio }</p>
-                  }
-                </div>
-              </article>
+            for _, f := range filtros {
+                <a role="tab" href="/favoritos?categoria={ string(f.Key) }" hx-get="/favoritos?categoria={ string(f.Key) }" hx-target="#favoritos-content" hx-swap="innerHTML" hx-push-url="true">
+                  { f.Label } [{len(arts)}]
+                </a>
             }
           </div>
-        </section>
+            <span>ORDENAR: GUARDADOS RECIENTEMENTE ↓</span>
+        </div>
+        @GrillaFavoritos(arts)
         <div class="saved-note">
           <span>♥ &nbsp;{ len(arts) } piezas guardadas. Los favoritos no reservan stock.</span><a href="/">Seguir explorando ↗</a>
         </div>
-        <section class="maker-cta">
-          <div>
-            <h2 class="display">DETRÁS DE CADA PIEZA, UN CREADOR.</h2>
-            <p>
-              Conocé los talleres y las personas que hacen distinto el hardware de todos los días.
-            </p>
+        @Bloque(
+          "DETRÁS DE CADA PIEZA, UN CREADOR.",
+          "Conocé los talleres y las personas que hacen distinto el hardware de todos los días.",
+          BotonEnlace("Conocer creadores ↗", "./creadores"),
+        )
+}
+
+// GrillaFavoritos es el fragmento que recargan los filtros de la página (htmx).
+templ GrillaFavoritos(articulos []ArticuloData) {
+        <section class="pixel-frame veg-bl codo-2 oxide veg-2" id="favoritos-content">
+          <div class="product-grid">
+            for _, a := range articulos {
+              @Articulo(a, ArticuloConfig{
+                Favorito: false,
+                Carrito: true,
+                Compra: false,
+                Editar: false,
+                Ficha: true,
+                Quitar: "/favoritos",
+              })
+            }
           </div>
-          <a>Conocer creadores ↗</a>
         </section>
 }

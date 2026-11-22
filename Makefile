@@ -42,6 +42,7 @@ stop:
 
 clear:
 	@$(COMPOSE) down --volumes --rmi local
+	rm -rf uploads
 
 clear_cache: clear
 	@docker system prune

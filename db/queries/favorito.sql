@@ -4,7 +4,7 @@ VALUES ($1, $2)
 ON CONFLICT DO NOTHING;
 
 -- name: GetFavoritosByUsuario :many
-SELECT a.id_articulo, a.titulo, a.descripcion, a.condicion, a.categoria, a.precio, a.precio_xmr, a.stock, a.fecha_publicacion, a.ruta_imagen
+SELECT a.id_articulo, a.titulo, a.descripcion, a.condicion, a.categoria, a.precio, a.precio_xmr, a.stock, a.fecha_publicacion, a.ruta_imagen, a.ubicacion, a.tipo_entrega, a.costo_envio, a.zona_entrega
 FROM favorito f JOIN articulo a ON a.id_articulo = f.id_articulo
 WHERE f.id_usuario = $1
 ORDER BY f.fecha;

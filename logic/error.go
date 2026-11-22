@@ -6,7 +6,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/jackc/pgconn"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 // CodigoViolacionFK es el código SQLSTATE de la violación de foreign key.
