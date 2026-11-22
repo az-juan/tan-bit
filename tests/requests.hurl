@@ -50,7 +50,7 @@ HTTP 303
 header "Location" == "/login"
 
 # ---------------- REGISTRO DE VENDEDOR (Lionel Messi) ----------------
-# 1) Sin aceptar terminos -> re-renderiza el form con error (no toca la DB)
+# 1) Sin aceptar terminos -> 303 redirect a /registrarse (no toca la DB)
 POST {{host}}/registrarse
 [Form]
 role: vendedor
@@ -58,11 +58,12 @@ nombre: Lionel
 apellido: Messi
 email: leo@messi.com
 password: campeon2022
-HTTP 200
+password2: campeon2022
+HTTP 303
 [Asserts]
-body contains "Debes aceptar los términos"
+header "Location" == "/registrarse"
 
-# 2) Rol vendedor sin telefono/cbu/alias -> re-renderiza con error (no toca la DB)
+# 2) Rol vendedor sin telefono/cbu/alias -> 303 redirect a /registrarse (no toca la DB)
 POST {{host}}/registrarse
 [Form]
 role: vendedor
@@ -70,12 +71,13 @@ nombre: Lionel
 apellido: Messi
 email: leo@messi.com
 password: campeon2022
+password2: campeon2022
 terminos: on
-HTTP 200
+HTTP 303
 [Asserts]
-body contains "Para registrarte como vendedor necesitás completar TELÉFONO, CBU y ALIAS."
+header "Location" == "/registrarse"
 
-# 3) Registro de vendedor OK -> 200 + cookie user_id
+# 3) Registro de vendedor OK -> 303 a /mi_cuenta + cookie user_id
 POST {{host}}/registrarse
 [Form]
 role: vendedor
@@ -83,18 +85,20 @@ nombre: Lionel
 apellido: Messi
 email: leo@messi.com
 password: campeon2022
+password2: campeon2022
 telefono: 2494101010
 cbu: 0000010101010
 alias: leo.campeon.xmr
 direccion_xmr: 44Affq5kSiGBoZ4NMDwYtN18obc8AemS33DBLWs3H7otXft3XjrpDtQGv7SqSsaBYBb98uNbr2VBBEt7f2wfn3RVGQBEP3A
 terminos: on
-HTTP 200
+HTTP 303
 [Captures]
 vendedor_id: cookie "user_id"
 [Asserts]
+header "Location" == "/mi_cuenta"
 cookie "user_id" exists
 
-# 4) Email duplicado -> violacion UNIQUE manejada antes de tocar tabla vendedor
+# 4) Email duplicado -> violacion UNIQUE manejada, encola notificacion y redirige a /registrarse
 POST {{host}}/registrarse
 [Form]
 role: vendedor
@@ -102,15 +106,16 @@ nombre: Otro
 apellido: Usuario
 email: leo@messi.com
 password: campeon2022
+password2: campeon2022
 telefono: 2494999999
 cbu: 9999999999999
 alias: otro.alias
 terminos: on
-HTTP 200
+HTTP 303
 [Asserts]
-body contains "El email ya está registrado"
+header "Location" == "/registrarse"
 
-# Verifica que la sesion del vendedor muestra su perfil y datos de vendedor
+# Verifica que la sesion del vendedor muestra su perfil, datos de vendedor y la notificacion encolada
 GET {{host}}/mi_cuenta
 HTTP 200
 [Asserts]
@@ -118,22 +123,24 @@ body contains "Lionel Messi"
 body contains "leo@messi.com"
 body contains "■ VENDEDOR"
 body contains "leo.campeon.xmr"
+body contains "El email ya está registrado."
 
 # ---------------- LOGIN ----------------
 POST {{host}}/login
 [Form]
 email: leo@messi.com
 password: incorrecta
-HTTP 401
+HTTP 303
 [Asserts]
-body contains "Credenciales inválidas"
+header "Location" == "/login"
 
 POST {{host}}/login
 [Form]
 email: leo@messi.com
 password: campeon2022
-HTTP 200
+HTTP 303
 [Asserts]
+header "Location" == "/mi_cuenta"
 cookie "user_id" exists
 
 # ---------------- PUBLICACION DE ARTICULOS (/vender) ----------------
@@ -143,14 +150,14 @@ HTTP 200
 [Asserts]
 body contains "DALE CIRCULACIÓN A TU HARDWARE."
 
-# Validacion de campos obligatorios faltantes
+# Validacion de campos obligatorios faltantes -> 303 redirect a /vender
 POST {{host}}/vender
 [MultipartFormData]
 titulo:
 descripcion:
-HTTP 200
+HTTP 303
 [Asserts]
-body contains "Faltan datos obligatorios"
+header "Location" == "/vender"
 
 # 1. Gabinete (gabinete.png)
 POST {{host}}/vender
@@ -167,9 +174,9 @@ tipo_entrega: ambos
 costo_envio: 4500
 zona_entrega: Tandil y alrededores
 fotos: file,static/assets/gabinete.png; image/png
-HTTP 200
+HTTP 303
 [Asserts]
-body == ""
+header "Location" == "/mi_cuenta"
 
 # 2. Teclado (teclado.png)
 POST {{host}}/vender
@@ -186,9 +193,9 @@ tipo_entrega: envio a domicilio
 costo_envio: 2500
 zona_entrega: Todo el pais
 fotos: file,static/assets/teclado.png; image/png
-HTTP 200
+HTTP 303
 [Asserts]
-body == ""
+header "Location" == "/mi_cuenta"
 
 # 3. Memoria RAM (ram.png)
 POST {{host}}/vender
@@ -205,9 +212,9 @@ tipo_entrega: ambos
 costo_envio: 2000
 zona_entrega: Tandil centro
 fotos: file,static/assets/ram.png; image/png
-HTTP 200
+HTTP 303
 [Asserts]
-body == ""
+header "Location" == "/mi_cuenta"
 
 # 4. Motherboard (mother.png)
 POST {{host}}/vender
@@ -224,9 +231,9 @@ tipo_entrega: retiro en persona
 costo_envio: 0
 zona_entrega: Tandil centro
 fotos: file,static/assets/mother.png; image/png
-HTTP 200
+HTTP 303
 [Asserts]
-body == ""
+header "Location" == "/mi_cuenta"
 
 # 5. Cooler (cooler.png)
 POST {{host}}/vender
@@ -243,9 +250,9 @@ tipo_entrega: ambos
 costo_envio: 2200
 zona_entrega: Tandil y zona serrana
 fotos: file,static/assets/cooler.png; image/png
-HTTP 200
+HTTP 303
 [Asserts]
-body == ""
+header "Location" == "/mi_cuenta"
 
 # 6. Lampara (lampara.png)
 POST {{host}}/vender
@@ -262,9 +269,9 @@ tipo_entrega: retiro en persona
 costo_envio: 0
 zona_entrega: Tandil centro
 fotos: file,static/assets/lampara.png; image/png
-HTTP 200
+HTTP 303
 [Asserts]
-body == ""
+header "Location" == "/mi_cuenta"
 
 # 7. Pad (pad.png)
 POST {{host}}/vender
@@ -281,9 +288,9 @@ tipo_entrega: envio a domicilio
 costo_envio: 1800
 zona_entrega: Todo el pais
 fotos: file,static/assets/pad.png; image/png
-HTTP 200
+HTTP 303
 [Asserts]
-body == ""
+header "Location" == "/mi_cuenta"
 
 # ---------------- VERIFICACION DE CATALOGO E IMAGENES ----------------
 # El marketplace muestra los 7 articulos cargados y sus rutas en /uploads/
