@@ -1,0 +1,317 @@
+package views
+
+import (
+	"database/sql"
+	"strconv"
+	"strings"
+
+	"tan-bit.com/tan-bit/db/sqlc"
+)
+
+/* ------------------------------------------------------------
+   STRUCTS AUXILIARES PARA TEMPLATES
+------------------------------------------------------------ */
+type FiltroCategoria struct {
+	Key   db.Categoria
+	Label string
+	Count int
+}
+
+// ArticuloConfig describe qué acciones muestra la tarjeta de artículo.
+type ArticuloConfig struct {
+	Favorito bool
+	Carrito  bool
+	Compra   bool
+	Editar   bool
+	Ficha    bool
+	Borrar   bool
+	Quitar   string // destino del borrado acotado (carrito/favoritos); vacío lo desactiva
+}
+
+type UsuarioData struct {
+	IDUsusario   int32
+	Apellido     string
+	Nombre       string
+	Email        string
+	Password     string
+	IDVendedor   int32
+	Telefono     int64
+	DireccionXmr sql.NullString
+	Cbu          string
+	Alias        string
+}
+
+type ArticuloData struct {
+	IDArticulo       int32
+	Titulo           string
+	Descripcion      string
+	Condicion        string
+	Categoria        string
+	RutaImagen       sql.NullString
+	Precio           float64
+	PrecioXmr        float64
+	Stock            int32
+	FechaPublicacion sql.NullTime
+	Ubicacion        string
+	TipoEntrega      string
+	CostoEnvio       sql.NullFloat64
+	ZonaEntrega      sql.NullString
+	Alias            string
+	Cbu              string
+	DireccionXmr     sql.NullString
+	Cantidad         int32
+}
+
+/* ------------------------------------------------------------
+   MODELOS
+------------------------------------------------------------ */
+
+// Marco envuelve contenido en el marco pixel compartido.
+templ Marco(variantes string, cuerpo templ.Component) {
+	<div class={ "pixel-frame " + variantes }>@cuerpo</div>
+}
+
+// Carta es el contenedor compartido para tarjetas de contenido.
+templ Carta(cuerpo templ.Component) {
+	<article class="carta">
+		<div>@cuerpo</div>
+	</article>
+}
+
+// Hero es la sección principal de presentación con copia y arte.
+templ Hero(titulo string, cuerpo templ.Component, arte templ.Component) {
+	<section class="hero pixel-frame veg-vs codo-2 copper-new veg-3 copper">
+		<div class="hero-copy">
+			<h1 class="display">{ titulo }</h1>
+			@cuerpo
+		</div>
+		<div class="hero-art">@arte</div>
+	</section>
+}
+
+// Bloque es la sección de cierre con título, descripción y acción.
+templ Bloque(titulo string, descripcion string, componente templ.Component) {
+	<section class="bloque">
+		<div>
+			<h2 class="display">{ titulo }</h2>
+			<p>{ descripcion }</p>
+		</div>
+		@componente
+	</section>
+}
+
+// Formulario envuelve el contenido en un formulario. Con marco=true usa el
+// marco pixel compartido (.form-card .pixel-frame); con false deja solo la variante.
+// hxPost habilita el envío por htmx apuntando a #main; vacío deja un POST normal.
+templ Formulario(accion string, metodo string, variante string, hxPost string, marco bool, cuerpo templ.Component) {
+	if hxPost != "" {
+		<form class={ ClaseFormulario(variante, marco) } action={ accion } method={ metodo } hx-post={ hxPost } hx-target="#main" hx-push-url="true">@cuerpo</form>
+	} else {
+		<form class={ ClaseFormulario(variante, marco) } action={ accion } method={ metodo }>@cuerpo</form>
+	}
+}
+
+// ClaseFormulario agrega el marco compartido solo cuando corresponde.
+func ClaseFormulario(variante string, marco bool) string {
+	if marco {
+		return "form-card pixel-frame " + variante
+	}
+	return variante
+}
+
+// Campo renderiza un label con su entrada usando los estilos compartidos.
+templ Campo(etiqueta string, nombre string, tipo string, placeholder string, valor string, requerido bool) {
+	<label class="form-group"><span class="field-label">{ etiqueta }</span><input class="field" type={ tipo } name={ nombre } placeholder={ placeholder } value={ valor } required?={ requerido } /></label>
+}
+
+// BotonEnlace es una acción principal con destino libre.
+templ BotonEnlace(texto string, destino string) {
+	<a class="btn" href={ destino }>{ texto }</a>
+}
+
+// BotonBorrar elimina un artículo con confirmación y saca la tarjeta del DOM.
+templ BotonBorrar(id int32) {
+	<button
+		type="button"
+		class="btn danger"
+		hx-delete={ "/articulos/" + strconv.Itoa(int(id)) }
+		hx-confirm="¿Eliminar esta pieza?"
+		hx-target="closest article"
+		hx-swap="outerHTML"
+	>Borrar ✕</button>
+}
+
+// BotonQuitar saca del carrito o de favoritos una pieza y elimina su tarjeta.
+templ BotonQuitar(destino string, id int32) {
+	<button
+		type="button"
+		class="btn danger"
+		hx-delete={ destino + "/" + strconv.Itoa(int(id)) }
+		hx-confirm="¿Quitar esta pieza?"
+		hx-target="closest article"
+		hx-swap="outerHTML"
+	>Quitar ✕</button>
+}
+
+// BotonEditar abre el modal con el formulario de edición de la pieza.
+templ BotonEditar(articulo ArticuloData) {
+	<button type="button" class="text-link" hx-get={ "/articulos/" + strconv.Itoa(int(articulo.IDArticulo)) + "/editar" } hx-target="#modal" hx-swap="innerHTML">Editar ✎</button>
+}
+
+templ BotonFavorito(id int32) {
+	<span class="heart-badge">
+		<form method="POST" action="/favoritos/add" style="display:inline">
+			<input type="hidden" name="id_articulo" value={ id } />
+			<button type="submit" style="background:none;border:none;padding:0;cursor:pointer">
+				<div class="heart-img"></div>
+			</button>
+		</form>
+	</span>
+}
+
+templ BotonCarrito(id int32) {
+	<form method="POST" action="/carrito/add" style="display:inline">
+		<input type="hidden" name="id_articulo" value={ id } />
+		<button class="btn btn-small" type="submit">Agregar ↗</button>
+	</form>
+}
+
+templ BotonFicha(articulo ArticuloData) {
+	<button type="button" class="text-link" hx-get={ "/articulos/" + strconv.Itoa(int(articulo.IDArticulo)) } hx-target="#modal" hx-swap="innerHTML">Ver ficha ↗</button>
+}
+
+templ BotonCompra(id int32, tipo_entrega string) {
+	<form method="POST" action="/compra">
+		<input type="hidden" name="id_articulo" value={ id } />
+		<input type="hidden" name="entrega" value={ tipo_entrega } />
+		<button class="btn btn-small" type="submit">Confirmar compra ↗</button>
+	</form>
+}
+
+templ Articulo(articulo ArticuloData, config ArticuloConfig) {
+	<article class="product-card">
+		<div class="product-image">
+			if articulo.RutaImagen.Valid {
+				<img src={ articulo.RutaImagen.String } alt={ articulo.Titulo } />
+			} else {
+				<span>Sin imagen</span>
+			}
+			if articulo.Stock <= 0 {
+				<span class="sin-stock">Sin stock</span>
+			}
+			if config.Favorito {
+				@BotonFavorito(articulo.IDArticulo)
+			}
+		</div>
+		<div class="product-info">
+			if articulo.Titulo != "" {
+				<h2 class="product-name">{ articulo.Titulo }</h2>
+			}
+			if articulo.Descripcion != "" {
+				<p class="product-description">{ articulo.Descripcion }</p>
+			}
+			<div class="product-meta">
+				<span>Precio: ${ articulo.Precio }</span>
+				if articulo.PrecioXmr > 0 {
+					<span>· { articulo.PrecioXmr } XMR</span>
+				}
+				if articulo.Stock > 0 {
+					<span>· Stock: { articulo.Stock }</span>
+				}
+			</div>
+			if config.Compra && articulo.Stock > 0 {
+				<div class="product-meta seller-data">
+					<span><strong>Alias del vendedor:</strong> { articulo.Alias }</span>
+					<span><strong>CBU:</strong> { articulo.Cbu }</span>
+					if articulo.DireccionXmr.Valid {
+						<span><strong>Dirección XMR:</strong> { articulo.DireccionXmr.String }</span>
+					}
+				</div>
+				@BotonCompra(articulo.IDArticulo, articulo.TipoEntrega)
+			}
+			<div class="product-actions">
+				if config.Ficha {
+					@BotonFicha(articulo)
+				}
+				if config.Editar {
+					@BotonEditar(articulo)
+				}
+				if config.Carrito && articulo.Stock > 0 {
+					@BotonCarrito(articulo.IDArticulo)
+				}
+				if config.Borrar {
+					@BotonBorrar(articulo.IDArticulo)
+				}
+				if config.Quitar != "" {
+					@BotonQuitar(config.Quitar, articulo.IDArticulo)
+				}
+			</div>
+		</div>
+	</article>
+}
+
+templ Route(pagina string, comentario string) {
+	<div class="route">
+		<span>INICIO / { pagina }</span><span class="green">■ { comentario }</span>
+	</div>
+}
+
+/* ------------------------------------------------------------
+   FUNCIONES AUXILIARES
+------------------------------------------------------------ */
+func CategoriaLabel(c db.Categoria) string {
+	s := string(c)
+	if s == "" {
+		return ""
+	}
+	return strings.ToUpper(s[:1]) + s[1:]
+}
+
+func EntregaLabel(et string) string {
+	switch et {
+	case "envio a domicilio":
+		return "Envío a domicilio"
+	case "retiro en persona":
+		return "Pasar a retirar"
+	case "ambos":
+		return "Ambos"
+	default:
+		return et
+	}
+}
+
+func BuildFiltros(arts []db.GetArticulosRow) []FiltroCategoria { // revisar
+	counts := map[db.Categoria]int{}
+	for _, a := range arts {
+		counts[a.Categoria]++
+	}
+	// order by db enum order (matches schema)
+	order := []db.Categoria{"notebook", "pantalla", "electronica", "periferico", "accesorio", "audio", "video", "gaming", "analogico", "comunicacion"}
+	var out []FiltroCategoria
+	total := len(arts)
+	out = append(out, FiltroCategoria{Key: "", Label: "TODOS", Count: total})
+	for _, c := range order {
+		if n, ok := counts[c]; ok && n > 0 {
+			out = append(out, FiltroCategoria{Key: c, Label: CategoriaLabel(c), Count: n})
+		}
+	}
+	return out
+}
+
+func BuildFiltrosFav(arts []db.GetFavoritosByUsuarioRow) []FiltroCategoria { // revisar
+	counts := map[db.Categoria]int{}
+	for _, a := range arts {
+		counts[a.Categoria]++
+	}
+	// order by db enum order (matches schema)
+	order := []db.Categoria{"notebook", "pantalla", "electronica", "periferico", "accesorio", "audio", "video", "gaming", "analogico", "comunicacion"}
+	var out []FiltroCategoria
+	total := len(arts)
+	out = append(out, FiltroCategoria{Key: "", Label: "TODOS", Count: total})
+	for _, c := range order {
+		if n, ok := counts[c]; ok && n > 0 {
+			out = append(out, FiltroCategoria{Key: c, Label: CategoriaLabel(c), Count: n})
+		}
+	}
+	return out
+}

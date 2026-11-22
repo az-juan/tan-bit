@@ -90,24 +90,7 @@
   justify-content: space-between;
   padding-top: 16px;
   font-size: 11px;
-}
-.rules-cta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 32px;
-  border: 3px solid var(--line);
-  background: var(--panel);
-}
-.rules-cta div {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.rules-cta h2 {
-  font-size: 32px;
-}
-@media (max-width: 900px) {
+}@media (max-width: 900px) {
   .privacy-intro > p {
     width: auto;
   }
@@ -119,13 +102,7 @@
   }
   .legal-document {
     padding: 28px;
-  }
-  .draft,
-  .rules-cta {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .privacy-index nav {
+  }.privacy-index nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }

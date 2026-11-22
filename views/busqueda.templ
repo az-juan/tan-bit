@@ -1,0 +1,18 @@
+package views
+
+// Busqueda renderiza los resultados del buscador del header.
+templ Busqueda(articulos []ArticuloData) {
+	if len(articulos) == 0 {
+		<p class="muted">Sin resultados.</p>
+	} else {
+		<div class="cards-grid">
+			for _, a := range articulos {
+				@Articulo(a, ArticuloConfig{
+					Favorito: true,
+					Carrito:  true,
+					Ficha:    true,
+				})
+			}
+		</div>
+	}
+}

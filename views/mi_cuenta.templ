@@ -1,110 +1,126 @@
 package views
 
 import (
-  "tan-bit.com/tan-bit/db/sqlc"
+	"fmt"
+
+	"tan-bit.com/tan-bit/db/sqlc"
 )
 
-templ MiCuenta(nombre, apellido, email, telefono, alias, cbu, direccionXmr string, articulos []db.GetArticulosByVendedorRow, favoritos []db.GetFavoritosByUsuarioRow, compras []db.GetComprasByUsuarioRow) {
-  <div class="route"><span>INICIO / MI CUENTA</span><span class="green">■ PANEL PERSONAL</span></div>
-  <h1 class="display page-title">MI CUENTA.</h1>
-  <div class="account-grid">
-    <aside class="account-sidebar">
-      <div class="pixel-frame veg-tlverdigris veg-2 account-profile">
-        <img src={"/static/assets/"+map[bool]string{true: "account_seller.svg", false: "account_user.svg"}[telefono != ""]} alt="Avatar" />
-        <strong>{ nombre } { apellido }</strong>
-        <small>{ email }</small>
-        <span class="green">{ "■ " + map[bool]string{true: "VENDEDOR", false: "USUARIO"}[telefono != ""] }</span>
-      </div>
-      <nav class="account-nav">
+templ MiCuenta(usuario UsuarioData, articulos []ArticuloData, favoritos []ArticuloData, compras []db.GetComprasByUsuarioRow) {
+    @Route("MI CUENTA", "PANEL PERSONAL")
+    <h1 class="display page-title">MI CUENTA.</h1>
+    <div class="account-grid">
+        <aside class="account-sidebar">
+            @Marco("veg-tl verdigris veg-2 account-profile", Perfil(usuario))
+            @Navegacion()
+        </aside>
+        <section class="account-content">
+            @Marco("veg-h codo-2 verdigris veg-3 account-card", Formulario("/mi_cuenta", "post", "", "", false, DatosPersonales(usuario)))
+            @Marco("veg-vs codo-2 codo-3 steel-dark account-card", MisPiezas(articulos))
+            @Marco("veg-b codo-2 codo-3 steel-dark account-card", FavoritosUsuario(favoritos))
+            @Marco("veg-b codo-2 codo-3 steel-dark account-card", Pedidos(compras))
+            @Marco("veg-vs codo-2 codo-3 steel-dark account-card", Formulario("/mi_cuenta", "post", "", "", false, Seguridad()))
+        </section>
+    </div>
+}
+
+templ Perfil(usuario UsuarioData) {
+	<img src={"/static/assets/" + map[bool]string{true: "account_seller.svg", false: "account_user.svg"}[usuario.Telefono != 0]} alt="Avatar" />
+	<strong>{ usuario.Nombre } { usuario.Apellido }</strong>
+	<small>{ usuario.Email }</small>
+	<span class="green">{ "■ " + map[bool]string{true: "VENDEDOR", false: "USUARIO"}[usuario.Telefono != 0] }</span>
+}
+
+templ DatosPersonales(usuario UsuarioData) {
+	<h2 class="display">DATOS PERSONALES</h2>
+	<div class="account-form">
+		@Campo("NOMBRE", "nombre", "text", "", usuario.Nombre, false)
+		@Campo("APELLIDO", "apellido", "text", "", usuario.Apellido, false)
+		@Campo("EMAIL", "email", "email", "", usuario.Email, false)
+		@Campo("TELÉFONO", "telefono", "text", "+54 ...", fmt.Sprintf("%d", usuario.Telefono), false)
+		if usuario.Telefono != 0 {
+			<div class="account-card vendedor-data">
+				<h2 class="display">DATOS DE VENDEDOR</h2>
+				<div class="account-form">
+					@Campo("ALIAS", "alias", "text", "", usuario.Alias, false)
+					@Campo("CBU", "cbu", "text", "", usuario.Cbu, false)
+					@Campo("DIRECCIÓN XMR", "direccion_xmr", "text", "-", usuario.DireccionXmr.String, false)
+				</div>
+			</div>
+		}
+		<button class="btn" type="submit">Guardar cambios ↗</button>
+	</div>
+}
+
+templ MisPiezas(articulos []ArticuloData) {
+	<h2 class="display" id="mis_piezas">MIS PIEZAS</h2>
+	<div class="account-form">
+		if len(articulos) > 0 {
+			<p class="green">Hay piezas publicadas.</p>
+			for _, a := range articulos {
+				@Articulo(a, ArticuloConfig{
+					Editar: true,
+					Borrar: true,
+				})
+			}
+		} else {
+			<p class="green">Aún no publicas piezas.</p>
+		}
+	</div>
+}
+
+templ FavoritosUsuario(articulos []ArticuloData) {
+	<h2 class="display" id="favoritos">FAVORITOS</h2>
+	<div class="account-form">
+		if len(articulos) > 0 {
+			for _, f := range articulos {
+				@Articulo(f, ArticuloConfig{})
+			}
+		} else {
+			<p class="green">No tienes favoritos.</p>
+		}
+	</div>
+}
+
+templ Pedidos(compras []db.GetComprasByUsuarioRow) {
+	<h2 class="display" id="pedidos">PEDIDOS</h2>
+	<div class="account-form">
+		if len(compras) > 0 {
+			for _, c := range compras {
+				@Marco("veg-tl codo-2 codo-3 brass veg-2 mini-card", PedidoItem(c))
+			}
+		} else {
+			<p class="green">No realizaste pedidos.</p>
+		}
+	</div>
+}
+
+templ PedidoItem(c db.GetComprasByUsuarioRow) {
+	<strong>Compra #{c.IDCompra}</strong>
+	<small>{ c.Fecha.String() } · Total: { c.Total }</small>
+}
+
+templ Seguridad() {
+	<h2 class="display" id="seguridad">SEGURIDAD</h2>
+	<div class="account-form">
+		@Campo("CONTRASEÑA ACTUAL", "password_actual", "password", "", "", true)
+		@Campo("NUEVA CONTRASEÑA", "password_nueva", "password", "", "", true)
+		<button class="btn ghost">Cambiar contraseña ↗</button>
+	</div>
+}
+
+templ Navegacion() {
+    <nav class="account-nav">
         <a class="active">Datos personales</a>
         <a href="#mis_piezas">Mis piezas</a>
         <a href="#favoritos">Favoritos</a>
         <a href="#pedidos">Pedidos</a>
         <a href="#seguridad">Seguridad</a>
-      </nav>
-    </aside>
-    <section class="account-content">
-      <div class="pixel-frame veg-h codo-2verdigris veg-3 account-card">
-        <h2 class="display">DATOS PERSONALES</h2>
-        <div class="account-form">
-          <label class="form-group"><span class="field-label">NOMBRE</span><input class="field" value={ nombre } /></label>
-          <label class="form-group"><span class="field-label">APELLIDO</span><input class="field" value={ apellido } /></label>
-          <label class="form-group"><span class="field-label">EMAIL</span><input class="field" type="email" value={ email } /></label>
-          <label class="form-group"><span class="field-label">TELÉFONO</span><input class="field" value={ telefono } placeholder="+54 ..." /></label>
-          if telefono != "" {
-            <div class="account-card vendedor-data">
-              <h2 class="display">DATOS DE VENDEDOR</h2>
-              <div class="account-form">
-                <label class="form-group"><span class="field-label">ALIAS</span><input class="field" value={ alias } /></label>
-                <label class="form-group"><span class="field-label">CBU</span><input class="field" value={ cbu } /></label>
-                <label class="form-group"><span class="field-label">DIRECCIÓN XMR</span><input class="field" value={ direccionXmr } placeholder="-" /></label>
-              </div>
-            </div>
-          }
-          <button class="btn">Guardar cambios ↗</button>
-        </div>
-      </div>
-      <div class="pixel-frame veg-vs codo-2 codo-3steel-dark account-card">
-        <h2 class="display" id="mis_piezas">MIS PIEZAS</h2>
-        <div class="account-form">
-          if len(articulos) > 0 {
-            <p class="green">Hay piezas publicadas.</p>
-            for _, a := range articulos {
-              <div id="publicado" class="pixel-frame mini-card">
-                <img src={ a.RutaImagen.String } alt={ a.Titulo } />
-                <strong>{ a.Titulo }</strong>
-                if a.PrecioXmr > 0 {
-                  <small>{ a.Categoria } · ${ a.Precio } · { a.PrecioXmr } XMR</small>
-                } else {
-                  <small>{ a.Categoria } · { a.Precio }</small>
-                }
-              <button hx-delete={ "/articulos/" + string(a.IDArticulo) } hx-target="#publicado" hx-swap="outerHTML" hx-confirm="Eliminar el articulo?" type="submit" class="btn btn-small" style="background:#ff6b6b;color:white;border:none;padding:4px 12px;cursor:pointer">🗑️ Eliminar</button>
-              </div>
-            }
-          } else {
-            <p class="green">Aún no publicas piezas.</p>
-          }
-        </div>
-      </div>
-      <div class="pixel-frame veg-b codo-2 codo-3steel-dark account-card">
-        <h2 class="display" id="favoritos">FAVORITOS</h2>
-        <div class="account-form">
-          if len(favoritos) > 0 {
-            for _,f := range favoritos {
-              <div class="pixel-frame veg-tl codo-2 codo-3brass veg-2 mini-card">
-                <img src={ f.RutaImagen.String } alt={f.Titulo} class="mini-card-img" />
-                <strong>{f.Titulo}</strong>
-                <small>{ f.Categoria } · ${ f.Precio } · { f.PrecioXmr } XMR</small>
-              </div>
-            }
-          } else {
-            <p class="green">No tienes favoritos.</p>
-          }
-        </div>
-      </div>
-      <div class="pixel-frame veg-b codo-2 codo-3steel-dark account-card">
-        <h2 class="display" id="pedidos">PEDIDOS</h2>
-        <div class="account-form">
-          if len(compras) > 0 {
-            for _,c := range compras {
-              <div class="pixel-frame veg-tl codo-2 codo-3brass veg-2 mini-card">
-                <strong>Compra #{c.IDCompra}</strong>
-                <small>{c.Fecha.String()} · Total: {c.Total}</small>
-              </div>
-            }
-          } else {
-            <p class="green">No realizaste pedidos.</p>
-          }
-        </div>
-      </div>
-      <div class="pixel-frame veg-vs codo-2 codo-3steel-dark account-card">
-        <h2 class="display" id="seguridad">SEGURIDAD</h2>
-        <div class="account-form">
-          <label class="form-group"><span class="field-label">CONTRASEÑA ACTUAL</span><input class="field" type="password" /></label>
-          <label class="form-group"><span class="field-label">NUEVA CONTRASEÑA</span><input class="field" type="password" /></label>
-          <button class="btn ghost">Cambiar contraseña ↗</button>
-        </div>
-      </div>
-    </section>
-  </div>
+        <form method="POST" action="/logout" style="display:inline">
+            <button type="submit" class="btn" style="background:var(--rojo-1);color:white;border:none;padding:4px 12px;cursor:pointer;text-decoration:none">Cerrar sesión</button>
+        </form>
+        <form method="POST" action="/mi_cuenta/delete" style="display:inline" onsubmit="return confirm('¿Seguro que querés borrar tu cuenta? Esta acción no se puede deshacer.');">
+            <button type="submit" class="btn" style="background:var(--rojo-0);color:white;border:none;padding:4px 12px;cursor:pointer;text-decoration:none">Borrar cuenta</button>
+        </form>
+    </nav>
 }

@@ -58,9 +58,7 @@
   font-size: 11px;
 }
 @media (max-width: 900px) {
-  .register-main {
-    padding: 40px 20px;
-  }
+
   .register-grid {
     grid-template-columns: 1fr;
   }

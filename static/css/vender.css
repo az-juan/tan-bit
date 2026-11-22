@@ -2,24 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-.sell-steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-.sell-steps span {
-  padding: 18px;
-  border: 2px solid var(--line);
-  background: var(--panel);
-  font-family: "VT323:Regular";
-  font-size: 23px;
-}
-.sell-steps .active {
-  background: var(--copper);
-  color: var(--night);
-}
-.sell-layout {
+}.sell-layout {
   display: grid;
   grid-template-columns: 832px 1fr;
   gap: 32px;
@@ -131,10 +114,5 @@
   line-height: 1.7;
 }
 @media (max-width: 900px) {
-  .sell-steps,
-  .sell-layout,
-  .form-columns,
-  .honesty {
-    grid-template-columns: 1fr;
-  }
+
 }

@@ -1,0 +1,255 @@
+/* ------------------------------------------------------------
+   BODY
+------------------------------------------------------------ */
+html {
+  background: var(--night);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--ink);
+  color: var(--sand);
+  font-family: "IBM Plex Mono:Regular", monospace;
+  font-size: 12px;
+}
+
+.page-title {
+  font-size: 64px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  padding: 64px;
+}
+
+.display {
+  color: var(--orange);
+  font-family: "VT323:Regular", monospace;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+/* ------------------------------------------------------------
+   HEADER
+------------------------------------------------------------ */
+.site-header {
+  display: flex;
+  width: 100%;
+  height: 80px;
+  flex: 0 0 80px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  border-bottom: 4px solid var(--line);
+  box-shadow: 0 2px 0 0 var(--line);
+}
+
+.brand,
+.header-actions,
+.cart-link {
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  gap: 12px;
+}
+
+.brand img {
+  image-rendering: pixelated;
+  width: 180px;
+  height: 32px;
+  /* width: auto; */
+  /* max-width: 100%; */
+  /* height: auto; */
+}
+
+.brand span {
+  color: var(--orange);
+  font-family: "VT323:Regular";
+  font-size: 26px;
+}
+
+.site-search {
+  display: flex;
+  width: 400px;
+  height: 40px;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  border: 4px solid var(--sand);
+  background: var(--panel);
+  color: var(--sand);
+  font-size: 11px;
+}
+
+.site-search img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  /* width: 18px; */
+  /* height: 18px; */
+}
+
+.header-actions {
+  gap: 22px;
+  color: var(--orange);
+  font-family: "VT323:Regular";
+  font-size: 20px;
+}
+
+.header-actions > img {
+  width: 22px;
+  height: 22px;
+}
+
+.header-actions .account {
+  width: 28px;
+  height: 40px;
+}
+
+.cart-link {
+  gap: 8px;
+  font-size: 18px;
+}
+
+.cart-link img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ------------------------------------------------------------
+   FOOTER
+------------------------------------------------------------ */
+.site-footer {
+  margin-top: auto;
+  width: 100%;
+}
+
+.values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+  padding: 26px 64px;
+  border-top: 4px solid var(--line);
+  border-bottom: 4px solid var(--line);
+  background: var(--brown-light);
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.value img {
+  width: 26px;
+  height: 26px;
+}
+
+.value strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--yellow);
+  font-family: "VT323:Regular";
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.value span {
+  color: var(--sand);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.footer-main {
+  display: grid;
+  grid-template-columns: 280px 150px 160px 380px;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 32px 64px;
+  background: var(--brown);
+}
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-column h3 {
+  color: var(--orange);
+  font-family: "VT323:Regular";
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.footer-column p,
+.footer-column a {
+  color: var(--sand);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-brand img {
+  width: 180px;
+  height: 32px;
+}
+.values,
+.footer-main {
+  grid-template-columns: 1fr;
+}
+
+.values,
+.footer-main,
+.legal {
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.newsletter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border: 4px solid var(--line);
+  background: #1a1614;
+}
+
+.legal {
+  flex-direction: column;
+  gap: 10px;
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 64px;
+  border-top: 4px solid var(--line);
+  background: var(--night);
+  color: var(--sand);
+  font-size: 10px;
+}
+
+@media (max-width: 520px) {
+  .brand span,
+  .header-actions > a:first-child {
+  display: none;
+}
+
+.header-actions {
+  font-size: 16px;
+}
+
+.product-grid {
+  grid-template-columns: 1fr;
+}
+}

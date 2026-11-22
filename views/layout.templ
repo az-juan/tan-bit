@@ -1,7 +1,7 @@
 package views
 
 import (
-  "tan-bit.com/tan-bit/logic"
+	"tan-bit.com/tan-bit/logic"
 	"net/http"
 )
 templ Header(userRole string) {
@@ -98,28 +98,29 @@ templ Head() {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TAN-BIT · Marketplace</title>
+  <link rel="stylesheet" href="/static/css/layout.css" />
+  <link rel="stylesheet" href="/static/css/articulo.css" />
   <link rel="stylesheet" href="/static/css/shared.css" />
   <link rel="stylesheet" href="/static/css/colors.css" />
   <link rel="stylesheet" href="/static/css/fonts.css" />
+  <link rel="stylesheet" href="/static/css/modal.css" />
+  <link rel="stylesheet" href="/static/css/compra.css" />
   <link rel="stylesheet" href="/static/css/carrito.css" />
   <link rel="stylesheet" href="/static/css/favoritos.css" />
   <link rel="stylesheet" href="/static/css/mi_cuenta.css" />
   <link rel="stylesheet" href="/static/css/contacto.css" />
-  <link rel="stylesheet" href="/static/css/evento.css" />
   <link rel="stylesheet" href="/static/css/terminos.css" />
   <link rel="stylesheet" href="/static/css/privacidad.css" />
   <link rel="stylesheet" href="/static/css/marketplace.css" />
   <link rel="stylesheet" href="/static/css/login.css" />
   <link rel="stylesheet" href="/static/css/registrarse.css" />
   <link rel="stylesheet" href="/static/css/vender.css" />
-  <link rel="stylesheet" href="/static/css/historia.css" />
-  <link rel="stylesheet" href="/static/css/creadores.css" />
   <script src="/static/htmx.min.js"></script>
   <script>htmx.config.historyRestoreAsHxRequest = false</script>
 </head>
 }
 
-templ Base(contenido templ.Component) {
+templ Base(contenido templ.Component, session string) {
   <!doctype html>
   <html lang="es">
     <body hx-boost="true" hx-target="#main">
@@ -129,14 +130,17 @@ templ Base(contenido templ.Component) {
         @contenido
       </main>
       @Footer()
+      <div id="modal"></div>
+      @Notificaciones(logic.TakeNotifications(session))
     </body>
   </html>
 }
 
-templ Pagina(r *http.Request, contenido templ.Component) {
+templ Pagina(w http.ResponseWriter, r *http.Request, contenido templ.Component) {
     if logic.IsHtmxRequest(r) {
-        @contenido   // solo el fragmento
+        @Notificaciones(logic.TakeNotifications(logic.SessionID(w, r)))
+        @contenido   // solo el fragmento + notificaciones OOB
     } else {
-        @Base(contenido)
+        @Base(contenido, logic.SessionID(w, r))
     }
 }

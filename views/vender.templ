@@ -1,38 +1,39 @@
 package views
 
 import (
-	db "tan-bit.com/tan-bit/db/sqlc"
+	"tan-bit.com/tan-bit/db/sqlc"
+	"tan-bit.com/tan-bit/logic"
 )
 
-templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condicion, errorMsg string) {
+templ Vender(data logic.VenderInput, categorias []db.Categoria, condiciones []db.Condicion) {
 	<section class="sell-intro">
-		<div class="route"><span>INICIO / VENDER</span></div>
+    @Route("VENDER", "")
 		<h1 class="display page-title">DALE CIRCULACIÓN A TU HARDWARE.</h1>
 	</section>
   <div class="sell-layout">
-    <form class="pixel-frame veg-tr codo-3copper veg-2 sell-form" method="post" action="/vender" enctype="multipart/form-data" hx-post="/vender" hx-target="#main" hx-swap="innerHTML" hx-push-url="true">
-    if errorMsg != "" {
-      <div class="form-error">{ errorMsg }</div>
-    }
+    <form class="pixel-frame veg-tr codo-3 copper veg-2 sell-form" method="post" action="/vender" enctype="multipart/form-data" hx-post="/vender" hx-target="#main" hx-swap="innerHTML" hx-push-url="true">
+    // if errorMsg != "" {
+      // <div class="form-error">{ errorMsg }</div>
+    // }
       <div class="form-title">
         <h2 class="display">01. CONTANOS SOBRE TU PIEZA</h2>
         <span>* OBLIGATORIO</span>
       </div>
       <label>
         <span>TÍTULO DE LA PUBLICACIÓN *</span>
-        <input class="field" name="titulo" value={ data.Titulo } placeholder="Ej. Teclado mecánico de nogal · 75%" required />
+        <input class="field" name="titulo" placeholder="Ej. Teclado mecánico de nogal · 75%" required />
       </label>
       <div class="form-columns">
         <label>
           <span>CATEGORÍA *</span>
-            <select class="field" name="categoria">
+          <select class="field" name="categoria">
             for _, c := range categorias {
-              <option value={ string(c) } selected?={ data.Categoria == c }>{ CategoriaLabel(c) }</option>
+              <option value={ c } selected?={ data.Categoria == string(c) }>{ CategoriaLabel(c) }</option>
             }
             </select></label>
           <label><span>ESTADO *</span><select class="field" name="condicion">
             for _, c := range condiciones {
-              <option value={ string(c) } selected?={ data.Condicion == c }>{ string(c) }</option>
+              <option value={ string(c) } selected?={ data.Condicion == string(c) }>{ string(c) }</option>
             }
           </select></label>
       </div>
@@ -52,7 +53,7 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
         <label class="upload-action">
           <strong>+</strong>
           <div>
-            <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 3 a 8 imágenes</small>
+            <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 1 a 8 imágenes</small>
           </div>
           <input type="file" name="fotos" accept="image/*" multiple />
         </label>
@@ -67,7 +68,7 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
       </div>
       <div class="form-columns">
         <label><span>PRECIO *</span><input class="field" name="precio" value={ data.Precio } placeholder="0.00" type="number" step="0.01" required /></label>
-        <label><span>PRECIO XMR *</span><input class="field" name="precio_xmr" value={ data.PrecioXMR } placeholder="0.00" type="number" step="0.01" /></label>
+        <label><span>PRECIO XMR *</span><input class="field" name="precio_xmr" value={ data.PrecioXmr } placeholder="0.00" type="number" step="0.01" /></label>
         <label><span>STOCK *</span><input class="field" name="stock" value={ data.Stock } placeholder="1" type="number" min="1" /></label>
       </div>
       <div class="form-columns">
@@ -80,13 +81,7 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
       </div>
     </form>
     <aside class="sell-aside">
-      <div class="pixel-frame veg-br codo-2copper veg-3 preview"><small>VISTA PREVIA / BORRADOR</small><img src="" alt="Vista previa del articulo" />
-        <h2 class="display">TU PRÓXIMA PUBLICACIÓN</h2>
-        <p>
-          Las fotos y los detalles de tu pieza aparecerán acá mientras completás la ficha.
-        </p>
-        <span class="green">■ GUARDADO COMO BORRADOR</span>
-      </div>
+      @Marco("veg-br codo-2 copper veg-3 preview", VistaPrevia())
       <div class="tips">
         <h2 class="display">UNA BUENA FICHA, MÁS CONFIANZA.</h2>
         <p>01 &nbsp; Luz natural y fondo simple.</p>
@@ -103,4 +98,13 @@ templ Vender(data VenderData, categorias []db.Categoria, condiciones []db.Condic
       especificaciones inventadas. Leé los términos antes de publicar.
     </p>
   </section>
+}
+
+templ VistaPrevia() {
+	<small>VISTA PREVIA / BORRADOR</small><img src="" alt="Vista previa del articulo" />
+	<h2 class="display">TU PRÓXIMA PUBLICACIÓN</h2>
+	<p>
+		Las fotos y los detalles de tu pieza aparecerán acá mientras completás la ficha.
+	</p>
+	<span class="green">■ GUARDADO COMO BORRADOR</span>
 }

@@ -5,21 +5,22 @@ import (
 	"log"
 	"net/http"
 	"tan-bit.com/tan-bit/db/connection"
-	sqlc "tan-bit.com/tan-bit/db/sqlc"
 	"tan-bit.com/tan-bit/handlers"
+	"tan-bit.com/tan-bit/logic"
 )
 
 func main() {
+	logic.StartNotificationDispatcher()
 	db, err := connection.Open()
 	if err != nil {
 		log.Fatalf("Failed to connect to DB: %v", err)
 	}
 	defer db.Close()
 
-	queries := sqlc.New(db) //Instancimos queries para ejecutarse en nuestro pool
-	artHandler := handlers.NewArticuloHandler(queries)
-	userHandler := handlers.NewUsuarioHandler(queries)
-	vendHandler := handlers.NewVendedorHandler(queries)
+	datos := logic.NuevoDatos(db) // acceso a la base vía sqlc
+	artHandler := handlers.NewArticuloHandler(datos)
+	userHandler := handlers.NewUsuarioHandler(datos)
+	vendHandler := handlers.NewVendedorHandler(datos)
 
 	fs := http.FileServer(http.Dir("static"))
 	us := http.FileServer(http.Dir("uploads"))
@@ -34,11 +35,13 @@ func main() {
 	http.HandleFunc("/contacto", handlers.ContactoHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", us))
-	http.HandleFunc("/vender", vendHandler.ServeHTTP)
+	http.Handle("/vender", vendHandler)
 	http.Handle("/registrarse", userHandler)
 	http.Handle("/login", userHandler)
+	http.Handle("/logout", userHandler)
 	http.Handle("/mi_cuenta", userHandler)
-	// http.HandleFunc("/notifications", handlers.NotificationsHandler)
+	http.Handle("/mi_cuenta/delete", userHandler)
+	http.Handle("/search", artHandler)
 	http.Handle("/", artHandler)
 	port := ":8080"
 	fmt.Printf("Servidor escuchando en http://localhost%s\n", port)

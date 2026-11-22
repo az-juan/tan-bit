@@ -4,35 +4,82 @@ import (
     "tan-bit.com/tan-bit/db/sqlc"
 )
 
-templ Marketplace(articulos []db.GetArticulosRow, filtros []FiltroCategoria) {
-  <section class="hero pixel-frame veg-vs codo-2verdigris copper">
-    <div class="hero-copy">
-      <h1 class="display">TU PRÓXIMA JOYA DEL<br />HARDWARE.</h1>
-      <nav class="hero-links">
-        <a href="./vender">·&gt; VENDER</a>
-        <a href="./evento">·&gt; IR A EVENTO</a>
-        <a href="./creadores">·&gt; CREADORES</a>
-      </nav>
+// CategoriasDB devuelve la lista de categorías disponibles
+func CategoriasDB() []FiltroCategoria {
+    categorias := []db.Categoria{
+        db.CategoriaNotebook,
+        db.CategoriaPantalla,
+        db.CategoriaElectronica,
+        db.CategoriaPeriferico,
+        db.CategoriaAccesorio,
+        db.CategoriaAudio,
+        db.CategoriaVideo,
+        db.CategoriaGaming,
+        db.CategoriaComunicacion,
+        db.CategoriaAnalogico,
+        db.CategoriaDecoracion,
+    }
+    filtros := make([]FiltroCategoria, 0, len(categorias))
+    for _, cat := range categorias {
+        filtros = append(filtros, FiltroCategoria{
+            Key:   cat,
+            Label: string(cat),
+            Count: 0,
+        })
+    }
+    return filtros
+}
+
+templ Filtros(filtros []FiltroCategoria, articulos int) {
+    <div class="filters" role="tablist">
+      for _, f := range filtros {
+        <a role="tab" href="./?categoria={ string(f.Key) }" hx-get="./?categoria={ string(f.Key) }" hx-target="#articulos" hx-swap="innerHTML" hx-push-url="true">
+          { f.Label } [{ articulos }]
+        </a>
+      }
     </div>
-    <div class="hero-art">
-      <img
-       src="/static/assets/retro_console.gif"
-       width="300"
-       alt="Gamecube en tv retro"
-      />
-    </div>
+}
+
+templ Marketplace(articulos []ArticuloData, filtros []FiltroCategoria) {
+  @Route("", "EXPLORA PRODUCTOS")
+  @Hero("TU PRÓXIMA JOYA DEL HARDWARE.", HeroLinks(), HeroArte())
+  <section class="catalog">
+  @Filtros(filtros, len(articulos))
+    @GrillaMarketplace(articulos)
   </section>
 
-  <section id="articulos" class="catalog">
-    <div class="filters" role="tablist">
-    for i, f := range filtros {
-      <a role="tab" href={ "./?categoria=" + string(f.Key) } class={"filter-btn tab "+map[bool]string{true: "active", false: ""}[i == 0]} hx-get={ "./?categoria=" + string(f.Key) } hx-target="closest #productos" hx-swap="outerHTML" hx-push-url="true">
-        { f.Label } [{ f.Count }]
-      </a>
-    }
-  </div>
-    <div class="product-grid market-products">
-      @Articulos(articulos)
+}
+
+// GrillaMarketplace es el fragmento que recarga el buscador de filtros (htmx).
+templ GrillaMarketplace(articulos []ArticuloData) {
+    <div id="articulos" class="product-grid market-products">
+      if len(articulos) == 0 {
+         <span style="display: flex; align-items: center; display: block; box-sizing: border-box; width: 100%; align-content: space-around; justify-content: space-around; flex-wrap: wrap; color: var(--paper);">
+                      Aún no hay articulos publicados.
+                      </span>
+      } else {
+        for _, a := range articulos {
+          @Articulo(a, ArticuloConfig{
+            Favorito: true,
+            Carrito: true,
+            Compra: false,
+            Editar: false,
+            Ficha: true,
+            Borrar: false,
+          })
+        }
+      }
     </div>
-  </section>
+}
+
+templ HeroLinks() {
+    <nav class="hero-links">
+      <a href="./vender">·&gt; VENDER</a>
+      <a href="./evento">·&gt; IR A EVENTO</a>
+      <a href="./creadores">·&gt; CREADORES</a>
+    </nav>
+}
+
+templ HeroArte() {
+    <img src="/static/assets/retro_console.gif" width="300" alt="Gamecube en tv retro" />
 }
