@@ -39,11 +39,6 @@
 .form-legal {
   line-height: 1.7;
 }
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 .remember {
   display: flex;
   align-items: center;

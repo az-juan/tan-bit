@@ -3,11 +3,14 @@ package logic
 import (
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
+
 	db "tan-bit.com/tan-bit/db/sqlc"
 )
 
@@ -138,6 +141,58 @@ func sanitize(s string) string {
 		}
 	}
 	return b.String()
+}
+
+// GuardarImagenTemporal guarda una imagen subida en uploads/ con nombre
+// temporal y devuelve su URL pública para la vista previa del formulario.
+func GuardarImagenTemporal(f multipart.File, fh *multipart.FileHeader) (string, error) {
+	if fh.Size > 10<<20 {
+		return "", fmt.Errorf("la imagen supera los 10 MB")
+	}
+	ext := strings.ToLower(filepath.Ext(fh.Filename))
+	if _, ok := extensionesImagen[ext]; !ok {
+		return "", fmt.Errorf("formato no soportado: usá JPG, PNG o WEBP")
+	}
+	if ct := fh.Header.Get("Content-Type"); ct != "" {
+		esperado := extensionesImagen[ext]
+		if ct != esperado {
+			return "", fmt.Errorf("el archivo no es una imagen válida")
+		}
+	}
+	if err := os.MkdirAll("uploads", 0755); err != nil {
+		return "", err
+	}
+	limpiarTemporales()
+	nombre := fmt.Sprintf("tmp-%d%s", time.Now().UnixNano(), ext)
+	out, err := os.Create(filepath.Join("uploads", nombre))
+	if err != nil {
+		return "", err
+	}
+	defer out.Close()
+	if _, err := io.Copy(out, f); err != nil {
+		return "", err
+	}
+	return "/uploads/" + nombre, nil
+}
+
+var extensionesImagen = map[string]string{
+	".jpg":  "image/jpeg",
+	".jpeg": "image/jpeg",
+	".png":  "image/png",
+	".webp": "image/webp",
+}
+
+// limpiarTemporales borra las vistas previas anteriores.
+func limpiarTemporales() {
+	entradas, err := os.ReadDir("uploads")
+	if err != nil {
+		return
+	}
+	for _, e := range entradas {
+		if strings.HasPrefix(e.Name(), "tmp-") {
+			os.Remove(filepath.Join("uploads", e.Name()))
+		}
+	}
 }
 
 // CategoriasDB devuelve la lista de categorías disponibles en la base de datos

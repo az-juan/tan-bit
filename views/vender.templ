@@ -55,7 +55,7 @@ templ Vender(data logic.VenderInput, categorias []db.Categoria, condiciones []db
           <div>
             <b>Arrastrá tus fotos o elegí archivos</b><small>JPG o PNG · hasta 10 MB · de 1 a 8 imágenes</small>
           </div>
-          <input type="file" name="fotos" accept="image/*" multiple />
+          <input type="file" name="fotos" accept="image/*" multiple hx-post="/vender/preview" hx-trigger="change" hx-include="this" hx-encoding="multipart/form-data" hx-target="#vista-previa" hx-swap="innerHTML" />
         </label>
       </div>
       <div class="form-columns">
@@ -81,7 +81,7 @@ templ Vender(data logic.VenderInput, categorias []db.Categoria, condiciones []db
       </div>
     </form>
     <aside class="sell-aside">
-      @Marco("veg-br codo-2 copper veg-3 preview", VistaPrevia())
+      @Marco("veg-br codo-2 copper veg-3 preview", VistaPrevia(""))
       <div class="tips">
         <h2 class="display">UNA BUENA FICHA, MÁS CONFIANZA.</h2>
         <p>01 &nbsp; Luz natural y fondo simple.</p>
@@ -100,11 +100,18 @@ templ Vender(data logic.VenderInput, categorias []db.Categoria, condiciones []db
   </section>
 }
 
-templ VistaPrevia() {
-	<small>VISTA PREVIA / BORRADOR</small><img src="" alt="Vista previa del articulo" />
-	<h2 class="display">TU PRÓXIMA PUBLICACIÓN</h2>
-	<p>
-		Las fotos y los detalles de tu pieza aparecerán acá mientras completás la ficha.
-	</p>
-	<span class="green">■ GUARDADO COMO BORRADOR</span>
+templ VistaPrevia(imagen string) {
+	<div id="vista-previa" class="preview-card">
+		<small>VISTA PREVIA / BORRADOR</small>
+		if imagen != "" {
+			<img src={ imagen } alt="Vista previa de la imagen subida" />
+		} else {
+			<div class="preview-empty">Tu foto aparece acá</div>
+		}
+		<h2 class="display">TU PRÓXIMA PUBLICACIÓN</h2>
+		<p>
+			Las fotos y los detalles de tu pieza aparecerán acá mientras completás la ficha.
+		</p>
+		<span class="green">■ GUARDADO COMO BORRADOR</span>
+	</div>
 }

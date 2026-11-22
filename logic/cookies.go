@@ -34,7 +34,7 @@ func GetCookieOrRedirect(w http.ResponseWriter, r *http.Request) (int, bool) {
 func writeAuthRequiredFragment(w http.ResponseWriter, loginURL string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	html := `<div class="auth-required pixel-frame">
+	html := `<div class="bloque pixel-frame">
   <h1 class="display">ACCESO REQUERIDO</h1>
   <p>Para acceder a esta página tenés que iniciar sesión.</p>
   <a class="btn" href=` + loginURL + `>Iniciar sesión ↗</a>

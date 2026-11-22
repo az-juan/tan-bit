@@ -48,7 +48,7 @@
 }
 
 .order-table td:first-child {
-  font-family: "VT323:Regular";
+  font-family: var(--font-display);
   font-size: 18px;
 }
 
@@ -83,7 +83,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  font-family: "VT323:Regular";
+  font-family: var(--font-display);
   font-size: 32px;
   color: var(--orange);
 }

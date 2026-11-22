@@ -30,6 +30,8 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.CarritoHandler(w, r)
 	case path == "/carrito/add":
 		h.AddCarritoHandler(w, r)
+	case path == "/carrito/widget":
+		h.CartWidgetHandler(w, r)
 	case strings.HasPrefix(path, "/carrito/"):
 		h.RemoveCarritoHandler(w, r)
 	case path == "/compra":
@@ -97,8 +99,8 @@ func (h *ArticuloHandler) MarketplaceHandler(w http.ResponseWriter, r *http.Requ
 			Cantidad:         0,
 		}
 	}
-	if logic.IsHtmxRequest(r) {
-		// Los filtros recargan solo la grilla, no la página entera.
+	if logic.IsHtmxRequest(r) && r.URL.Query().Has("categoria") {
+		// Solo cuando la URL viene de un filtro clickeado: recarga la grilla.
 		views.Pagina(w, r, views.GrillaMarketplace(data)).Render(r.Context(), w)
 		return
 	}
@@ -270,11 +272,22 @@ func (h *ArticuloHandler) FavoritosHandler(w http.ResponseWriter, r *http.Reques
 			Cantidad:         0,
 		}
 	}
-	if logic.IsHtmxRequest(r) {
+	if logic.IsHtmxRequest(r) && r.URL.Query().Has("categoria") {
 		views.Pagina(w, r, views.GrillaFavoritos(data)).Render(r.Context(), w)
 		return
 	}
 	views.Pagina(w, r, views.Favoritos(data, views.BuildFiltrosFav(arts))).Render(r.Context(), w)
+}
+
+// CartWidgetHandler devuelve el ícono del carrito con su cantidad.
+func (h *ArticuloHandler) CartWidgetHandler(w http.ResponseWriter, r *http.Request) {
+	_, id := logic.CheckAuth(r)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if id == 0 {
+		views.CartWidget(0, false).Render(r.Context(), w)
+		return
+	}
+	views.CartWidget(h.datos.CantidadCarrito(int32(id)), false).Render(r.Context(), w)
 }
 
 func (h *ArticuloHandler) AddCarritoHandler(w http.ResponseWriter, r *http.Request) {
@@ -301,6 +314,12 @@ func (h *ArticuloHandler) AddCarritoHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	notificar(w, r, logic.NotificationInfo, "información", "Agregado al carrito", "La pieza quedó reservada en tu carrito.", "/carrito", "Ver carrito")
+	if logic.IsHtmxRequest(r) {
+		// Con hx-boost el 303 se sigue por XHR y el header no se re-renderiza;
+		// HX-Redirect fuerza la navegación completa y el widget se actualiza.
+		w.Header().Set("HX-Redirect", destinoPost(r))
+		return
+	}
 	http.Redirect(w, r, destinoPost(r), http.StatusSeeOther)
 }
 
@@ -402,6 +421,8 @@ func (h *ArticuloHandler) RemoveCarritoHandler(w http.ResponseWriter, r *http.Re
 	}
 	notificar(w, r, logic.NotificationInfo, "información", "Pieza quitada del carrito", "La pieza ya no ocupa lugar en tu carrito.", "/carrito", "Ver carrito")
 	responderNotificaciones(w, r)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	views.CartWidget(h.datos.CantidadCarrito(int32(userId)), true).Render(r.Context(), w)
 }
 
 // DELETE /favoritos/{id} - Eliminar favorito

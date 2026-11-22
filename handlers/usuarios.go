@@ -131,7 +131,9 @@ func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Reque
 			http.Error(w, "Error al crear el usuario: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+		rol := "usuario"
 		if data.Role == "vendedor" && data.Telefono != "" && data.CBU != "" && data.Alias != "" {
+			rol = "vendedor"
 			telefono, err := strconv.ParseInt(data.Telefono, 10, 64)
 			if err != nil {
 				notificar(w, r, logic.NotificationError, "error", "Teléfono inválido", "El teléfono solo puede contener dígitos.", "/registrarse", "Reintentar")
@@ -150,13 +152,20 @@ func (h *UsuarioHandler) RegistrarseHandler(w http.ResponseWriter, r *http.Reque
 				if logic.EsViolacionUnique(err) {
 					msg = mensajeViolacion(logic.ColumnaViolacionUnique(err))
 				}
+				logic.SetRolCookie(w, "usuario")
+				setSessionCookie(w, usuario.IDUsuario)
 				notificar(w, r, logic.NotificationError, "error", "Datos de vendedor ya en uso", msg, "/mi_cuenta", "Revisar mis datos")
 				http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 				return
 			}
 		}
+		logic.SetRolCookie(w, rol)
 		setSessionCookie(w, usuario.IDUsuario)
 		notificarUsuario(usuario.IDUsuario, logic.NotificationSuccess, "éxito", "Cuenta creada", "Ya podés comprar, guardar favoritos y publicar piezas.", "/mi_cuenta", "Ir a mi cuenta")
+		if logic.IsHtmxRequest(r) {
+			w.Header().Set("HX-Redirect", "/mi_cuenta")
+			return
+		}
 		http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 		return
 	default:
@@ -189,8 +198,17 @@ func (h *UsuarioHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
+		rol := "usuario"
+		if _, err := h.datos.Queries().GetVendedorByID(r.Context(), u.IDUsuario); err == nil {
+			rol = "vendedor"
+		}
+		logic.SetRolCookie(w, rol)
 		setSessionCookie(w, u.IDUsuario)
 		notificarUsuario(u.IDUsuario, logic.NotificationInfo, "info", "Sesión iniciada", "Bienvenido de nuevo.", "/mi_cuenta", "Ir a mi cuenta")
+		if logic.IsHtmxRequest(r) {
+			w.Header().Set("HX-Redirect", "/mi_cuenta")
+			return
+		}
 		http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 		return
 	default:
@@ -327,7 +345,9 @@ func (h *UsuarioHandler) actualizarDatos(w http.ResponseWriter, r *http.Request,
 			http.Redirect(w, r, "/mi_cuenta", http.StatusSeeOther)
 			return
 		}
-		if err := h.datos.ActualizarVendedor(int32(id), vin); err != nil {
+		if err := h.datos.ActualizarVendedor(int32(id), vin); err == nil {
+			logic.SetRolCookie(w, "vendedor")
+		} else {
 			msg := "Ocurrió un error al guardar los datos de vendedor."
 			if logic.EsViolacionUnique(err) {
 				msg = mensajeViolacion(logic.ColumnaViolacionUnique(err))
@@ -377,6 +397,8 @@ func (h *UsuarioHandler) actualizarContrasenia(w http.ResponseWriter, r *http.Re
 
 func (h *UsuarioHandler) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	notificar(w, r, logic.NotificationInfo, "info", "Sesión cerrada", "Te esperamos de vuelta.", "/login", "Iniciar sesión")
+	logic.ClearRolCookie(w)
+	logic.ClearRolCookie(w)
 	clearSessionCookie(w)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

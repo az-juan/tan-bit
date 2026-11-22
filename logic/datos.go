@@ -129,6 +129,19 @@ func (d *Datos) ActualizarDatosUsuario(id int32, in ActualizarUsuarioInput) erro
 	return err
 }
 
+// CantidadCarrito suma las unidades que el usuario tiene en el carrito.
+func (d *Datos) CantidadCarrito(idUsuario int32) int32 {
+	filas, err := d.q.GetCarritoByUsuario(context.Background(), idUsuario)
+	if err != nil {
+		return 0
+	}
+	var total int32
+	for _, f := range filas {
+		total += f.Cantidad
+	}
+	return total
+}
+
 // ActualizarVendedor aplica el update vía sqlc.
 func (d *Datos) ActualizarVendedor(id int32, in ActualizarVendedorInput) error {
 	_, err := d.q.UpdateVendedor(context.Background(), db.UpdateVendedorParams{

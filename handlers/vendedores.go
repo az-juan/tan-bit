@@ -21,6 +21,8 @@ func (h *VendedorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch r.URL.Path {
 	case "/vender":
 		h.VenderHandler(w, r)
+	case "/vender/preview":
+		h.PreviewImagenHandler(w, r)
 	default:
 		NotFoundHandler(w, r)
 	}
@@ -73,4 +75,28 @@ func (h *VendedorHandler) VenderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	views.Pagina(w, r, views.Vender(logic.VenderInput{}, logic.CategoriasDB(), logic.CondicionesDB())).Render(r.Context(), w)
+}
+
+// PreviewImagenHandler guarda la imagen elegida y devuelve la vista previa.
+func (h *VendedorHandler) PreviewImagenHandler(w http.ResponseWriter, r *http.Request) {
+	if _, ok := logic.GetCookieOrRedirect(w, r); !ok {
+		return
+	}
+	if err := r.ParseMultipartForm(10 << 20); err != nil {
+		http.Error(w, "No pudimos leer la imagen", http.StatusBadRequest)
+		return
+	}
+	f, fh, err := r.FormFile("fotos")
+	if err != nil {
+		http.Error(w, "No se recibió ninguna imagen", http.StatusBadRequest)
+		return
+	}
+	defer f.Close()
+	url, err := logic.GuardarImagenTemporal(f, fh)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	views.VistaPrevia(url).Render(r.Context(), w)
 }

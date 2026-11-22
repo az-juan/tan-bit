@@ -1,3 +1,11 @@
+/* Familias tipográficas del proyecto. Todo el texto debe resolver a una de
+   estas tres familias; si el @font-face remoto falla, cae a monospace. */
+:root {
+  --font-mono: "IBM Plex Mono:Regular", ui-monospace, monospace;
+  --font-mono-bold: "IBM Plex Mono:SemiBold", ui-monospace, monospace;
+  --font-display: "VT323:Regular", "IBM Plex Mono:Regular", monospace;
+}
+
 @font-face {
   font-family: "IBM Plex Mono:Regular";
   src: url("https://static.figma.com/font/IBMPlexMono-Regular_2") format("woff2");
@@ -17,4 +25,28 @@
   src: url("https://static.figma.com/font/VT323-Regular_1") format("woff2");
   font-style: normal;
   font-weight: 350;
+}
+
+/* Selectores que no declaran familia explícita y heredan de body. Se fijan
+   acá para que usen siempre las fuentes de fonts.css. */
+.route,
+.product-name,
+.product-description,
+.product-meta,
+.text-link,
+.btn-small,
+.field,
+.field-label,
+.search-input,
+.filter-nav,
+.card-cat,
+.card-foot,
+.hero-art figcaption,
+.value span,
+.footer-column p,
+.footer-column a,
+.newsletter,
+.sin-stock,
+.account-nav a {
+  font-family: var(--font-mono);
 }

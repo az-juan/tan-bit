@@ -36,6 +36,7 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", us))
 	http.Handle("/vender", vendHandler)
+	http.Handle("/vender/preview", vendHandler)
 	http.Handle("/registrarse", userHandler)
 	http.Handle("/login", userHandler)
 	http.Handle("/logout", userHandler)

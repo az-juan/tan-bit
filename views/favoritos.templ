@@ -11,7 +11,7 @@ templ Favoritos(arts []ArticuloData, filtros []FiltroCategoria) {
         <div class="favorite-controls">
           <div class="filters" role="tablist">
             for _, f := range filtros {
-                <a role="tab" href="/favoritos?categoria={ string(f.Key) }" hx-get="/favoritos?categoria={ string(f.Key) }" hx-target="#favoritos-content" hx-swap="innerHTML" hx-push-url="true">
+                <a role="tab" href="/favoritos?categoria={ string(f.Key) }" hx-get="/favoritos?categoria={ string(f.Key) }" hx-target="#favoritos-content" hx-swap="outerHTML" hx-push-url="true">
                   { f.Label } [{len(arts)}]
                 </a>
             }

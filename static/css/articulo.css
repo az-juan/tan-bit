@@ -4,14 +4,13 @@
 .product-card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 12px;
   padding: 16px;
   transition: transform 0.2s, box-shadow 0.2s;
   cursor: pointer;
   display: flex;
   min-width: 0;
   flex-direction: column;
-  border: 1px solid #aaa8a3;
+  border: 1px solid var(--line);
   color: var(--panel);
 }
 
@@ -45,7 +44,8 @@
 
 .product-name {
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 300;
+  font-family: 'VT323:Regular'; 
   color: var(--text);
   margin: 0;
   white-space: nowrap;
@@ -88,7 +88,6 @@
 .btn-small {
   font-size: 0.75rem;
   padding: 4px 8px;
-  border-radius: 6px;
   transition: background 0.2s;
 }
 
@@ -128,16 +127,16 @@
   background: var(--ink);
 }
 
-heart-img {
+.heart-img {
     width: 20px;
     height: 16px;
-    background-image: url('/static/assets/heart-empty.svg');
+    background-image: url('../assets/heart-empty.svg');
     background-size: cover;
-    position: center;
-    transition: background-image 0.3s ease;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .heart-img:hover {
-    background-image: url('/static/assets/heart.svg');
+    background-image: url('../assets/heart.svg');
 }
 
 /* ------------------------------------------------------------

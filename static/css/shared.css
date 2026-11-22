@@ -42,7 +42,7 @@ body {
   min-width: 320px;
   background: var(--ink);
   color: var(--sand);
-  font-family: "IBM Plex Mono:Regular", monospace;
+  font-family: var(--font-mono), monospace;
   font-size: 12px;
 }
 
@@ -55,7 +55,7 @@ body {
 
 .display {
   color: var(--orange);
-  font-family: "VT323:Regular", monospace;
+  font-family: var(--font-display), monospace;
   font-weight: 400;
   line-height: 1.05;
 }
@@ -134,8 +134,20 @@ body {
   padding: 12px 8px;
   background: #5e4835;
   color: white;
-  font-family: "VT323:Regular";
+  font-family: var(--font-display);
   font-size: 18px;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease,
+    border-color 0.2s ease;
+}
+
+.hero-links a:hover,
+.hero-links a:focus-visible {
+  background: var(--copper);
+  border-color: var(--night);
+  color: var(--night);
+  transform: translateX(4px);
 }
 
 .hero-art {
@@ -152,9 +164,9 @@ body {
 }
 
 .hero-art img {
-  width: 100%;
-  height: auto;
-  opacity: 0.92;
+  /* width: 100%; */
+  /* height: auto; */
+  /* opacity: 0.92; */
 }
 
 .hero-art figcaption {
@@ -265,7 +277,7 @@ body {
   border: 2px solid var(--copper);
   background: var(--copper);
   color: var(--night);
-  font-family: "IBM Plex Mono:SemiBold";
+  font-family: var(--font-mono-bold);
   cursor: pointer;
 }
 
@@ -298,7 +310,7 @@ body {
   border: 0;
   background: var(--paper);
   color: var(--panel);
-  font-family: "VT323:Regular";
+  font-family: var(--font-display);
   font-size: 22px;
 }
 
@@ -326,12 +338,18 @@ body {
 ------------------------------------------------------------ */
 .field {
   display: flex;
-  min-height: 42px;
+  min-height: 44px;
   align-items: center;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border: 2px solid var(--line);
   background: var(--ink);
   color: var(--sand);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .field::placeholder {
@@ -348,8 +366,8 @@ body {
 .form-card {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  padding: 28px;
+  gap: 20px;
+  padding: 32px;
 }
 
 /* ------------------------------------------------------------
@@ -382,7 +400,7 @@ body {
 
 .card-num {
   color: var(--orange);
-  font-family: "VT323:Regular", monospace;
+  font-family: var(--font-display), monospace;
   font-size: 22px;
 }
 
@@ -431,14 +449,14 @@ body {
   place-items: center;
   background: var(--ink);
   color: var(--orange);
-  font-family: "VT323:Regular";
+  font-family: var(--font-display);
   font-size: 18px;
 }
 
 .card-head strong {
   display: block;
   color: var(--paper);
-  font-family: "VT323:Regular";
+  font-family: var(--font-display);
   font-size: 22px;
 }
 
@@ -488,7 +506,7 @@ body {
 
 .timeline time {
   color: var(--orange);
-  font-family: "VT323:Regular";
+  font-family: var(--font-display);
   font-size: 26px;
 }
 
@@ -624,7 +642,7 @@ body {
   background: var(--marron-1);
   color: var(--paper);
   border-bottom: 2px solid var(--line);
-  font-family: "IBM Plex Mono:SemiBold";
+  font-family: var(--font-mono-bold);
 }
 
 .toast-icon {

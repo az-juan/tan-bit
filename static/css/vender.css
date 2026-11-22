@@ -93,6 +93,19 @@
   height: 210px;
   object-fit: cover;
 }
+.preview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.preview-empty {
+  display: grid;
+  height: 210px;
+  place-items: center;
+  border: 2px dashed var(--line);
+  color: var(--muted);
+  font-size: 11px;
+}
 .preview p,
 .tips p {
   line-height: 1.7;

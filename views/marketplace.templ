@@ -33,7 +33,7 @@ func CategoriasDB() []FiltroCategoria {
 templ Filtros(filtros []FiltroCategoria, articulos int) {
     <div class="filters" role="tablist">
       for _, f := range filtros {
-        <a role="tab" href="./?categoria={ string(f.Key) }" hx-get="./?categoria={ string(f.Key) }" hx-target="#articulos" hx-swap="innerHTML" hx-push-url="true">
+        <a role="tab" href="/?categoria={ string(f.Key) }" hx-get="/?categoria={ string(f.Key) }" hx-target="#articulos" hx-swap="outerHTML" hx-push-url="true">
           { f.Label } [{ articulos }]
         </a>
       }

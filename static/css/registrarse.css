@@ -39,11 +39,6 @@
 .form-legal {
   line-height: 1.7;
 }
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
 .check {
   display: flex;
   align-items: flex-start;
