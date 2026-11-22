@@ -24,6 +24,11 @@ Para ejecutar la aplicación:
 ```
 Para acceder a la página: http://localhost:8080
 
+## Credenciales de prueba (Vendedor precargado)
+Al iniciar la aplicación con `./run-app.sh`, los tests de Hurl crean automáticamente un vendedor con artículos publicados en el catálogo:
++ **Email:** `leo@messi.com`
++ **Contraseña:** `campeon2022`
+
 ## Asegurarse de
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`.
 Al ejecutar `groups` tiene que listarse "docker", de lo contrario cierra la sesión actual e inicia otra.

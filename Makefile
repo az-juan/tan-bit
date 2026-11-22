@@ -33,9 +33,10 @@ status:
 	@$(COMPOSE) exec api atlas migrate status --dir "file://db/migrations" --url "$(DB_URL)"
 
 # --- Tests en el anfitrión ---
+# --file-root para que hurl pueda ver las imagenes de static/assets.
 test:
 	@set -a && . ./$(ENV_FILE) && set +a && DB_HOST=localhost DB_PORT=5433 go test -count=1 -v ./tests
-	@hurl --test --variable host=$(HOST) tests/hurl_test.hurl
+	@hurl --test --file-root . --variable host=$(HOST) tests/requests.hurl
 
 stop:
 	@$(COMPOSE) down

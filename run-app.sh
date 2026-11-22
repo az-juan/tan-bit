@@ -42,7 +42,8 @@ while true; do
     "${COMPOSE[@]}" up -d --build --wait
     # Sobreescibe variables para que el anfitrion pueda usar ./db/connection/connection.go
     DB_HOST=localhost DB_PORT=5433 #go test -count=1 -v ./tests
-    #hurl --test --variable host="$HOST" tests/hurl_test.hurl
+    # --file-root para que hurl pueda ver las imagenes de static/assets.
+    hurl --test --file-root . --variable host="$HOST" tests/requests.hurl
     echo "Servidor de produccion corriendo en $HOST"
   else
     "${COMPOSE[@]}" down -v --rmi local

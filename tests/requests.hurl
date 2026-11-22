@@ -1,13 +1,11 @@
 # =============================================================
-# Smoke tests HTTP de tan-bit (vistas HTML + flujo de sesion)
-# Uso: hurl --test --variable host=http://localhost:8080 tests/hurl_test.hurl
-# Nota: no hay endpoint de borrado -> cada corrida deja 1 usuario en la DB.
+# Smoke tests HTTP + Seed de catálogo de tan-bit
+# --file-root para que hurl pueda ver las imagenes de static/assets.
+# Uso: hurl --test --file-root . --variable host=http://localhost:8080 tests/requests.hurl
 # =============================================================
 
 # ---------------- HEALTH ----------------
 GET {{host}}/health
-[Options]
-variable: email=hurl_{{newUuid}}@test.io
 HTTP 200
 [Asserts]
 body == "Servidor andando!"
@@ -25,7 +23,7 @@ GET {{host}}/historia
 HTTP 200
 [Asserts]
 header "Content-Type" contains "text/html"
-body contains "TAN-BIT · Historia"
+body contains "EL HARDWARE TAMBIÉN TIENE HISTORIA."
 
 GET {{host}}/static/css/shared.css
 HTTP 200
@@ -46,53 +44,85 @@ HTTP 303
 [Asserts]
 header "Location" == "/login"
 
-# ---------------- REGISTRO ----------------
-# Sin aceptar terminos -> re-renderiza el form con error (no toca la DB)
+GET {{host}}/vender
+HTTP 303
+[Asserts]
+header "Location" == "/login"
+
+# ---------------- REGISTRO DE VENDEDOR (Lionel Messi) ----------------
+# 1) Sin aceptar terminos -> re-renderiza el form con error (no toca la DB)
 POST {{host}}/registrarse
 [Form]
+role: vendedor
 nombre: Lionel
 apellido: Messi
-email: {{email}}
-password: hurl1234
+email: leo@messi.com
+password: campeon2022
 HTTP 200
 [Asserts]
 body contains "Debes aceptar los términos"
 
-# Registro OK -> 303 + cookie de sesion
+# 2) Rol vendedor sin telefono/cbu/alias -> re-renderiza con error (no toca la DB)
 POST {{host}}/registrarse
 [Form]
+role: vendedor
 nombre: Lionel
 apellido: Messi
-email: {{email}}
-password: hurl1234
+email: leo@messi.com
+password: campeon2022
 terminos: on
-HTTP 303
+HTTP 200
 [Asserts]
-header "Location" == "/mi_cuenta"
-cookie "user_id" exists
+body contains "Para registrarte como vendedor necesitás completar TELÉFONO, CBU y ALIAS."
 
-# Email duplicado -> violacion UNIQUE manejada
+# 3) Registro de vendedor OK -> 200 + cookie user_id
 POST {{host}}/registrarse
 [Form]
+role: vendedor
+nombre: Lionel
+apellido: Messi
+email: leo@messi.com
+password: campeon2022
+telefono: 2494101010
+cbu: 0000010101010
+alias: leo.campeon.xmr
+direccion_xmr: 44Affq5kSiGBoZ4NMDwYtN18obc8AemS33DBLWs3H7otXft3XjrpDtQGv7SqSsaBYBb98uNbr2VBBEt7f2wfn3RVGQBEP3A
+terminos: on
+HTTP 200
+[Captures]
+vendedor_id: cookie "user_id"
+[Asserts]
+cookie "user_id" exists
+
+# 4) Email duplicado -> violacion UNIQUE manejada antes de tocar tabla vendedor
+POST {{host}}/registrarse
+[Form]
+role: vendedor
 nombre: Otro
 apellido: Usuario
-email: {{email}}
-password: hurl1234
+email: leo@messi.com
+password: campeon2022
+telefono: 2494999999
+cbu: 9999999999999
+alias: otro.alias
 terminos: on
 HTTP 200
 [Asserts]
 body contains "El email ya está registrado"
 
-# Hurl reenvia la cookie sola -> ve su propia cuenta
+# Verifica que la sesion del vendedor muestra su perfil y datos de vendedor
 GET {{host}}/mi_cuenta
 HTTP 200
 [Asserts]
-body contains "{{email}}"
+body contains "Lionel Messi"
+body contains "leo@messi.com"
+body contains "■ VENDEDOR"
+body contains "leo.campeon.xmr"
 
 # ---------------- LOGIN ----------------
 POST {{host}}/login
 [Form]
-email: {{email}}
+email: leo@messi.com
 password: incorrecta
 HTTP 401
 [Asserts]
@@ -100,16 +130,199 @@ body contains "Credenciales inválidas"
 
 POST {{host}}/login
 [Form]
-email: {{email}}
-password: hurl1234
-HTTP 303
+email: leo@messi.com
+password: campeon2022
+HTTP 200
 [Asserts]
-header "Location" == "/mi_cuenta"
 cookie "user_id" exists
+
+# ---------------- PUBLICACION DE ARTICULOS (/vender) ----------------
+# Acceso al formulario de venta con sesion de vendedor
+GET {{host}}/vender
+HTTP 200
+[Asserts]
+body contains "DALE CIRCULACIÓN A TU HARDWARE."
+
+# Validacion de campos obligatorios faltantes
+POST {{host}}/vender
+[MultipartFormData]
+titulo:
+descripcion:
+HTTP 200
+[Asserts]
+body contains "Faltan datos obligatorios"
+
+# 1. Gabinete (gabinete.png)
+POST {{host}}/vender
+[MultipartFormData]
+titulo: Gabinete Artesanal de Nogal ATX
+categoria: gaming
+condicion: nuevo
+descripcion: Gabinete custom en madera de nogal macizo y cobre. Lo vendo porque necesito liberar la repisa del escritorio, si no no me entran los 8 Balones de Oro.
+ubicacion: Tandil, Buenos Aires
+precio: 210000
+precio_xmr: 0.95
+stock: 1
+tipo_entrega: ambos
+costo_envio: 4500
+zona_entrega: Tandil y alrededores
+fotos: file,static/assets/gabinete.png; image/png
+HTTP 200
+[Asserts]
+body == ""
+
+# 2. Teclado (teclado.png)
+POST {{host}}/vender
+[MultipartFormData]
+titulo: Teclado Mecanico Custom 75%
+categoria: periferico
+condicion: muy bueno
+descripcion: Chasis mecanizado con switches tactiles lubricados a mano y keycaps PBT retro. Ideal para programar o jugar sin fatiga.
+ubicacion: Tandil, Buenos Aires
+precio: 115000
+precio_xmr: 0.52
+stock: 2
+tipo_entrega: envio a domicilio
+costo_envio: 2500
+zona_entrega: Todo el pais
+fotos: file,static/assets/teclado.png; image/png
+HTTP 200
+[Asserts]
+body == ""
+
+# 3. Memoria RAM (ram.png)
+POST {{host}}/vender
+[MultipartFormData]
+titulo: Kit Memoria RAM DDR4 32GB 3600MHz
+categoria: electronica
+condicion: muy bueno
+descripcion: Dos modulos de 16GB con disipador de aluminio anodizado. Testeados con MemTest86 sin errores, latencia CL16.
+ubicacion: Tandil, Buenos Aires
+precio: 88000
+precio_xmr: 0.40
+stock: 3
+tipo_entrega: ambos
+costo_envio: 2000
+zona_entrega: Tandil centro
+fotos: file,static/assets/ram.png; image/png
+HTTP 200
+[Asserts]
+body == ""
+
+# 4. Motherboard (mother.png)
+POST {{host}}/vender
+[MultipartFormData]
+titulo: Motherboard B550 AM4 VRM Disipado
+categoria: electronica
+condicion: reacondicionado
+descripcion: Placa madre socket AM4 con doble slot M.2 NVMe, PCIe 4.0 y capacitores japoneses. BIOS actualizada lista para usar.
+ubicacion: Tandil, Buenos Aires
+precio: 145000
+precio_xmr: 0.65
+stock: 1
+tipo_entrega: retiro en persona
+costo_envio: 0
+zona_entrega: Tandil centro
+fotos: file,static/assets/mother.png; image/png
+HTTP 200
+[Asserts]
+body == ""
+
+# 5. Cooler (cooler.png)
+POST {{host}}/vender
+[MultipartFormData]
+titulo: Cooler CPU Doble Torre 6 Heatpipes
+categoria: accesorio
+condicion: nuevo
+descripcion: Disipador por aire con base y heatpipes de cobre puro. Silencioso a maxima carga, incluye anclajes AM4, AM5 y LGA1700.
+ubicacion: Tandil, Buenos Aires
+precio: 62000
+precio_xmr: 0.28
+stock: 4
+tipo_entrega: ambos
+costo_envio: 2200
+zona_entrega: Tandil y zona serrana
+fotos: file,static/assets/cooler.png; image/png
+HTTP 200
+[Asserts]
+body == ""
+
+# 6. Lampara (lampara.png)
+POST {{host}}/vender
+[MultipartFormData]
+titulo: Lampara de Escritorio Industrial Vintage
+categoria: analogico
+condicion: nuevo
+descripcion: Armada artesanalmente con tuberias recuperadas y filamento calido regulable. Luz suave para jornadas nocturnas de taller.
+ubicacion: Tandil, Buenos Aires
+precio: 54000
+precio_xmr: 0.24
+stock: 2
+tipo_entrega: retiro en persona
+costo_envio: 0
+zona_entrega: Tandil centro
+fotos: file,static/assets/lampara.png; image/png
+HTTP 200
+[Asserts]
+body == ""
+
+# 7. Pad (pad.png)
+POST {{host}}/vender
+[MultipartFormData]
+titulo: Deskpad XL Texturado Costura Reforzada
+categoria: periferico
+condicion: nuevo
+descripcion: Mousepad extendido de 90x40cm con base de caucho antideslizante y superficie microtexturada de control preciso.
+ubicacion: Tandil, Buenos Aires
+precio: 29000
+precio_xmr: 0.13
+stock: 5
+tipo_entrega: envio a domicilio
+costo_envio: 1800
+zona_entrega: Todo el pais
+fotos: file,static/assets/pad.png; image/png
+HTTP 200
+[Asserts]
+body == ""
+
+# ---------------- VERIFICACION DE CATALOGO E IMAGENES ----------------
+# El marketplace muestra los 7 articulos cargados y sus rutas en /uploads/
+GET {{host}}/
+HTTP 200
+[Asserts]
+body contains "Gabinete Artesanal de Nogal ATX"
+body contains "no me entran los 8 Balones de Oro"
+body contains "Teclado Mecanico Custom 75%"
+body contains "Kit Memoria RAM DDR4 32GB 3600MHz"
+body contains "Motherboard B550 AM4 VRM Disipado"
+body contains "Cooler CPU Doble Torre 6 Heatpipes"
+body contains "Lampara de Escritorio Industrial Vintage"
+body contains "Deskpad XL Texturado Costura Reforzada"
+
+# El filtro por categoria funciona y filtra los perifericos
+GET {{host}}/?categoria=periferico
+HTTP 200
+[Asserts]
+body contains "Teclado Mecanico Custom 75%"
+body contains "Deskpad XL Texturado Costura Reforzada"
+body not contains "Gabinete Artesanal de Nogal ATX"
+
+# El archivo binario subido al volumen /app/uploads se sirve correctamente
+GET {{host}}/uploads/{{vendedor_id}}_gabinete_artesanal_de_nogal_atx_1.png
+HTTP 200
+[Asserts]
+header "Content-Type" contains "image/png"
+
+# En /mi_cuenta del vendedor figuran sus piezas publicadas
+GET {{host}}/mi_cuenta
+HTTP 200
+[Asserts]
+body contains "Hay piezas publicadas."
+body contains "Gabinete Artesanal de Nogal ATX"
 
 
 # =============================================================
-# TESTS ANTERIORES (API REST JSON, hoy comentada en /handlers)
+# TESTS ANTERIORES (API REST JSON, comentada en /handlers)
 # =============================================================
 # # =============================================================
 # # Tests de contrato HTTP de tan-bit (status + body)
