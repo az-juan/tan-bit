@@ -11,20 +11,24 @@ templ Header(rol string, lleno bool) {
       </a>
       <div class="site-search">
         <img src="/static/assets/search.svg" alt="" />
-        <form class="search-form" hx-get="/search" hx-target="#search-results" hx-trigger="input changed delay:300ms" hx-push-url="true" hx-params="no-body">
+        <div id="search-inline-results" class="search-inline-results"></div>
+        <form class="search-form" hx-get="/buscar" hx-target="#search-inline-results" hx-push-url="true" hx-params="no-body">
           <input
             type="text"
             name="q"
             placeholder="Buscar artículos..."
             class="search-input"
             autocomplete="off"
+            hx-trigger="input changed delay:500ms"
+            hx-indicator=".htmx-indicator"
+            hx-on:keydown="if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); const input = this; const form = this.closest('form'); if (form) { htmx.ajax('GET', form.getAttribute('hx-get') + '?open=1&q=' + encodeURIComponent(input.value), { target: '#modal' }); } }"
           />
         </form>
       </div>
       <nav class="header-actions">
         <a href="./vender">VENDER</a>
         <a href="./favoritos">
-          <img src="/static/assets/heart.svg" alt="Favoritos" />
+          <div class="header-heart"></div>
         </a>
         <a class="cart-link" href="./carrito">
           @CartIcon(lleno, false)

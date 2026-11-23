@@ -52,7 +52,7 @@ func (h *ArticuloHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		} else {
 			http.Error(w, "Metodo no permitido", http.StatusMethodNotAllowed)
 		}
-	case path == "/search":
+	case path == "/search", path == "/buscar":
 		h.SearchHandler(w, r)
 	default:
 		NotFoundHandler(w, r)
@@ -445,9 +445,61 @@ func (h *ArticuloHandler) RemoveFavoritoHandler(w http.ResponseWriter, r *http.R
 	responderNotificaciones(w, r)
 }
 
-// SearchHandler responde el fragmento de resultados para el buscador del header.
+// SearchHandler responde los resultados del buscador del header.
+// Con open=1 (pulsación de Enter) abre la ficha del primer resultado o
+// muestra una notificación de "sin resultados".
 func (h *ArticuloHandler) SearchHandler(w http.ResponseWriter, r *http.Request) {
+	open := r.FormValue("open") == "1"
 	q := r.FormValue("q")
+	if open {
+		q = strings.TrimSpace(q)
+		if q == "" {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+		arts, err := h.datos.Queries().SearchArticulos(r.Context(), sql.NullString{String: q, Valid: true})
+		if err != nil {
+			http.Error(w, "Error al buscar articulos", http.StatusInternalServerError)
+			return
+		}
+		if len(arts) == 0 {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			n := logic.Notification{
+				Type:    logic.NotificationInfo,
+				Label:   "info",
+				Title:   "Sin resultados",
+				Message: "No se encontró ningún objeto con ese nombre.",
+			}
+			views.Notificacion(n).Render(r.Context(), w)
+			return
+		}
+		full, err := h.datos.Queries().GetArticuloCompletoByID(r.Context(), int32(arts[0].IDArticulo))
+		if err != nil {
+			http.Error(w, "Error al obtener los datos del artículo", http.StatusInternalServerError)
+			return
+		}
+		data := views.ArticuloData{
+			IDArticulo:       full.IDArticulo,
+			Titulo:           full.Titulo,
+			Descripcion:      full.Descripcion,
+			Condicion:        string(full.Condicion),
+			Categoria:        string(full.Categoria),
+			RutaImagen:       full.RutaImagen,
+			Precio:           full.Precio,
+			PrecioXmr:        full.PrecioXmr,
+			Stock:            full.Stock,
+			FechaPublicacion: full.FechaPublicacion,
+			Ubicacion:        full.Ubicacion,
+			TipoEntrega:      string(full.TipoEntrega),
+			CostoEnvio:       full.CostoEnvio,
+			ZonaEntrega:      full.ZonaEntrega,
+			Alias:            full.Alias,
+			Cbu:              full.Cbu,
+			DireccionXmr:     full.DireccionXmr,
+		}
+		views.Pagina(w, r, views.VistaFicha(data)).Render(r.Context(), w)
+		return
+	}
 	arts, err := h.datos.Queries().SearchArticulos(r.Context(), sql.NullString{String: q, Valid: q != ""})
 	if err != nil {
 		http.Error(w, "Error al buscar articulos", http.StatusInternalServerError)

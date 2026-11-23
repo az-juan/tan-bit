@@ -7,27 +7,52 @@ Hardware de segunda mano y hardware custom/personalizado hecho de forma 'artesan
 
 *DESCENTRALIZADO - CONFIANZA - OPORTUNIDAD*
 
-[Documentación del proyecto](./docs/)
-
 ## Dependencias
 + docker
 + docker compose
-+ go
++ go 1.26 (versión exacta en go.mod)
 + sqlc: `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
 + templ: `go install github.com/a-h/templ/cmd/templ@latest`
 + hurl: https://hurl.dev
 
-Para ejecutar la aplicación:
-```bash
-  chmod u+x run-app.sh
-  ./run-app.sh
-```
-Para acceder a la página: http://localhost:8080
+## Estructura del proyecto
+Vista general completa en [`docs/arquitectura.md`](./docs/arquitectura.md).
 
-## Credenciales de prueba (Vendedor precargado)
-Al iniciar la aplicación con `./run-app.sh`, los tests de Hurl crean automáticamente un vendedor con artículos publicados en el catálogo:
-+ **Email:** `leo@messi.com`
-+ **Contraseña:** `campeon2022`
+```
+tan-bit.com/tan-bit
+├── main.go              # pool DB, rutas, static fs
+├── go.mod / go.sum      # go 1.26
+├── Dockerfile*          # dev (air) y prod (binario alpine)
+├── nginx.conf           # proxy /api/ y /uploads/ (producción)
+├── compose.yaml         # desarrollo (api + db)
+├── compose.prod.yaml    # producción (api + db + nginx)
+├── example.env          # variables DB_*
+├── Makefile             # run/test/migrate/apply/status/preCommit/clear
+├── run-app.sh           # arranque con sqlc+templ, compose y tests hurl
+├── db/
+│   ├── schema/          # schema.sql (DDL real de la BD)
+│   ├── queries/         # consultas sqlc (-- name: ...)
+│   ├── sqlc/            # codegen sqlc
+│   ├── migrations/      # migraciones Atlas (dev)
+│   └── connection/      # pool pgx
+├── logic/               # regla de negocio (parseo, validación, auth, notificaciones, tx)
+├── handlers/            # net/http handlers
+├── views/               # componentes SSR con templ + htmx
+├── static/              # css, assets, htmx.min.js
+└── tests/               # go test + escenarios Hurl
+```
+
+## Ejecutar la aplicación
+```bash
+chmod u+x run-app.sh
+./run-app.sh` # — bucle: genera, baja volúmenes, `up -d --build --wait`, ejecuta hurl; `n` para salir.
+```
+Accedader a la página: http://localhost:8080
+
+## Credenciales de prueba (vendedor pre-cargado)
+Al iniciar la aplicación con ./run-app.sh, los tests de Hurl crean automáticamente un vendedor con artículos publicados en el catálogo:
++ **Email:** leo@messi.com
++ **contraseña:** campeon2022
 
 ## Asegurarse de
 + Estar en el grupo 'docker', en caso de no estarlo, ejecutar: `sudo usermod -aG docker $USER`.

@@ -75,6 +75,7 @@ body {
 
 .site-search {
   display: flex;
+  position: relative;
   width: 400px;
   height: 40px;
   align-items: center;
@@ -85,6 +86,13 @@ body {
   color: var(--sand);
   font-size: 11px;
 }
+
+.site-search #search-inline-results {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
 
 .site-search img {
   width: auto;
@@ -104,6 +112,20 @@ body {
 .header-actions > img {
   width: 22px;
   height: 22px;
+}
+
+.header-heart {
+  width: 20px;
+  height: 16px;
+  background-image: url('../assets/heart.svg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: background-image 0.3s ease-in-out;
+}
+
+.header-heart:hover {
+  background-image: url('../assets/heart_gold.svg');
 }
 
 .header-actions .account {
