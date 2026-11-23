@@ -15,6 +15,12 @@ for dep in docker sqlc go hurl templ; do
   fi
 done
 
+# Sincronizar el CLI de templ con la version correcta
+TEMPL_VER=$(go list -m -f '{{.Version}}' github.com/a-h/templ)
+if [[ "$(templ version 2>/dev/null || true)" != "$TEMPL_VER" ]]; then
+  go install "github.com/a-h/templ/cmd/templ@${TEMPL_VER}"
+fi
+
 # Exporta las credenciales para que go test (en anfitrion) las lea
 # y para que el compose las pueda interpolar
 set -a
