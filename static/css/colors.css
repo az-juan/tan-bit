@@ -137,3 +137,17 @@ header .header-actions button.theme-toggle-btn {
 header .header-actions button.theme-toggle-btn:hover {
   background-color: var(--panel) !important;
 }
+
+.eyebrow {
+  color: var(--orange);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.muted {
+  color: var(--sand);
+}
+
+.green {
+  color: var(--green);
+}

@@ -4,7 +4,7 @@ script toggleTheme() {
 	const html = document.documentElement;
 	const next = html.getAttribute("data-theme") === "claro" ? "oscuro" : "claro";
 	html.setAttribute("data-theme", next);
-	document.cookie = "theme=" + next + "; path=/; max-age=31536000; SameSite=Lax";
+	document.cookie = "tema=" + next + "; path=/; max-age=31536000; SameSite=Lax";
 }
 
 templ ThemeToggle() {

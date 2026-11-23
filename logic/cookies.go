@@ -68,7 +68,7 @@ func CarritoCookie(r *http.Request) int {
 	return n
 }
 
-// TemaCookie 
+// TemaCookie
 func TemaCookie(r *http.Request) string {
 	c, err := r.Cookie("tema")
 	if err != nil || c.Value != "claro" {

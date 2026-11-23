@@ -15,7 +15,8 @@ run: generate
 
 generate:
 	@sqlc generate
-	@templ generate
+	@# Ejecuta templ con la versión exacta declarada en go.mod para evitar incompatibilidades con el binario global
+	@go run "github.com/a-h/templ/cmd/templ@$$(go list -m -f '{{.Version}}' github.com/a-h/templ)" generate
 
 api_logs:
 	@$(COMPOSE) logs api
@@ -35,8 +36,10 @@ status:
 # --- Tests en el anfitrión ---
 # --file-root para que hurl pueda ver las imagenes de static/assets.
 test:
+# 	Sobreescibe variables para que el anfitrion pueda usar ./db/connection/connection.go
 	@set -a && . ./$(ENV_FILE) && set +a && DB_HOST=localhost DB_PORT=5433 go test -count=1 -v ./tests
-	@hurl --test --file-root . --variable host=$(HOST) tests/requests.hurl
+#	Ya lo hace run-app.sh
+#	@hurl --test --file-root . --variable host=$(HOST) tests/requests.hurl
 
 stop:
 	@$(COMPOSE) down

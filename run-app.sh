@@ -15,12 +15,6 @@ for dep in docker sqlc go hurl templ; do
   fi
 done
 
-# Sincronizar el CLI de templ con la version correcta
-TEMPL_VER=$(go list -m -f '{{.Version}}' github.com/a-h/templ)
-if [[ "$(templ version 2>/dev/null || true)" != "$TEMPL_VER" ]]; then
-  go install "github.com/a-h/templ/cmd/templ@${TEMPL_VER}"
-fi
-
 # Exporta las credenciales para que go test (en anfitrion) las lea
 # y para que el compose las pueda interpolar
 set -a
@@ -39,15 +33,14 @@ while true; do
   INPUT="${INPUT:-Y}"
   if [[ "$INPUT" =~ ^[yY]$ ]]; then
     sqlc generate
-    templ generate
+    # Compila los .templ segun la version declarada en go.mod, no la del anfitrion
+    go run "github.com/a-h/templ/cmd/templ@$(go list -m -f '{{.Version}}' github.com/a-h/templ)" generate
     # Bajamos volumenes previos
     "${COMPOSE[@]}" down -v
     # --build: la imagen incluye el codigo/sqlc recien generado
     # --wait: no sigue hasta que ambos contenedores esten healthy
     # directorio para fotos de articulos a publicar
     "${COMPOSE[@]}" up -d --build --wait
-    # Sobreescibe variables para que el anfitrion pueda usar ./db/connection/connection.go
-    DB_HOST=localhost DB_PORT=5433 #go test -count=1 -v ./tests
     # --file-root para que hurl pueda ver las imagenes de static/assets.
     hurl --test --file-root . --variable host="$HOST" tests/requests.hurl
     echo "Servidor de produccion corriendo en $HOST"
