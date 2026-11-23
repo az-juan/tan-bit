@@ -68,6 +68,15 @@ func CarritoCookie(r *http.Request) int {
 	return n
 }
 
+// TemaCookie 
+func TemaCookie(r *http.Request) string {
+	c, err := r.Cookie("tema")
+	if err != nil || c.Value != "claro" {
+		return "oscuro"
+	}
+	return "claro"
+}
+
 // SetCarritoCookie guarda la cantidad del carrito; 0 la invalida.
 func SetCarritoCookie(w http.ResponseWriter, cantidad int) {
 	valor := "0"

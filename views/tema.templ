@@ -1,0 +1,15 @@
+package views
+
+script toggleTheme() {
+	const html = document.documentElement;
+	const next = html.getAttribute("data-theme") === "claro" ? "oscuro" : "claro";
+	html.setAttribute("data-theme", next);
+	document.cookie = "theme=" + next + "; path=/; max-age=31536000; SameSite=Lax";
+}
+
+templ ThemeToggle() {
+	<button type="button" class="theme-toggle-btn" onclick={ toggleTheme() } aria-label="Cambiar tema">
+		<span class="only-oscuro">☀️</span>
+		<span class="only-claro">🌙</span>
+	</button>
+}

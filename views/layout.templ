@@ -33,6 +33,7 @@ templ Header(rol string, lleno bool) {
         <a class="cart-link" href="./carrito">
           @CartIcon(lleno, false)
         </a>
+	@ThemeToggle()
         <div class="account-dropdown-wrap">
           <a href="./mi_cuenta" class="account-btn">
             if rol == "vendedor" {
@@ -142,9 +143,9 @@ templ Head() {
 </head>
 }
 
-templ Base(contenido templ.Component, session string, rol string, lleno bool) {
+templ Base(contenido templ.Component, session string, rol string, lleno bool, tema string) {
   <!doctype html>
-  <html lang="es">
+  <html lang="es" data-theme= { tema }>
     <body hx-boost="true" hx-target="#main">
       @Head()
       @Header(rol, lleno)
@@ -163,6 +164,6 @@ templ Pagina(w http.ResponseWriter, r *http.Request, contenido templ.Component) 
         @Notificaciones(logic.TakeNotifications(logic.SessionID(w, r)))
         @contenido   // solo el fragmento + notificaciones OOB
     } else {
-        @Base(contenido, logic.SessionID(w, r), logic.RolCookie(r), logic.CarritoCookie(r) > 0)
+        @Base(contenido, logic.SessionID(w, r), logic.RolCookie(r), logic.CarritoCookie(r) > 0, logic.TemaCookie(r))
     }
 }
