@@ -34,6 +34,9 @@ func main() {
 	http.HandleFunc("/creadores", handlers.CreadoresHandler)
 	http.HandleFunc("/contacto", handlers.ContactoHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "static/assets/icon.ico")
+	})
 	http.Handle("/uploads/", http.StripPrefix("/uploads/", us))
 	http.Handle("/vender", vendHandler)
 	http.Handle("/vender/preview", vendHandler)

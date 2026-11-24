@@ -507,11 +507,11 @@ navegador → 80 (nginx) → /api/* → 8080 → API Go
 flowchart TB
     app["tan-bit.com/tan-bit (Go module)"]
     main["main.go<br/>(pool DB, enrutamiento, static fs)"]
-    logic["logic/</br>Datos, parseos, validaciones, notificaciones, transacciones"]
-    handlers["handlers/</br>ArticuloHandler, UsuarioHandler, VendedorHandler"]
-    views["views/</br>*_templ.go (SSR con templ + htmx)"]
+    logic["logic/<br/>Datos, parseos, validaciones, notificaciones, transacciones"]
+    handlers["handlers/<br/>ArticuloHandler, UsuarioHandler, VendedorHandler"]
+    views["views/<br/>*_templ.go (SSR con templ + htmx)"]
     db["db/"]
-    static["static/</br>css assets htmx.min.js"]
+    static["static/<br/>css assets htmx.min.js"]
 
     subgraph nix["Plataforma de ejecución (Docker)"]
         nginx["nginx:alpine :80"]
@@ -523,11 +523,11 @@ flowchart TB
     main --> handlers
     main --> db
     main --> static
-    logic --> handlers
+    handlers --> logic
     handlers --> views
     handlers --> db
-    db --> sqlc["sqlc</option></br>(codegen db/sqlc)"]
-    db --> schema["schema.sql </br>(DDL real)"]
+    db --> sqlc["sqlc<br/>(codegen db/sqlc)"]
+    db --> schema["schema.sql <br/>(DDL real)"]
     db --> queries["queries/*.sql"]
     db --> migrations["migrations/<br/>(Atlas)"]
     nginx -- :80 --> api
@@ -541,16 +541,16 @@ flowchart TB
 
 ```mermaid
 flowchart LR
-    browser["Navegador</br>(HTML/CSS + htmx)"]
-    nginx["nginx :80</br>proxy /api/, /uploads/"]
-    api["Go HTTP Server :8080</br>http.ServeMux + handlers"]
-    handler["ArticuloHandler</br>UsuarioHandler</br>VendedorHandler"]
-    renderer["Templ renderer</br>views/*_templ.go"]
-    notif["Dispatcher de</br>notificaciones (chan 256)"]
-    sqlc["sqlc queries</br>pgx pool"]
+    browser["Navegador<br/>(HTML/CSS + htmx)"]
+    nginx["nginx :80<br/>proxy /api/, /uploads/"]
+    api["Go HTTP Server :8080<br/>http.ServeMux + handlers"]
+    handler["ArticuloHandler<br/>UsuarioHandler<br/>VendedorHandler"]
+    renderer["Templ renderer<br/>views/*_templ.go"]
+    notif["Dispatcher de<br/>notificaciones (chan 256)"]
+    sqlc["sqlc queries<br/>pgx pool"]
     pg["PostgreSQL :5432"]
-    fs["Static file server</br>/static/* (FileServer)"]
-    up["Served dir</br>/app/uploads</br>(nginx :ro)"]
+    fs["Static file server<br/>/static/* (FileServer)"]
+    up["Served dir<br/>/app/uploads<br/>(nginx :ro)"]
 
     browser --> nginx
     nginx -- "/api/*" --> api
@@ -595,13 +595,12 @@ flowchart TB
     usuh --> logic
     logic --> pg
     logic --> notif
-    sqlc --> templ
-    notif --> templ
+    arth --> templ
     templ --> client
 
-    subgraph Auth["* autenticación: user_id cookie ← user_id / role / cart / sid"]
+    subgraph Auth["autenticación: cookies user_id / role / cart / sid"]
     end
-    subgraph PRG["* PRG: POST → 303 → GET"]
+    subgraph PRG["PRG: POST → 303 → GET"]
     end
 ```
 
@@ -663,13 +662,13 @@ erDiagram
         condicion condicion
         categoria categoria
         text ruta_imagen
-        double precio // CHECK (precio >= 0)
-        double precio_xmr // CHECK (precio_xmr >= 0)
-        int stock // CHECK (stock >= 0)
-        timestamptz fecha_publicacion // DEFAULT now()
+        double precio "CHECK: precio >= 0"
+        double precio_xmr "CHECK: precio_xmr >= 0"
+        int stock "CHECK: stock >= 0"
+        timestamptz fecha_publicacion "DEFAULT now()"
         text ubicacion
         entrega tipo_entrega
-        double costo_envio // CHECK (costo_envio >= 0)
+        double costo_envio "CHECK: costo_envio >= 0"
         text zona_entrega
         int id_vendedor FK
     }
@@ -677,26 +676,26 @@ erDiagram
         int id_compra PK
         int id_comprador FK
         timestamp fecha
-        double total // CHECK (total >= 1)
-        double total_xmr // CHECK (total_xmr >= 0)
+        double total "CHECK: total >= 1"
+        double total_xmr "CHECK: total_xmr >= 0"
     }
     DETALLE_COMPRA {
         int id_compra PK, FK
         int id_articulo PK, FK
-        int cantidad // CHECK (cantidad >= 1)
-        double precio_historico_unitario // CHECK (precio_historico_unitario >= 1)
-        double precio_historico_unitario_xmr // CHECK (precio_historico_unitario_xmr >= 0)
+        int cantidad "CHECK: cantidad >= 1"
+        double precio_historico_unitario "CHECK: precio_historico_unitario >= 1"
+        double precio_historico_unitario_xmr "CHECK: precio_historico_unitario_xmr >= 0"
     }
     CARRITO {
         int id_usuario PK, FK
         int id_articulo PK, FK
-        int cantidad // CHECK (cantidad >= 1)
-        timestamptz fecha_agregado // DEFAULT now()
+        int cantidad "CHECK: cantidad >= 1"
+        timestamptz fecha_agregado "DEFAULT now()"
     }
     FAVORITO {
         int id_usuario PK, FK
         int id_articulo PK, FK
-        timestamptz fecha // DEFAULT now()
+        timestamptz fecha "DEFAULT now()"
     }
 
     USUARIO ||--o| VENDEDOR : "es (1:1)"
@@ -721,20 +720,22 @@ erDiagram
 flowchart LR
     user["Usuario / cliente"]
     nginx["nginx:alpine<br/>:80"]
-    api["api<br/>golang:1.26 :8080"]
+    api["api<br/>alpine:3.20 · binario :8080"]
     db["database<br/>postgres:15-alpine :5432"]
+    up["/app/uploads<br/>(volumen, montado :ro en nginx)"]
+    schema["db/schema/schema.sql<br/>docker-entrypoint-initdb.d/01-schema.sql"]
 
     user -->|":80"| nginx
     nginx -->|"GET/POST /api/*"| api
-    nginx -->|"GET /uploads/*"| api
-    nginx -.->|volumen uploads (ro)| api
+    nginx -->|"GET /uploads/* (alias local)"| up
+    api -. volumen uploads .-> up
     api -->|"pgx pool"| db
-    db -->|"esquema: schema.sql </br>(docker-entrypoint-initdb.d/01-schema.sql)"| db
+    schema -->|"init (solo 1ª vez)"| db
 
     subgraph internet["Internet"]
         user
     end
-    subgraph compose_prod["compose.prod.yaml (host)]
+    subgraph compose_prod["compose.prod.yaml (host)"]
         nginx
         api
         db
